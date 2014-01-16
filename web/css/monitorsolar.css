@@ -1,0 +1,247 @@
+
+{
+        padding:0;
+        margin:0;
+}
+
+body {
+        font-size: 99%;
+}
+img {
+        border-width: 0;
+}
+
+#solar {
+
+ width: 100%;
+	height:100%;
+	}
+
+#status_box{
+		width: 100%;
+		height: 440px;
+			margin-left: 10px;
+		margin-right: 10px;
+		margin-bottom: 10px;
+		
+		
+		
+}
+	
+.status_tab{
+	font: Verdana,"BitStream vera Sans",Tahoma,Helvetica,Sans-serif;
+	font-size:15px;
+	float:left;
+	padding: 3px;
+	border:solid;
+	border-top: none;
+	border-bottom: none;
+	border-color: #545454;
+	border-width:1px;
+	text-align: left;
+	
+}	
+
+#status_box_data{
+	width: 35%;
+	height: 440px;
+	float: left;
+	font: Verdana,"BitStream vera Sans",Tahoma,Helvetica,Sans-serif;
+	font-size:14px;
+	border:solid;
+	border-top:none;
+	border-color: #545454;
+	border-width:2px;
+	text-align: left;
+
+	}
+
+.status_content{
+		height: 191px;
+        width: 100%;
+        overflow: auto;
+}
+
+.status_title{
+	
+float: center;
+	width: 100%;
+	height: 25px;
+	background-color:  #EDC240;
+	background-color: rgba(237, 194, 64, 0.5);
+	text-align: center;
+	font: 20px "Lucida Grande", Verdana, Arial, sans-serif, bold;
+	border-top:solid;
+	border-bottom:solid;
+	border-width:2px;
+	border-color: #545454;
+}
+
+
+.titulografica{
+	
+float: center;
+	width: 100%;
+	height: 25px;
+	background-color:  #EDC240;
+	background-color: rgba(237, 194, 64, 0.5);
+	text-align: center;
+	font: 20px "Lucida Grande", Verdana, Arial, sans-serif, bold;
+	border:solid;
+	#border-bottom:solid;
+	border-width:2px;
+	border-color: #545454;
+	
+}
+
+#right_little_chart{
+width: 50%;
+height: 100%;
+
+text-align:left;
+	float: right;
+}
+
+#right_little_chart_select_div{
+	height: : 100%;
+	width: 50%;
+	float:right;
+}
+#left_little_chart_select_div{
+	height: : 100%;
+	width: 50%;
+	float:left;
+}
+
+#right_little_chartamparray{
+width: 50%;
+height: 100%;
+
+text-align:left;
+	float: right;
+}
+
+
+#left_little_chart{
+width:50%;
+height: 100%;
+float: center;
+text-align:left;
+float: left;
+	
+}
+#left_little_chartarray{
+width:50%;
+height: 100%;
+float: center;
+text-align:left;
+float: left;
+	
+}
+
+#month_days_chart{
+width: 100%;
+height: 50%;
+float: right;
+text-align:left;
+}
+#datebars{
+width: 60%;
+height: 100%;
+float: left;
+text-align:left;
+margin-left: 10px;
+
+}
+#months_chart{
+width: 50%;
+height: 50%;
+float: left;
+text-align:left;
+}
+#years_chart{
+width: 50%;
+height: 50%;
+float: left;
+text-align:left;
+}
+
+
+#little_charts{
+width: 95%;
+height: 350px;
+float: center;
+
+
+}
+
+#little_chartsarray{
+width: 95%;
+height: 350px;
+float: center;
+
+}
+
+#big_chart{
+width: 95%;
+height: 400px;
+text-align:left;
+
+
+
+}
+.display{
+width: 100%;
+height: 16px;
+text-align:left;
+
+}
+.lbldisplay{
+width: 50%;
+height: 100%;
+text-align:left;
+float : left;
+}
+.valordisplay{
+width: 50%;
+height: 100%;
+text-align:left;
+float : left;
+}
+
+ul{
+  width:760px;
+  margin-bottom:20px;
+  overflow:hidden;
+  border-top:1px solid #ccc;
+  align:left;
+}
+
+.spanlbl{
+width: 50%;
+text-align:left;
+float : left;
+}
+
+
+.spanval{
+width: 50%;
+text-align:left;
+float : right;
+}
+
+li{
+  line-height:1.5em;
+  text-align:left;
+  border-bottom:1px solid #ccc;
+  float:left;
+  font: Verdana,"BitStream vera Sans",Tahoma,Helvetica,Sans-serif;
+	font-size:15px;
+	font-weight:bold;
+}
+
+.dialogodiv li { width:50%;
+  align:left;
+}
+
+	
