@@ -1,0 +1,91 @@
+body {
+	margin: 20px;
+	font-family: Verdana;
+	font-size: 11px;
+}
+
+/*
+	STYLE
+*/
+
+#left-col table {
+	width: 100%;
+	table-layout: fixed;
+}
+
+caption {
+	font-weight: bold;
+	font-size: 12px;
+	text-align: left;
+	padding: 4px;
+	border-bottom: 1px solid black;
+}
+
+caption div {
+	display: inline-block;
+	float: right;
+}
+
+th.subhead {
+	text-align: right;
+	color: #aaaaaa;
+}
+
+td {
+	padding-left: 4px;
+}
+
+td.label {
+	text-align: right;
+	color: #aaaaaa;
+}
+
+/*
+	LAYOUT 
+*/
+
+#left-col {
+	float: left;
+	width: 320px; /* if you change this, change top chart's left margin. */
+	margin-bottom: 20px;
+}
+
+.top-chart {
+	height: 260px;
+	min-width: 380px; /* should be double-wide width minus left margin (below) - */	
+	margin-left: 340px; /* shoud be 20px more than the left-col width. */
+	margin-right: 0px;
+	margin-bottom: 20px;	
+}
+
+
+.bottom-wide-chart {
+	clear: both;
+	width: 100%;
+	min-width: 720px;
+	height: 260px;
+	margin-top: 20px;	
+}
+
+.bottom-double-charts {
+	position: relative;
+	height: 10px;  /* just so you can see it */
+	margin: 20px 0px;
+	min-width: 720px;
+}
+
+.left-chart {
+	position: absolute;
+	left: 0px;
+	width: 48%;
+	height: 260px;
+	margin-right: 20px;
+}
+
+.right-chart {
+	position: absolute;
+	right: 0px;
+	width: 48%;
+	height: 260px;
+	margin-left: 20px;
+}
