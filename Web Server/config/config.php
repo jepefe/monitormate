@@ -14,16 +14,16 @@ for more details.
 */
 
 // DATABASE
-$dbhost="";			//Database host
-$dbuser=""; 		//Database user
-$dbpass=""; 		//Database password
-$dbname="";			//Database name
+$dbhost="internal-db.s128668.gridserver.com";	//Database host
+$dbuser="db128668_www"; 			//Database user
+$dbpass="blowfish"; 				//Database password
+$dbname="db128668_monitormate3";	//Database name
 
 //UPDATES
-$reg_interval=10;	//Time between each record in minutes
-$token="";			//Token
+$reg_interval=10;					//Time between each record in minutes
+$token="HprJy2oB9rD99Jhq";			//Token
 
 // GENERAL
-$timezone="";		//See http://www.php.net/manual/en/timezones.php, example for Spain: Europe/Madrid
+$timezone="America/Los_Angeles"		//See http://www.php.net/manual/en/timezones.php, example for Spain: Europe/Madrid
 
 ?> 
