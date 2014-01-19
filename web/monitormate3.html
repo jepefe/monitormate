@@ -1,0 +1,89 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+<link href="./css/monitorsolar.css" type="text/css" rel="stylesheet">
+<!--[if lte IE 9]><script language="javascript" type="text/javascript" src="flot/excanvas.min.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="./js/jquery-1.7.1.js"></script>
+<!--<script language="javascript" type="text/javascript" src="./js/jquery-ui-1.8.17.js"></script>-->
+<script language="javascript" type="text/javascript" src="./flot/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="monitormate3.js"></script>
+
+<link type="text/css" href="./css/jquery-ui.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="solar">
+
+	<div id="status_box">
+		<div id="status_box_data">
+			<div id="status_title_top" class="status_title">
+				<select id="status_top_select" onchange="set_status('status_top',this.options[this.selectedIndex].value)"></select>
+ 
+			</div>
+			
+			<div id="status_top" class="status_content">
+			
+				
+			</div>
+			
+			
+			
+			
+			<div id="status_title_bottom" class="status_title"> 
+			<select id="status_bottom_select" onchange="set_status('status_bottom',this.options[this.selectedIndex].value)"></select>
+			</div>
+			
+			<div id="status_bottom" class="status_content">
+			
+				
+			</div>
+		</div>
+		
+		
+		<div id="datebars">
+			<div id="years_chart">
+			</div>
+			<div id="months_chart">
+			</div>
+			<div id="month_days_chart">
+			</div>
+		</div>
+	</div>
+	<select id="big_chart_select" onchange="set_chart('big_chart',this.options[this.selectedIndex].value)">
+	<input type="checkbox" id="chk_mode_bc" value="1" onchange="set_chart('big_chart')"><label for="chk_mode_bc">Show charge mode</label>
+
+	
+    
+    </select>
+	<div id="big_chart">
+	</div>
+	<div id="little_charts">
+	
+		
+		<div id="left_little_chart_select_div" >
+		<select id="left_little_chart_select" onchange="set_chart('left_little_chart',this.options[this.selectedIndex].value)"></select>
+
+		</div>
+		<div id="right_little_chart_select_div" >
+	<select id="right_little_chart_select" onchange="set_chart('right_little_chart',this.options[this.selectedIndex].value)"></select>
+
+		</div>
+		
+					<div id="right_little_chart">
+		</div>
+		
+    
+		<div id="left_little_chart">
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+get_years(getUrlVars()["date"]);
+
+
+
+</script>
+</body>
+
+</html>
