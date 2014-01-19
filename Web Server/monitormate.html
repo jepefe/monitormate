@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<link rel="icon" href="./images/favicon16.png" type="image/png">
+	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
+	<!-- <link type="text/css" href="./css/jquery-ui.css" rel="stylesheet"> -->
+	<script src="./js/jquery-1.7.1.js"></script>
+	<!--<script src="./js/jquery-ui-1.8.17.js"></script>-->
+	<!--[if lte IE 9]><script src="./flot/excanvas.min.js"></script><![endif]-->
+	<script src="./flot/jquery.flot.js"></script>
+	<script src="./flot/jquery.flot.time.js"></script>
+	<script src="./flot/jquery.flot.resize.js"></script>
+	<script src="./flot-plugins/jquery.flot.threshold.multiple.js"></script>
+	<script src="./config/labels.js"></script>
+	<script src="./js/monitormate.js"></script>
+	<title>MonitorMate</title>
+</head>
+<body>
+	<div id="left-col">
+		<select id="status_top_select" onchange="set_status('status_top',this.options[this.selectedIndex].value)"></select>
+		<select id="status_bottom_select" onchange="set_status('status_bottom',this.options[this.selectedIndex].value)"></select>
+		<div id="status_top" class="status_content"></div>
+		<div id="status_bottom" class="status_content"></div>
+	</div>
+
+	<select id="multichart1_select" onchange="set_chart('multichart1',this.options[this.selectedIndex].value)"></select>
+	<div id="multichart1" class="top-chart"></div>
+
+	<select id="multichart2_select" onchange="set_chart('multichart2',this.options[this.selectedIndex].value)"></select>
+	<div id="multichart2" class="top-chart"></div>
+
+	<select id="multichart3_select" onchange="set_chart('multichart3',this.options[this.selectedIndex].value)"></select>
+	<input type="checkbox" id="chk_mode_bc" value="1" onchange="set_chart('big_chart')">
+	<label for="chk_mode_bc">Show charge mode</label>
+	<div id="multichart3" class="bottom-wide-chart"></div>
+
+	<div id="month_days_chart" class="bottom-wide-chart"></div>
+	<div class="bottom-double-charts">
+		<div id="months_chart" class="left-chart"></div>
+		<div id="years_chart" class="right-chart"></div>
+	</div>
+</body>
+</html>
