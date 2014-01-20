@@ -307,12 +307,12 @@ function set_status(div, value) {
 						<tr><td class="label">Relay Mode:</td><td>' + device.relay_mode + '</td></tr>\
 						<tr><td class="label">Relay Status:</td><td>' + device.relay_status + '</td></tr>\
 						<th class="subhead">Shunts</th>\
-						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.shunt_a_amps + ' A</td></tr>\
-						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.shunt_b_amps + ' A</td></tr>\
-						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.shunt_c_amps + ' A</td></tr>\
+						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.shunt_a_amps + ' A, ' + Math.round(device.shunt_a_amps * device.battery_volt) + ' W</td></tr>\
+						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.shunt_b_amps + ' A, ' + Math.round(device.shunt_b_amps * device.battery_volt) + ' W</td></tr>\
+						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.shunt_c_amps + ' A, ' + Math.round(device.shunt_c_amps * device.battery_volt) + ' W</td></tr>\
 						<th class="subhead">Today\'s Net</th>\
 						<tr><td class="label">Input Ah:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
-						<tr><td class="label">Output Ah:</td><td>' + device.today_net_output_ah + ' Ah ' + device.today_net_output_kwh + ' kWh</td></tr>\
+						<tr><td class="label">Output Ah:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\
 						<th class="subhead">Accumulation</th>\
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.accumulated_ah_shunt_a + ' Ah, ' + device.accumulated_kwh_shunt_a + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.accumulated_ah_shunt_b + ' Ah, ' + device.accumulated_kwh_shunt_b + ' kWh</td></tr>\
