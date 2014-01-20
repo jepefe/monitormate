@@ -152,10 +152,7 @@ class flexnetdc():
         
         #Soc
         self.status_formatted[23] = int(datastream[8])
-<<<<<<< HEAD
-=======
 
->>>>>>> fc02f8f69defc57233030f408709c05c5e21468e
         
         
 
