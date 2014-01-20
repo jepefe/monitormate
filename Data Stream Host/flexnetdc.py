@@ -41,7 +41,7 @@ class flexnetdc():
     #Formatted datastream
         self.status_formatted = [0]*self.valuenames_formatted.__len__()
     #Device name
-        self.name = "FlexNet DC"
+        self.name = "FLEXnet DC"
 
     
 

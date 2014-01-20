@@ -37,7 +37,7 @@ class fxinv():
     #Modifiers for 230V devices
         self.modifiers = 0
    #Device name     
-        self.name = "FX Inverter"
+        self.name = "FX Series Inverter/Charger"
 
         
     #Enables modifiers to 230V devices

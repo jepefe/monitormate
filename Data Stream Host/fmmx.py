@@ -36,7 +36,7 @@ class fmmx:
     #Raw datastream
         self.status_raw = []
     #Device name
-        self.name = "FM/MX Charge controller"
+        self.name = "FM/MX Charge Controller"
     
     
     #Formatted datastream
