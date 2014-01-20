@@ -481,8 +481,8 @@ function get_years() {
 		comp_date = new Date(comp_date[0], 0, 1);
 		comp_date = (new Date(((comp_date).getFullYear()), 0, 1));
 
-		staggerDateLeft = new Date(comp_date.setMonth(comp_date.getMonth() - 6));
-		staggerDateRight = new Date(comp_date.setMonth(comp_date.getMonth() + 6));
+		staggerDateLeft = new Date(comp_date.setMonth(comp_date.getMonth()));
+		staggerDateRight = new Date(comp_date.setMonth(comp_date.getMonth()+6));
 
 		years_data_kwhin[i] = [staggerDateLeft, (Math.round(available_years[i].kwh_in * 100) / 100)];
 		years_data_kwhout[i] = [staggerDateRight, (Math.round(available_years[i].kwh_out * 100) / 100)];
@@ -558,8 +558,9 @@ function get_months(date) {
 		split_date = available_months[i].date.split(/[- :]/);
 		month_date = (new Date(split_date[0], split_date[1] - 1, 1));
 
-		staggerDateLeft = new Date(month_date.setDate(month_date.getDate() - 10));
-		staggerDateRight = new Date(month_date.setDate(month_date.getDate() + 10));
+		staggerDateLeft = new Date(month_date.setDate(month_date.getDate()));
+		staggerDateRight = new Date(month_date.setDate(month_date.getDate()+10));
+	
 
 
 		months_data_kwhin[i] = [staggerDateLeft, (Math.round(available_months[i].kwh_in * 100) / 100)];
@@ -643,7 +644,7 @@ function get_month_days(date) {
 		split_date = available_month_days[i].date.split(/[- :]/);
 		month_days_date = (new Date(split_date[0], split_date[1] - 1, split_date[2]));
 
-		staggerDateLeft = new Date(month_days_date.setHours(month_days_date.getHours() - 8));
+		staggerDateLeft = new Date(month_days_date.setHours(month_days_date.getHours() ));
 		staggerDateRight = new Date(month_days_date.setHours(month_days_date.getHours() + 8));
 		
 		month_days_data_kwhin[i] = [staggerDateLeft, (Math.round(available_month_days[i].kwh_in * 100) / 100)];
