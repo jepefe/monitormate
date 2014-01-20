@@ -151,7 +151,7 @@ class flexnetdc():
         self.status_formatted[22] = str(int(datastream[7])*0.1)
         
         #Soc
-        self.status_formatted[23] = datastream[8]
+        self.status_formatted[23] = int(datastream[8])
 
         
         
