@@ -2,17 +2,12 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width">
+	<meta name="viewport" content="width=800">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
-	<!-- <link type="text/css" href="./css/jquery-ui.css" rel="stylesheet"> -->
-	<script src="./js/jquery-1.7.1.js"></script>
-	<!--<script src="./js/jquery-ui-1.8.17.js"></script>-->
-	<!--[if lte IE 9]><script src="./flot/excanvas.min.js"></script><![endif]-->
-	<script src="./flot/jquery.flot.js"></script>
-	<script src="./flot/jquery.flot.time.js"></script>
-	<script src="./flot/jquery.flot.resize.js"></script>
-	<script src="./flot-plugins/jquery.flot.threshold.multiple.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="./config/highcharts-themes.js"></script>
 	<script src="./config/labels.js"></script>
 	<script src="./js/monitormate.js"></script>
 	<title>MonitorMate</title>
@@ -35,7 +30,7 @@
 	<input type="checkbox" id="chk_mode_bc" value="1" onchange="set_chart('big_chart')">
 	<label for="chk_mode_bc">Show charge mode</label>
 	<div id="multichart3" class="bottom-wide-chart"></div>
-
+	<h2>Historical Production/Usage:</h2>
 	<div id="month_days_chart" class="bottom-wide-chart"></div>
 	<div class="bottom-double-charts">
 		<div id="months_chart" class="left-chart"></div>

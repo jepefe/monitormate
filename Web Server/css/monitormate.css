@@ -2,6 +2,7 @@ body {
 	margin: 20px;
 	font-family: Verdana;
 	font-size: 11px;
+	background-color: #eeeff9;
 }
 
 /*
@@ -48,6 +49,8 @@ td.label {
 	float: left;
 	width: 320px; /* if you change this, change top chart's left margin. */
 	margin-bottom: 20px;
+	background-color: white;
+	border-radius: 6px;
 }
 
 .top-chart {
@@ -63,7 +66,7 @@ td.label {
 	clear: both;
 	width: 100%;
 	min-width: 720px;
-	height: 260px;
+	height: 300px;
 	margin-top: 20px;	
 }
 
@@ -78,7 +81,7 @@ td.label {
 	position: absolute;
 	left: 0px;
 	width: 48%;
-	height: 260px;
+	height: 300px;
 	margin-right: 20px;
 }
 
@@ -86,6 +89,6 @@ td.label {
 	position: absolute;
 	right: 0px;
 	width: 48%;
-	height: 260px;
+	height: 300px;
 	margin-left: 20px;
 }

@@ -3,6 +3,7 @@ MonitorMate
 
 A monitoring system for the Outback Power Mate3. It processes the data stream, reformats it for logging, charting, and display on a web server.
 
+Originally created by Jesús Miguel Pérez and distributed on his website: http://www.jeperez.com/monitor-solar-outback/
 
 How software works?
 ===========

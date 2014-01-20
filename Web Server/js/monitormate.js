@@ -30,75 +30,41 @@ var available_years;
 var available_months = [];
 var available_month_days;
 
-//
-// this is the crazy way to get shit started in jQuery. Seriously.
-//
-$( document ).ready(function() {
-	on_load();
-});
-
-
 function on_load() {
 	// moved this from html
-	get_years();
+	chart_years();
 	
-	addDateTooltip("years_chart", "y");
-	$("#years_chart").bind("plotclick", function (event, pos, item) {
-		if (item) {
-			get_months(get_formatted_date(item.datapoint[0]));
-		}
-	});
+	// no reason to get url vars anymore...
+	// get_months(get_URLvars()["date"]);
+	chart_months();
 
 	// no reason to get url vars anymore...
-	// get_months(getUrlVars()["date"]);
-	get_months();
-
-	addDateTooltip("months_chart", "m");
-
-	$("#months_chart").bind("plotclick", function (event, pos, item) {
-		if (item) {
-			get_month_days(get_formatted_date(item.datapoint[0]));
-		}
-	});
-
-	// no reason to get url vars anymore...
-	// get_month_days(getUrlVars()["date"]);
-	get_month_days();
+	// get_month_days(get_URLvars()["date"]);
+	chart_days_of_month();
 	
-	addDateTooltip("month_days_chart", "d");
-
-	$("#month_days_chart").bind("plotclick", function (event, pos, item) {
-		if (item) {
-			get_day(get_formatted_date(item.datapoint[0]));
-			set_chart("multichart1", chart_content["multichart1"]);
-			set_chart("multichart2", chart_content["multichart2"]);
-			set_chart("multichart3", chart_content["multichart3"]);
-			set_status("status_top", status_content["status_top"]);
-			set_status("status_bottom", status_content["status_bottom"]);
-
-		}
-	});
-
 	// no reason to get url vars anymore...
-	// get_day(getUrlVars()["date"]);
+	// get_day(get_URLvars()["date"]);
+	// I have no idea why we wouldn't get the day first and then pass it on to the charting functions one-by-one.
 	get_day();
 	
 	populate_status();
 	get_cookies();
 	get_status();
+	
 	populate_select("multichart1_select");
 	populate_select("multichart2_select");
 	populate_select("multichart3_select");
-	set_chart("multichart3", chart_content["multichart3"]);
-	set_chart("multichart2", chart_content["multichart2"]);
-	set_chart("multichart1", chart_content["multichart1"]);
+	
+	chart_day("multichart1", chart_content["multichart1"]);
+	chart_day("multichart2", chart_content["multichart2"]);
+	chart_day("multichart3", chart_content["multichart3"]);
 
 	setInterval("get_status()", 5000);
 	
 }
 
 
-function getUrlVars() {
+function get_URLvars() {
 	var vars = {};
 	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
 		vars[key] = value;
@@ -121,9 +87,31 @@ function get_cookies() {
 	if (document.cookie.match('(^|;) ?' + "status_bottom" + '=([^;]*)(;|$)')) status_content["status_bottom"] = unescape(document.cookie.match('(^|;) ?' + "status_bottom" + '=([^;]*)(;|$)')[2]);
 }
 
+function get_day(date) {
+	var chart_data;
 
-function days_in_month(Year, Month) {
-	return (new Date((new Date(Year, Month + 1, 1)) - 1)).getDate();
+	if (!date) {
+		date = get_formatted_date();
+	}
+
+	$.ajax({
+		async: false,
+		type: 'GET',
+		dataType: 'json',
+		url: 'getstatus.php?q=day&date=' + date,
+		success: function (data) {
+			full_day_data = data;
+		}
+	});
+
+}
+
+function get_days_in_month(year, month) {
+	// makes a date object for *next* month...
+	// subtracks a single second (to make it the last second of the previous day)
+	// gets the day of *that* month
+	// now return that, which is the number of days in that month!
+	return (new Date((new Date(year, month + 1, 1)) - 1)).getDate();
 }
 
 
@@ -140,9 +128,18 @@ function get_formatted_date(date) {
 	return date;
 }
 
-//
-// Put the items in the pop-up selection menu for the charts 
-//
+// not currently using this...
+function round_decimals(number, places) {
+    placeholder = number * Math.pow(10,places);
+	placeholder = Math.round(placeholder);
+	rounded = placeholder / Math.pow(10,places);
+	return rounded;
+}
+
+
+/*
+	Put the items in the pop-up selection menu for the charts 
+*/
 function populate_select(pselect) {
 	var select_items = [];
 
@@ -165,9 +162,9 @@ function populate_select(pselect) {
 }
 
 
-//
-// Put the items in the pop-up selection menu for the status sidebar 
-//
+/*
+	Put the items in the pop-up selection menu for the status sidebar 
+*/
 function populate_status() {
 	var tabs = [];
 
@@ -190,7 +187,6 @@ function populate_status() {
 					// Assign name from cfg file
 					name = deviceLabel[j];
 				} else {
-
 					// Assign default name based on ID type 
 					//	2 is an inverter (FX)
 					//	3 is a Charge Controller (FM/MX)
@@ -307,12 +303,12 @@ function set_status(div, value) {
 						<tr><td class="label">Relay Mode:</td><td>' + device.relay_mode + '</td></tr>\
 						<tr><td class="label">Relay Status:</td><td>' + device.relay_status + '</td></tr>\
 						<th class="subhead">Shunts</th>\
-						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.shunt_a_amps + ' A</td></tr>\
-						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.shunt_b_amps + ' A</td></tr>\
-						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.shunt_c_amps + ' A</td></tr>\
+						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.shunt_a_amps + ' A, ' + Math.round(device.shunt_a_amps * device.battery_volt) + ' W</td></tr>\
+						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.shunt_b_amps + ' A, ' + Math.round(device.shunt_b_amps * device.battery_volt) + ' W</td></tr>\
+						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.shunt_c_amps + ' A, ' + Math.round(device.shunt_c_amps * device.battery_volt) + ' W</td></tr>\
 						<th class="subhead">Today\'s Net</th>\
 						<tr><td class="label">Input Ah:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
-						<tr><td class="label">Output Ah:</td><td>' + device.today_net_output_ah + ' Ah ' + device.today_net_output_kwh + ' kWh</td></tr>\
+						<tr><td class="label">Output Ah:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\
 						<th class="subhead">Accumulation</th>\
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.accumulated_ah_shunt_a + ' Ah, ' + device.accumulated_kwh_shunt_a + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.accumulated_ah_shunt_b + ' Ah, ' + device.accumulated_kwh_shunt_b + ' kWh</td></tr>\
@@ -328,111 +324,6 @@ function set_status(div, value) {
 	set_cookies(div, value);
 }
 
-
-function addTooltip(chart_id, units, description) {
-	var previousPoint = null;
-	var description = description;
-	$("#" + chart_id).bind("plothover", function (event, pos, item) {
-		$("#x").text(pos.x.toFixed(2));
-		$("#y").text(pos.y.toFixed(2));
-
-		if (item) {
-			if (previousPoint != item.dataIndex) {
-				previousPoint = item.dataIndex;
-
-				$("#tooltip").remove();
-				var x = item.datapoint[0].toFixed(2),
-					y = item.datapoint[1].toFixed(2);
-
-
-				var hour = new Date(item.datapoint[0]).getUTCHours();
-				var minutes = new Date(item.datapoint[0]).getMinutes();
-				if (minutes < 10) { //format minutes
-					minutes = "0" + minutes;
-				}
-				y = item.datapoint[1].toFixed(2);
-
-				var full_hour = hour + ":" + minutes;
-				fdescription = description;
-				if (!description) {
-					fdescription = item.series.label;
-				}
-				showTooltip(item.pageX, item.pageY, fdescription + " " + y + units + " - " + full_hour);
-			}
-		} else {
-			$("#tooltip").remove();
-			previousPoint = null;
-		}
-
-	});
-
-
-}
-
-
-function addDateTooltip(chart_id, description) {
-
-	var previousPoint = null;
-	var description = description;
-	$("#" + chart_id).bind("plothover", function (event, pos, item) {
-		$("#x").text(pos.x.toFixed(2));
-		$("#y").text(pos.y.toFixed(2));
-
-		if (item) {
-			if (previousPoint != item.dataIndex) {
-				previousPoint = item.dataIndex;
-
-				$("#tooltip").remove();
-				var x = item.datapoint[0].toFixed(2),
-					y = item.datapoint[1].toFixed(2);
-
-
-				var hour = new Date(item.datapoint[0]).getUTCHours();
-				var minutes = new Date(item.datapoint[0]).getMinutes();
-				if (minutes < 10) { //format minutes
-					minutes = "0" + minutes;
-				}
-				y = item.datapoint[1].toFixed(2);
-
-				var full_hour = hour + ":" + minutes;
-				if (description == "y") {
-
-					date = new Date(item.datapoint[0]).getFullYear();
-				}
-				else if (description == "m") {
-					date = (new Date(item.datapoint[0]).getFullYear()) + "-" + ((new Date(item.datapoint[0]).getMonth()) + 1);
-
-					i
-				} else {
-					date = get_formatted_date(item.datapoint[0]);
-				}
-				showTooltip(item.pageX, item.pageY, date + "-> " + y + " " + item.series.label);
-			}
-		} else {
-			$("#tooltip").remove();
-			previousPoint = null;
-		}
-
-	});
-}
-
-
-function showTooltip(x, y, contents) {
-	$('<div id="tooltip">' + contents + '</div>').css({
-		position: 'absolute',
-		display: 'none',
-		top: y + 15,
-		left: x + 10,
-		border: '1px solid #fdd',
-		padding: '2px',
-		'background-color': '#fee',
-		opacity: 0.80
-	}).appendTo("body").fadeIn(200);
-}
-
-//
-// Getters for SQL data in order to make the charts
-//
 
 function get_status() {
 
@@ -456,11 +347,12 @@ function get_status() {
 }
 
 
-function get_years() {
+function chart_years() {
 
 	years_data_kwhin = [];
 	years_data_kwhout = [];
 	date = get_formatted_date();
+	
 	//Get all years in database		
 	status = $.ajax({
 		async: false,
@@ -472,69 +364,62 @@ function get_years() {
 		}
 	})
 
-
+	// TODO:	let's not show ALL the years... I think just five.
+	// 			currently the plot function has a 5 year max range, but don't know what that does, last five? first five?
 
 	//Fill array with series
 	for (i = 0; i < available_years.length; i++) {
 
-		comp_date = available_years[i].date.split(/[- :]/);
-		comp_date = new Date(comp_date[0], 0, 1);
-		comp_date = (new Date(((comp_date).getFullYear()), 0, 1));
+		// TODO: can't i get the clean year data directly from the database with the right sql query?
 
-		staggerDateLeft = new Date(comp_date.setMonth(comp_date.getMonth() - 6));
-		staggerDateRight = new Date(comp_date.setMonth(comp_date.getMonth() + 6));
+		split_date = available_years[i].date.split(/[- :]/);	// split the YYYY-MM-DD into an array
+		comp_date = new Date(split_date[0], 0, 1);				// use the year to make a date object for jan 1st of that year
+		year = comp_date.getTime();								// turn it into millisecond timestamp
 
-		years_data_kwhin[i] = [staggerDateLeft, (Math.round(available_years[i].kwh_in * 100) / 100)];
-		years_data_kwhout[i] = [staggerDateRight, (Math.round(available_years[i].kwh_out * 100) / 100)];
-
+		years_data_kwhin[i] = [year, eval(available_years[i].kwh_in)];
+		years_data_kwhout[i] = [year, eval(available_years[i].kwh_out)];
+		
 	}
 
-	//Chart options
-	years_options = {
+	// Apply the column chart theme
+	Highcharts.setOptions(Highcharts.theme1);
 
-		bars: {
-			show: true,
-			clickable: true,
-			barWidth: 60 * 60 * 1000 * 24 * (365 / 2),
-			align: "left"
+	$('#years_chart').highcharts({
+		plotOptions: {
+			series: {
+				pointRange: 24 * 3600 * 1000 * 365	// 1 year
+			}
 		},
-		//Necesario para que las barras tengan el ancho adecuado
-		xaxis: {
-			tickSize: [1, "year"],
-			mode: "time",
-			timeformat: "%Y",
-
-			min: years_data_kwhin[0][0],
-			max: (new Date(((new Date(years_data_kwhin[years_data_kwhin.length - 1][0])).getFullYear() + ((years_data_kwhin.length < 6) ? (6 - years_data_kwhin.length) : 0)), 11, 31)),
-
-			clickable: true,
-			hoverable: true
+	    xAxis: {
+			minRange: 157785000000, 				// 5 years in milliseconds
+			tickInterval: 24 * 3600 * 1000 * 365,	// 1 year
+			dateTimeLabelFormats: {
+				year: '%Y'
+			}
+	    },
+	    tooltip: {
+			formatter: function() {
+				var string1 = Highcharts.dateFormat('%Y', this.x);
+				var string2 = this.series.name + ': <strong>' + this.y.toFixed(2) + ' kWh</strong>';
+				return string1 + '<br/>' + string2;
+			}
 		},
-		
-		grid: {
-			hoverable: true,
-			clickable: true
-		}
-	};
-
-
-	$.plot($("#years_chart"),
-		[{
-			label: 'kWh in',
-			data: years_data_kwhin
+	    series: [{
+	    	name: 'Production',
+	        data: years_data_kwhin
 		}, {
-			label: 'kWh out',
+		    name: 'Usage',
 			data: years_data_kwhout
-		}], years_options);
+	    }],
+	});
 
 }
 
 
-function get_months(date) {
+function chart_months(date) {
 
 	var months_data_kwhin = [];
 	var months_data_kwhout = [];
-	var months_options;
 	
 	if (!date) {
 		date = get_formatted_date();
@@ -555,73 +440,54 @@ function get_months(date) {
 	//Fill array with series
 	for (i = 0; i < available_months.length; i++) {
 
-		split_date = available_months[i].date.split(/[- :]/);
-		month_date = (new Date(split_date[0], split_date[1] - 1, 1));
+		split_date = available_months[i].date.split(/[- :]/);		// split the YYYY-MM-DD into an array
+		month_date = new Date(split_date[0], split_date[1] - 1, 1);	// use the month to make a date object for the 1st of the month
+		month = month_date.getTime();								// turn it into millisecond timestamp
 
-		staggerDateLeft = new Date(month_date.setDate(month_date.getDate() - 10));
-		staggerDateRight = new Date(month_date.setDate(month_date.getDate() + 10));
-
-
-		months_data_kwhin[i] = [staggerDateLeft, (Math.round(available_months[i].kwh_in * 100) / 100)];
-		months_data_kwhout[i] = [staggerDateRight, (Math.round(available_months[i].kwh_out * 100) / 100)];
+		months_data_kwhin[i]  = [month, eval(available_months[i].kwh_in)];
+		months_data_kwhout[i] = [month, eval(available_months[i].kwh_out)];
 
 	}
 
-	// Determine the min and max for the chart
-	// why the heck am i getting a min and max and basing this all on the data
-	// instead of the clock or data that's passed to this function??
-	minYearData = new Date(months_data_kwhin[0][0]).getFullYear();
-	maxYearData = new Date(months_data_kwhin[0][0]).getFullYear();
-	
-	chartMin = new Date(minYearData - 1, 11, 1);	// December(11) 1st of the previous year (to provide proper margins)
-	chartMax = new Date(maxYearData, 11, 31);		// December(11) 31st of the year.
-	
-	months_options = {
-		bars: {
-			show: true,
-			clickable: true,
-			barWidth: 60 * 60 * 1000 * 24 * 10, /* room for 2 bars and a space for each of the 12 months */
-			lineWidth: 1,
-			align: "left"
+	// Apply the column chart theme
+	Highcharts.setOptions(Highcharts.theme1);
+
+	$('#months_chart').highcharts({
+		plotOptions: {
+			series: {
+				pointRange: 24 * 3600 * 1000 * 30	// one month
+			}
 		},
-		xaxis: {
-			tickSize: [1, "month"],
-			monthNames: month_names,
-			mode: "time",
-			timeformat: "%b",
-
-			min: chartMin,
-			max: chartMax,
-
-			clickable: true,
-			hoverable: true
-		},
-		grid: {
-			hoverable: true,
-			clickable: true
-		}
-	};
-
-
-	$.plot($("#months_chart"), [{
-		label: 'kWh in',
-		data: months_data_kwhin
-	}, {
-		label: 'kWh out',
-		data: months_data_kwhout
-	}], months_options);
-
-
-
+	    xAxis: {
+			minRange: 31600000000,					// 1 year in milliseconds
+			tickInterval: 24 * 3600 * 1000 * 30,	// 1 month
+			dateTimeLabelFormats: {
+				month: '%b'
+			}
+	    },
+	    tooltip: {
+			formatter: function() {
+				var string1 = Highcharts.dateFormat('%B', this.x);
+				var string2 = this.series.name + ': <strong>' + this.y.toFixed(2) + ' kWh</strong>';
+				return string1 + '<br/>' + string2;
+			}
+		},	
+	    series: [{
+	        name: 'Production',
+	        data: months_data_kwhin,
+		}, {
+	        name: 'Usage',
+	        data: months_data_kwhout,
+	    }],
+	});
 
 }
 
 
-function get_month_days(date) {
+function chart_days_of_month(date) {
 
 	var month_days_data_kwhin = [];
 	var month_days_data_kwhout = [];
-	var month_days_options;
 
 	if (!date) {
 		date = get_formatted_date();
@@ -640,140 +506,100 @@ function get_month_days(date) {
 	//Fill array with series
 	for (i = 0; i < available_month_days.length; i++) {
 			
-		split_date = available_month_days[i].date.split(/[- :]/);
-		month_days_date = (new Date(split_date[0], split_date[1] - 1, split_date[2]));
-
-		staggerDateLeft = new Date(month_days_date.setHours(month_days_date.getHours() - 8));
-		staggerDateRight = new Date(month_days_date.setHours(month_days_date.getHours() + 8));
-		
-		month_days_data_kwhin[i] = [staggerDateLeft, (Math.round(available_month_days[i].kwh_in * 100) / 100)];
-		month_days_data_kwhout[i] = [staggerDateRight, (Math.round(available_month_days[i].kwh_out * 100) / 100)];
-	}
-
-	// Determine the min and max for the chart
-	// why the heck am i getting a min and max and basing this all on the data
-	// instead of the clock or data that's passed to this function??
-	chartMin = new Date(split_date[0], split_date[1] - 1, 0);	
-	chartMax = new Date(split_date[0], split_date[1] - 1, days_in_month(split_date[0], split_date[1] - 1), 23, 59);
+		split_date = available_month_days[i].date.split(/[- :]/);						// split the YYYY-MM-DD into an array
+		month_days_date = new Date(split_date[0], split_date[1] - 1, split_date[2]);	// use the month to make a date object for the 1st of the month
+		day = month_days_date.getTime();												// turn it into millisecond timestamp
 	
-	month_days_options = {
-		
-		bars: {
-			show: true,
-			clickable: true,
-			barWidth: 60 * 60 * 1000 * (24/3), /* room for 2 bars and a space for each of the ~30 days */
-			lineWidth: 1,
-			align: "right"
-		},
-		
-		legend: {
-			backgroundOpacity: 0
-		},
-		
-		xaxis: {
-			tickSize: [1, "day"],
-			mode: "time",
-			timeformat: "%d",
-			min: chartMin,
-			max: chartMax,
-			clickable: true,
-			hoverable: true
-		},
-
-		grid: {
-			hoverable: true,
-			clickable: true
-		}
-	};
-
-
-	$.plot($("#month_days_chart"), [{
-		label: 'kWh in',
-		data: month_days_data_kwhin
-	}, {
-		label: 'kWh out',
-		data: month_days_data_kwhout
-	}], month_days_options);
-
-
-
-}
-
-
-function get_day(date) {
-	var chart_data;
-
-	if (!date) {
-		date = get_formatted_date();
+		month_days_data_kwhin[i]  = [day, eval(available_month_days[i].kwh_in)];
+		month_days_data_kwhout[i] = [day, eval(available_month_days[i].kwh_out)];		
 	}
 
-	$.ajax({
-		async: false,
-		type: 'GET',
-		dataType: 'json',
-		url: 'getstatus.php?q=day&date=' + date,
-		success: function (data) {
-			full_day_data = data;
+	// Apply the column chart theme
+	Highcharts.setOptions(Highcharts.theme1);
 
-		}
+	$('#month_days_chart').highcharts({
+		plotOptions: {
+			series: {
+				pointRange: 24 * 3600 * 1000		// 1 day
+			}
+		},
+	    xAxis: {
+	    	minRange: 2630000000,					// 1 month in milliseconds
+			tickInterval: 24 * 3600 * 1000,			// 1 day
+			dateTimeLabelFormats: {
+				day: '%e'
+			}
+	    },
+	    tooltip: {
+			formatter: function() {
+				var string1 = Highcharts.dateFormat('%A, %b %e', this.x);
+				var string2 = this.series.name + ': <strong>' + this.y.toFixed(2) + ' kWh</strong>';
+				return string1 + '<br/>' + string2;
+			}
+		},	    
+	    series: [{
+	        name: 'Production',
+	        data: month_days_data_kwhin,
+		}, {
+	        name: 'Usage',
+	        data: month_days_data_kwhout,
+	    }],
 	});
 
-
-
-
-
-
 }
 
 
-function set_chart(chart_id, content) {
+function chart_day(chart_id, content) {
 	var chart_data = 0;
 	var units;
 	var tooltip_desc;
+
 	if (!content) {
 		content = chart_content[chart_id];
 	}
-	chart_content[chart_id] = content;
-	switch (content) {
-	case "charge_power":
-		chart_data = charge_power();
-		units = "W";
-		break;
-	case "battery_volts":
-		chart_data = battery_volts();
-		units = "V";
-		break;
-	case "charge_current":
-		chart_data = charge_current();
-		units = "A";
-		break;
-	case "array_volts":
-		chart_data = array_volts();
-		units = "V";
-		break;
-	case "array_current":
-		chart_data = array_current();
-		units = "A";
-		break;
-	case "flexnet_shunts":
-		chart_data = flexnet_shunts();
-		units = "A";
-		break;
-	case "flexnet_soc":
-		chart_data = flexnet_soc();
-		units = "%";
-		tooltip_desc = " ";
-		break;
-	default:
-		chart_data = null;
-		break;
 
+	chart_content[chart_id] = content;
+
+	switch (content) {
+		case "charge_power":
+			chart_data = charge_power();
+			units = "W";
+			break;
+		case "battery_volts":
+			chart_data = battery_volts();
+			units = "V";
+			break;
+		case "charge_current":
+			chart_data = charge_current();
+			units = "A";
+			break;
+		case "array_volts":
+			chart_data = array_volts();
+			units = "V";
+			break;
+		case "array_current":
+			chart_data = array_current();
+			units = "A";
+			break;
+		case "flexnet_shunts":
+			chart_data = flexnet_shunts();
+			units = "A";
+			break;
+		case "flexnet_soc":
+			chart_data = flexnet_soc();
+			units = "%";
+			tooltip_desc = " ";
+			break;
+		default:
+			chart_data = null;
+			break;
 	}
+
 	$('#' + chart_id + '_select').val(content);
 	set_cookies(chart_id, content);
 
-	$.plot($('#' + chart_id), chart_data[0], chart_data[1]);
-	addTooltip(chart_id, units, tooltip_desc);
+	// chart the data!
+	$('#' + chart_id).highcharts(chart_data);
 
 }
 
@@ -785,10 +611,15 @@ function flexnet_shunts() {
 	var day_data_shunt_c = [];
 
 
-	for (var i in full_day_data["4"]) { //Device id 4 are FlexNetDC charge controllers
+	for (var i in full_day_data["4"]) { // Device ID 4 is FlexNetDC charge controllers
 		for (y = 0; y < full_day_data["4"][i].length; y++) {
+
+			// chart theme currently is using UTC because it looks like this thing ends up spitting out UTC
+			// probably because of the timezone offset that's two lines up.
 			split_date = full_day_data["4"][i][y].date.split(/[- :]/);
-			day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
+			day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));		
+			day_date = day_date.getTime(); // turn into millisecond timestamp
+
 			total_shunt_a = 0;
 			total_shunt_b = 0;
 			total_shunt_c = 0;
@@ -797,70 +628,51 @@ function flexnet_shunts() {
 				total_shunt_a += (full_day_data["4"][j][y].shunt_a_amps) * 1;
 				total_shunt_b += (full_day_data["4"][j][y].shunt_b_amps) * 1;
 				total_shunt_c += (full_day_data["4"][j][y].shunt_c_amps) * 1;
-
-
-
 			}
+			
 			day_data_shunt_a[y] = [day_date, total_shunt_a];
 			day_data_shunt_b[y] = [day_date, total_shunt_b];
 			day_data_shunt_c[y] = [day_date, total_shunt_c];
-
-
 		}
 		break; //Only one iteration 
 	}
 
-	shunts_options = {
-		lines: {
-			show: true,
-			clickable: true,
-			hoverable: true
-		},
-		shadowSize: 0,
-		legend: {
-			position: "nw"
-		},
-		points: {
-			show: true,
-			clickable: true,
-			hoverable: true,
-			radius: 2,
-			lineWidth: 1,
-		},
-		xaxis: {
-			tickDecimals: 1,
-			minTickSize: [1, "hour"],
-			mode: "time",
-			timeformat: "%I%p",
-			clickable: true,
-			hoverable: true
-		},
-		grid: {
-			hoverable: true,
-			clickable: true
-		}
+	// Apply the line chart theme
+	Highcharts.setOptions(Highcharts.theme2);
 
-
-
-	}
-
-	var return_var = [
-		[{
-			label: shuntLabel[1],
+	chart_options = {
+		chart: {
+		    type: 'area'
+		},
+//		plotOptions: {
+//			series: {
+//				stacking: 'normal'
+//			}
+//		},
+    	yAxis: {
+    		tickInterval: 20,
+		    labels: {
+		        format: '{value} A'
+		    }
+		},
+		tooltip: {
+			formatter: function() {
+				return this.series.name + ': <strong>' + this.y.toFixed(1) + ' Amps</strong>';
+			}
+		},
+	    series: [{
+	    	name: shuntLabel[1],
 			data: day_data_shunt_a
 		}, {
-			label: shuntLabel[2],
+		    name: shuntLabel[2],
 			data: day_data_shunt_b
 		}, {
-			label: shuntLabel[3],
+		    name: shuntLabel[3],
 			data: day_data_shunt_c
-		}], shunts_options];
+	    }]
+	};
 
-	return return_var;
-
-
-
-
+	return chart_options;
 }
 
 
@@ -872,65 +684,54 @@ function flexnet_soc() {
 			for (j = 0; j < full_day_data["4"][i].length; j++) {
 				split_date = full_day_data["4"][i][j].date.split(/[- :]/);
 				day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
-				day_data_soc[j] = [day_date, full_day_data["4"][i][j].soc];
+				day_date = day_date.getTime(); // change to microseconds for highcharts
+				day_data_soc[j] = [day_date, eval(full_day_data["4"][i][j].soc)];
 			}
 		}
 	}
 
-	day_options = {
-		lines: {
-			show: true,
-			clickable: true,
-			hoverable: true
-		},
-		shadowSize: 0,
-		legend: {
-			position: "nw"
-		},
-		points: {
-			show: true,
-			clickable: true,
-			hoverable: true,
-			radius: 2,
-			lineWidth: 1,
-		},
-		xaxis: {
-			tickDecimals: 1,
-			minTickSize: [1, "hour"],
-			mode: "time",
-			timeformat: "%I%p",
-			clickable: true,
-			hoverable: true
-		},
-		yaxis: {
-			tickSize: 10,
-			min: 50,
-			max: 105,
-		},
-		grid: {
-			hoverable: true,
-			clickable: true
-		}
-	}
+	// Apply the line chart theme
+	Highcharts.setOptions(Highcharts.theme2);
 
-	// why curly braces inside brackets? i don't know!
-	day_data = [{
-		data: day_data_soc,
-		color: "rgb(255,206,0)", // default yellow
-		constraints: [
-			{
-				threshold: 59, // red stuff
-				color: "rgb(229, 0, 20)",
-				evaluate : function(y,threshold){ return y <= threshold; }
-			},{
-				threshold: 90, // green!
-				color: "rgb(0, 201, 20)",
-				evaluate : function(y,threshold){ return y >= threshold; }
+	chart_options = {
+    	yAxis: {
+    		tickInterval: 10,
+    		endOnTick: false,
+    		max: 100,
+    		min: 50,
+		    labels: {
+		        format: '{value}%'
+		    },
+		    plotBands: [{
+		    	// red from 0 to 59
+                color: '#ffedee',
+                from: 0,
+                to: 59.9
+            } , {
+            	// yellow from 60 to 79
+				color: '#ffffe1',
+				from: 60,
+				to: 79.9
+            } , {
+				// green from 80 to 100
+				color: '#dfffe0',
+				from: 80,
+				to: 100
+            }]
+		},
+		tooltip: {
+			formatter: function() {
+				return this.series.name + ': <strong>' + this.y + '%</strong>';
 			}
-		]
-	}];
+		},		
+	    series: [{
+			name: 'Charge',
+			data: day_data_soc
+	    }]
+	};
 
-	return [day_data, day_options];
+	return chart_options;
+
 }
 
 
@@ -948,7 +749,8 @@ function charge_power() {
 		for (y = 0; y < full_day_data["3"][i].length; y++) {
 			split_date = full_day_data["3"][i][y].date.split(/[- :]/);
 			day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
-
+			day_date = day_date.getTime(); // convert to milliseconds
+			
 			total_watts = 0;
 			for (var j in full_day_data["3"]) { //Get wh for all FM/MX devices
 				total_watts += (full_day_data["3"][j][y].charge_current) * 1 * full_day_data["3"][i][y].battery_volts;
@@ -961,20 +763,21 @@ function charge_power() {
 			chrg_mode = full_day_data["3"][i][y].charge_mode
 
 			if (chrg_mode == "Float") {
+
 				if (!charge_mode_fl[i]) {
 					charge_mode_fl[i] = []
 				};
 				charge_mode_fl[i][y] = [day_date, (full_day_data["3"][i][y].charge_current * 1 * full_day_data["3"][i][y].battery_volts)];
 
-			}
-			else if (chrg_mode == "Absorption") {
+			} else if (chrg_mode == "Absorption") {
+
 				if (!charge_mode_ab[i]) {
 					charge_mode_ab[i] = []
 				};
 				charge_mode_ab[i][y] = [day_date, (full_day_data["3"][i][y].charge_current * 1 * full_day_data["3"][i][y].battery_volts)];
 
-			}
-			else if (chrg_mode == "EQ") {
+			} else if (chrg_mode == "EQ") {
+
 				if (!charge_mode_eq[i]) {
 					charge_mode_eq[i] = []
 				};
@@ -987,40 +790,10 @@ function charge_power() {
 		}
 	}
 
-	day_options = {
-		lines: {
-			show: true,
-			clickable: true,
-			hoverable: true
-		},
-		shadowSize: 0,
-		legend: {
-			position: "nw"
-		},
-		points: {
-			show: true,
-			clickable: true,
-			hoverable: true,
-			radius: 2,
-			lineWidth: 1,
-		},
-		xaxis: {
-			tickDecimals: 1,
-			minTickSize: [1, "hour"],
-			mode: "time",
-			timeformat: "%I%p",
-			clickable: true,
-			hoverable: true
-		},
-		grid: {
-			hoverable: true,
-			clickable: true
-		}
-
-
-
-	}
-	
+	//
+	// Check to see if there's more than one charger
+	// If so, then label each series.
+	//	
 	if (day_data_watts.length > 1) {
 		for (var i in day_data_watts) {
 
@@ -1031,22 +804,53 @@ function charge_power() {
 				chartLabel = 'FM/MX - Port ' + i;
 			}
 
-			temp = {
-				label: chartLabel,
+			series = {
+				name: chartLabel,
+				type: 'line',
 				data: day_data_watts[i]
 			};
-			all_devices_data.push(temp);
+			
+			all_devices_data.push(series);
 		}
 	}
-	temp = {
-		label: 'Total',
+
+	total = {
+		name: 'Total',
+		type: 'areaspline',
+		fillOpacity: 0.1,
+		lineWidth: 0,
+		zIndex: -1,
 		data: total_day_data_watts
 	};
-	all_devices_data.push(temp);
+
+	all_devices_data.push(total);
+
+	// Apply the line chart theme
+	Highcharts.setOptions(Highcharts.theme2);
+
+	chart_options = {
+    	yAxis: {
+    		tickInterval: 500,
+    		min: 0,
+		    labels: {
+		        format: '{value} W'
+		    },
+		    
+		},
+		tooltip: {
+			formatter: function() {
+				return this.series.name + ': <strong>' + this.y.toFixed(1) + ' Watts</strong>';
+			}
+		},
+	    series: all_devices_data
+	};
+
+	return chart_options;
 
 	//
 	// Show Charge Mode - checkbox to show the charge mode
 	//
+
 	if ($("#chk_mode_bc").is(':checked')) {
 		count = 0;
 		for (var i in charge_mode_fl) {
@@ -1139,8 +943,6 @@ function charge_power() {
 		}
 	}
 
-	var return_var = [all_devices_data, day_options];
-	return return_var;
 }
 
 
@@ -1196,6 +998,8 @@ function charge_current() {
 		}
 	}
 
+/*
+	// FLOT chart options
 	day_options = {
 		lines: {
 			show: true,
@@ -1367,6 +1171,7 @@ function charge_current() {
 	var return_var = [all_devices_data_amps, day_options];
 
 	return return_var;
+*/
 
 }
 
@@ -1374,9 +1179,7 @@ function charge_current() {
 function array_volts() {
 	var total_day_data__array_volts = [];
 	var day_data_array_volts = new Array();
-	var all_devices_data_array_volts = []
-
-
+	var all_devices_data_array_volts = [];
 
 	for (var i in full_day_data["3"]) { //Device id 3 are FM/MX charge controllers
 		for (y = 0; y < full_day_data["3"][i].length; y++) {
@@ -1392,6 +1195,8 @@ function array_volts() {
 		}
 	}
 
+/*
+	// FLOT Chart options
 	day_options = {
 		lines: {
 			show: true,
@@ -1446,6 +1251,7 @@ function array_volts() {
 
 	var return_var = [all_devices_data_array_volts, day_options];
 	return return_var;
+*/
 
 }
 
@@ -1454,8 +1260,6 @@ function array_current() {
 	var total_day_data__array_amps = [];
 	var day_data_array_amps = new Array();
 	var all_devices_data_array_amps = []
-
-
 
 	for (var i in full_day_data["3"]) { //Device id 3 are FM/MX charge controllers
 		for (y = 0; y < full_day_data["3"][i].length; y++) {
@@ -1471,6 +1275,8 @@ function array_current() {
 		}
 	}
 
+/*
+	// FLOT chart options
 	day_options = {
 		lines: {
 			show: true,
@@ -1528,6 +1334,7 @@ function array_current() {
 
 
 	return return_var;
+*/
 }
 
 
@@ -1558,8 +1365,8 @@ function battery_volts() {
 	}
 
 
-
-
+/*
+	// FLOT chart options
 	day_options = {
 		lines: {
 			show: true,
@@ -1599,7 +1406,13 @@ function battery_volts() {
 		}], day_options];
 
 	return return_var;
-
-
+*/
 
 }
+
+//
+// this is the crazy way to get shit started in jQuery. Seriously.
+//
+$( document ).ready(function() {
+	on_load();
+});
