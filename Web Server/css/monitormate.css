@@ -9,6 +9,10 @@ body {
 	STYLE
 */
 
+a:link {
+	text-decoration: none;
+}
+
 #left-col table {
 	width: 100%;
 	table-layout: fixed;

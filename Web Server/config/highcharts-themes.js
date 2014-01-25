@@ -1,4 +1,6 @@
-
+//
+//	Historical Charts - Columns
+//
 Highcharts.theme1 = {
 	global: {
 		// all the mate data is stored in local timezone in the database, so turn off the UTC default for highcharts
@@ -63,6 +65,10 @@ Highcharts.theme1 = {
 	},
 };
 
+
+//
+//	Daily Charts - Lines/Splines/Area
+//
 Highcharts.theme2 = {
 	global: {
 		// all the mate data is stored in local timezone in the database, so turn off the UTC default for highcharts

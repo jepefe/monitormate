@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=800">
+	<link rel="icon" href="./images/favicon16.png" type="image/png">
+	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="./config/highcharts-themes.js"></script>
+	<script src="./config/labels.js"></script>
+	<script src="./js/monitormate.js"></script>
+	<title>MonitorMate — Historical</title>
+</head>
+<body>
+	<h2>Historical Production/Usage:</h2>
+	<div id="month_days_chart" class="bottom-wide-chart"></div>
+	<div class="bottom-double-charts">
+		<div id="months_chart" class="left-chart"></div>
+		<div id="years_chart" class="right-chart"></div>
+	</div>
+	<script>
+		function load_data() {
+			// moved this from html
+			chart_years();
+			
+			// no reason to get url vars anymore...
+			// get_months(get_URLvars()["date"]);
+			chart_months();
+		
+			// no reason to get url vars anymore...
+			// get_month_days(get_URLvars()["date"]);
+			chart_days_of_month();
+					
+			// setInterval("get_status()", 5000);
+		}
+	</script>
+</body>
+</html>

@@ -12,7 +12,16 @@ GNU General Public License at <http://www.gnu.org/licenses/>
 for more details.
 */
 
-var month_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+var FX_ID = "2";	// 2 is a FX-series inverter
+var CC_ID = "3";	// 3 is a FM/MX charge controller (CC)
+var FNDC_ID = "4";	// 4 is a FLEXnet DC
+
+var json_status = null;
+var full_day_data;
+var available_years;
+var available_months = [];
+var available_month_days;
+
 var chart_content = {
 	multichart1: "battery_volts",
 	multichart2: "charge_current",
@@ -23,45 +32,6 @@ var status_content = {
 	status_top: "summary",
 	status_bottom: "none",
 };
-
-var json_status = null;
-var full_day_data;
-var available_years;
-var available_months = [];
-var available_month_days;
-
-function on_load() {
-	// moved this from html
-	chart_years();
-	
-	// no reason to get url vars anymore...
-	// get_months(get_URLvars()["date"]);
-	chart_months();
-
-	// no reason to get url vars anymore...
-	// get_month_days(get_URLvars()["date"]);
-	chart_days_of_month();
-	
-	// no reason to get url vars anymore...
-	// get_day(get_URLvars()["date"]);
-	// I have no idea why we wouldn't get the day first and then pass it on to the charting functions one-by-one.
-	get_day();
-	
-	populate_status();
-	get_cookies();
-	get_status();
-	
-	populate_select("multichart1_select");
-	populate_select("multichart2_select");
-	populate_select("multichart3_select");
-	
-	chart_day("multichart1", chart_content["multichart1"]);
-	chart_day("multichart2", chart_content["multichart2"]);
-	chart_day("multichart3", chart_content["multichart3"]);
-
-	setInterval("get_status()", 5000);
-	
-}
 
 
 function get_URLvars() {
@@ -145,8 +115,8 @@ function populate_select(pselect) {
 
 	if (full_day_data[4]) { /* FlexNet available */
 		for (i in full_day_data[4]) {
-			select_items.push('<option value="flexnet_shunts">FLEXnet Shunts Current</option>');
-			select_items.push('<option value="flexnet_soc">Battery SOC</option>');
+			select_items.push('<option value="flexnet_soc">State of Charge</option>');
+			select_items.push('<option value="flexnet_shunts">Shunts Current</option>');
 		}
 	}
 
@@ -192,13 +162,13 @@ function populate_status() {
 					//	3 is a Charge Controller (FM/MX)
 					//	4 is a FLEXnet DC
 					switch (i) {
-					case "2":
+					case FX_ID:
 						name = "FX Inverter - Port " + full_day_data[i][j][0].address;
 						break;
-					case "3":
+					case CC_ID:
 						name = "FM/MX - Port " + full_day_data[i][j][0].address;
 						break;
-					case "4":
+					case FNDC_ID:
 						name = "FLEXnet DC - Port " + full_day_data[i][j][0].address;
 						break;
 					}
@@ -228,7 +198,7 @@ function set_status(div, value) {
 	if (value == "none") {
 		for (var i in json_status) {
 			switch (json_status[i].device_id) {
-				case "3":
+				case DEVICE["CC"]:
 					value = json_status[i].device_id + ":" + Math.round(json_status[i].address);
 					break;
 			}
@@ -262,7 +232,7 @@ function set_status(div, value) {
 						</table>';
 			break;
 
-		case "2": // fx inverter
+		case FX_ID:
 			content =	'<table><caption>FX Inverter<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">AC Output Voltage:</td><td>' + device.ac_output_voltage + ' V</td></tr>\
 						<tr><td class="label">Inverter Current:</td><td>' + device.inverter_current + ' A</td></tr>\
@@ -278,7 +248,7 @@ function set_status(div, value) {
 						</table>';
 			break;
 
-		case "3": // charge controller
+		case CC_ID:
 			content =	'<table><caption>FX/MX Charge Controller<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
 						<tr><td class="label">Charge Mode:</td><td>' + device.charge_mode + '</td></tr>\
@@ -292,7 +262,7 @@ function set_status(div, value) {
 						</table>';
 			break;
 
-		case "4": // flexnet dc
+		case FNDC_ID:
 			content =	'<table><caption>FLEXnet DC<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">SOC:</td><td>' + device.soc + '%</td></tr>\
 						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
@@ -548,11 +518,16 @@ function chart_days_of_month(date) {
 
 }
 
+function set_chart(chart_id, content) {
+
+	$('#' + chart_id + '_select').val(content);
+	set_cookies(chart_id, content);
+
+	chart_day(chart_id, content);
+}
 
 function chart_day(chart_id, content) {
 	var chart_data = 0;
-	var units;
-	var tooltip_desc;
 
 	if (!content) {
 		content = chart_content[chart_id];
@@ -563,40 +538,29 @@ function chart_day(chart_id, content) {
 	switch (content) {
 		case "charge_power":
 			chart_data = charge_power();
-			units = "W";
 			break;
 		case "battery_volts":
 			chart_data = battery_volts();
-			units = "V";
 			break;
 		case "charge_current":
 			chart_data = charge_current();
-			units = "A";
 			break;
 		case "array_volts":
 			chart_data = array_volts();
-			units = "V";
 			break;
 		case "array_current":
 			chart_data = array_current();
-			units = "A";
 			break;
 		case "flexnet_shunts":
 			chart_data = flexnet_shunts();
-			units = "A";
 			break;
 		case "flexnet_soc":
 			chart_data = flexnet_soc();
-			units = "%";
-			tooltip_desc = " ";
 			break;
 		default:
 			chart_data = null;
 			break;
 	}
-
-	$('#' + chart_id + '_select').val(content);
-	set_cookies(chart_id, content);
 
 	// chart the data!
 	$('#' + chart_id).highcharts(chart_data);
@@ -610,13 +574,10 @@ function flexnet_shunts() {
 	var day_data_shunt_b = [];
 	var day_data_shunt_c = [];
 
-
-	for (var i in full_day_data["4"]) { // Device ID 4 is FlexNetDC charge controllers
-		for (y = 0; y < full_day_data["4"][i].length; y++) {
-
-			// chart theme currently is using UTC because it looks like this thing ends up spitting out UTC
-			// probably because of the timezone offset that's two lines up.
-			split_date = full_day_data["4"][i][y].date.split(/[- :]/);
+	for (var port in full_day_data[FNDC_ID]) {
+		for (y = 0; y < full_day_data[FNDC_ID][port].length; y++) {
+			// each "y" is an object with all data for a given timestamp
+			split_date = full_day_data[FNDC_ID][port][y].date.split(/[- :]/);
 			day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));		
 			day_date = day_date.getTime(); // turn into millisecond timestamp
 
@@ -624,17 +585,17 @@ function flexnet_shunts() {
 			total_shunt_b = 0;
 			total_shunt_c = 0;
 
-			for (var j in full_day_data["4"]) { //Get wh for all FlexNetDC devices
-				total_shunt_a += (full_day_data["4"][j][y].shunt_a_amps) * 1;
-				total_shunt_b += (full_day_data["4"][j][y].shunt_b_amps) * 1;
-				total_shunt_c += (full_day_data["4"][j][y].shunt_c_amps) * 1;
+			for (var j in full_day_data[FNDC_ID]) { //Get wh for all FlexNetDC devices
+				total_shunt_a += (full_day_data[FNDC_ID][j][y].shunt_a_amps) * 1;
+				total_shunt_b += (full_day_data[FNDC_ID][j][y].shunt_b_amps) * 1;
+				total_shunt_c += (full_day_data[FNDC_ID][j][y].shunt_c_amps) * 1;
 			}
 			
 			day_data_shunt_a[y] = [day_date, total_shunt_a];
 			day_data_shunt_b[y] = [day_date, total_shunt_b];
 			day_data_shunt_c[y] = [day_date, total_shunt_c];
 		}
-		break; //Only one iteration 
+		break; // Only one iteration, only one FLEXnet DC. 
 	}
 
 	// Apply the line chart theme
@@ -657,7 +618,9 @@ function flexnet_shunts() {
 		},
 		tooltip: {
 			formatter: function() {
-				return this.series.name + ': <strong>' + this.y.toFixed(1) + ' Amps</strong>';
+				var string1 = Highcharts.dateFormat('%l:%M%P', this.x);
+				var string2 = this.series.name + ': <strong>' + this.y.toFixed(1) + ' Amps</strong>';
+				return string2 + '<br/>' + string1;
 			}
 		},
 	    series: [{
@@ -679,13 +642,13 @@ function flexnet_shunts() {
 function flexnet_soc() {
 	day_data_soc = [];
 
-	if (full_day_data["4"]) {
-		for (var i in full_day_data["4"]) {
-			for (j = 0; j < full_day_data["4"][i].length; j++) {
-				split_date = full_day_data["4"][i][j].date.split(/[- :]/);
+	if (full_day_data[FNDC_ID]) {
+		for (var i in full_day_data[FNDC_ID]) {
+			for (j = 0; j < full_day_data[FNDC_ID][i].length; j++) {
+				split_date = full_day_data[FNDC_ID][i][j].date.split(/[- :]/);
 				day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
 				day_date = day_date.getTime(); // change to microseconds for highcharts
-				day_data_soc[j] = [day_date, eval(full_day_data["4"][i][j].soc)];
+				day_data_soc[j] = [day_date, eval(full_day_data[FNDC_ID][i][j].soc)];
 			}
 		}
 	}
@@ -694,6 +657,9 @@ function flexnet_soc() {
 	Highcharts.setOptions(Highcharts.theme2);
 
 	chart_options = {
+	    legend: {
+	    	enabled: false  
+	    },
     	yAxis: {
     		tickInterval: 10,
     		endOnTick: false,
@@ -721,7 +687,9 @@ function flexnet_soc() {
 		},
 		tooltip: {
 			formatter: function() {
-				return this.series.name + ': <strong>' + this.y + '%</strong>';
+				var string1 = Highcharts.dateFormat('%l:%M%P', this.x);
+				var string2 = this.series.name + ': <strong>' + this.y + '%</strong>';
+				return string2 + '<br/>' + string1;
 			}
 		},		
 	    series: [{
@@ -745,47 +713,51 @@ function charge_power() {
 	var charge_mode_eq = [];
 	var count;
 
-	for (var i in full_day_data["3"]) { //Device id 3 are FM/MX charge controllers
-		for (y = 0; y < full_day_data["3"][i].length; y++) {
-			split_date = full_day_data["3"][i][y].date.split(/[- :]/);
+	for (var i in full_day_data[CC_ID]) {
+		// Device id 3 are FM/MX charge controllers
+		// i interates through each FM/MX charge controller
+		for (y = 0; y < full_day_data[CC_ID][i].length; y++) {
+			split_date = full_day_data[CC_ID][i][y].date.split(/[- :]/);
 			day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
 			day_date = day_date.getTime(); // convert to milliseconds
 			
-			total_watts = 0;
-			for (var j in full_day_data["3"]) { //Get wh for all FM/MX devices
-				total_watts += (full_day_data["3"][j][y].charge_current) * 1 * full_day_data["3"][i][y].battery_volts;
+			total_watts = 0;	
+			for (var j in full_day_data[CC_ID]) { //Get wh for all FM/MX devices
+				// shouldn't assume that every device has a datapoint for every timestamp.
+				// BUG: devices can come or go independently of each other.
+				total_watts += (full_day_data[CC_ID][j][y].charge_current) * 1 * full_day_data[CC_ID][i][y].battery_volts;
 			}
-			//[day_date, full_day_data["3"][j][y].charge_current*1];
+			//[day_date, full_day_data[CC_ID][j][y].charge_current*1];
 			if (!day_data_watts[i]) {
 				day_data_watts[i] = []
 			};
 
-			chrg_mode = full_day_data["3"][i][y].charge_mode
+			chrg_mode = full_day_data[CC_ID][i][y].charge_mode
 
 			if (chrg_mode == "Float") {
 
 				if (!charge_mode_fl[i]) {
 					charge_mode_fl[i] = []
 				};
-				charge_mode_fl[i][y] = [day_date, (full_day_data["3"][i][y].charge_current * 1 * full_day_data["3"][i][y].battery_volts)];
+				charge_mode_fl[i][y] = [day_date, (full_day_data[CC_ID][i][y].charge_current * 1 * full_day_data[CC_ID][i][y].battery_volts)];
 
 			} else if (chrg_mode == "Absorption") {
 
 				if (!charge_mode_ab[i]) {
 					charge_mode_ab[i] = []
 				};
-				charge_mode_ab[i][y] = [day_date, (full_day_data["3"][i][y].charge_current * 1 * full_day_data["3"][i][y].battery_volts)];
+				charge_mode_ab[i][y] = [day_date, (full_day_data[CC_ID][i][y].charge_current * 1 * full_day_data[CC_ID][i][y].battery_volts)];
 
 			} else if (chrg_mode == "EQ") {
 
 				if (!charge_mode_eq[i]) {
 					charge_mode_eq[i] = []
 				};
-				charge_mode_eq[i][y] = [day_date, (full_day_data["3"][i][y].charge_current * 1 * full_day_data["3"][i][y].battery_volts)];
+				charge_mode_eq[i][y] = [day_date, (full_day_data[CC_ID][i][y].charge_current * 1 * full_day_data[CC_ID][i][y].battery_volts)];
 
 			}
 
-			day_data_watts[i][y] = [day_date, (full_day_data["3"][i][y].charge_current * 1 * full_day_data["3"][i][y].battery_volts)];
+			day_data_watts[i][y] = [day_date, (full_day_data[CC_ID][i][y].charge_current * 1 * full_day_data[CC_ID][i][y].battery_volts)];
 			total_day_data_watts[y] = [day_date, total_watts];
 		}
 	}
@@ -814,11 +786,18 @@ function charge_power() {
 		}
 	}
 
+//	total = {
+//		name: 'Total',
+//		type: 'areaspline',
+//		fillOpacity: 0.1,
+//		lineWidth: 0,
+//		zIndex: -1,
+//		data: total_day_data_watts
+//	};
 	total = {
 		name: 'Total',
-		type: 'areaspline',
-		fillOpacity: 0.1,
-		lineWidth: 0,
+		type: 'line',
+		lineWidth: 2,
 		zIndex: -1,
 		data: total_day_data_watts
 	};
@@ -957,41 +936,43 @@ function charge_current() {
 
 
 
-	for (var i in full_day_data["3"]) { //Device id 3 are FM/MX charge controllers
-		for (y = 0; y < full_day_data["3"][i].length; y++) {
-			split_date = full_day_data["3"][i][y].date.split(/[- :]/);
+	for (var i in full_day_data[CC_ID]) { //Device id 3 are FM/MX charge controllers
+		for (y = 0; y < full_day_data[CC_ID][i].length; y++) {
+			split_date = full_day_data[CC_ID][i][y].date.split(/[- :]/);
 			day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
 
 			total_amps = 0;
-			for (var j in full_day_data["3"]) { //Get wh for all FM/MX devices
-				total_amps += (full_day_data["3"][j][y].charge_current) * 1;
+			for (var j in full_day_data[CC_ID]) { //Get wh for all FM/MX devices
+				if (full_day_data[CC_ID][j][y] !== undefined) {
+					total_amps += (full_day_data[CC_ID][j][y].charge_current) * 1;
+				}
 			}
-			//[day_date, full_day_data["3"][j][y].charge_current*1];
+			//[day_date, full_day_data[CC_ID][j][y].charge_current*1];
 			if (!day_data_amps[i]) {
 				day_data_amps[i] = []
 			};
-			day_data_amps[i][y] = [day_date, full_day_data["3"][i][y].charge_current * 1];
-			chrg_mode = full_day_data["3"][i][y].charge_mode
+			day_data_amps[i][y] = [day_date, full_day_data[CC_ID][i][y].charge_current * 1];
+			chrg_mode = full_day_data[CC_ID][i][y].charge_mode
 
 			if (chrg_mode == "Float") {
 				if (!charge_mode_fl[i]) {
 					charge_mode_fl[i] = []
 				};
-				charge_mode_fl[i][y] = [day_date, full_day_data["3"][i][y].charge_current * 1];
+				charge_mode_fl[i][y] = [day_date, full_day_data[CC_ID][i][y].charge_current * 1];
 
 			}
 			else if (chrg_mode == "Absorption") {
 				if (!charge_mode_ab[i]) {
 					charge_mode_ab[i] = []
 				};
-				charge_mode_ab[i][y] = [day_date, full_day_data["3"][i][y].charge_current * 1];
+				charge_mode_ab[i][y] = [day_date, full_day_data[CC_ID][i][y].charge_current * 1];
 
 			}
 			else if (chrg_mode == "EQ") {
 				if (!charge_mode_eq[i]) {
 					charge_mode_eq[i] = []
 				};
-				charge_mode_eq[i][y] = [day_date, full_day_data["3"][i][y].charge_current * 1];
+				charge_mode_eq[i][y] = [day_date, full_day_data[CC_ID][i][y].charge_current * 1];
 
 			}
 			total_day_data_amps[y] = [day_date, total_amps];
@@ -1181,17 +1162,17 @@ function array_volts() {
 	var day_data_array_volts = new Array();
 	var all_devices_data_array_volts = [];
 
-	for (var i in full_day_data["3"]) { //Device id 3 are FM/MX charge controllers
-		for (y = 0; y < full_day_data["3"][i].length; y++) {
-			split_date = full_day_data["3"][i][y].date.split(/[- :]/);
+	for (var i in full_day_data[CC_ID]) { //Device id 3 are FM/MX charge controllers
+		for (y = 0; y < full_day_data[CC_ID][i].length; y++) {
+			split_date = full_day_data[CC_ID][i][y].date.split(/[- :]/);
 			day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
 
 
-			//[day_date, full_day_data["3"][j][y].charge_current*1];
+			//[day_date, full_day_data[CC_ID][j][y].charge_current*1];
 			if (!day_data_array_volts[i]) {
 				day_data_array_volts[i] = []
 			};
-			day_data_array_volts[i][y] = [day_date, full_day_data["3"][i][y].pv_voltage * 1];
+			day_data_array_volts[i][y] = [day_date, full_day_data[CC_ID][i][y].pv_voltage * 1];
 		}
 	}
 
@@ -1261,17 +1242,17 @@ function array_current() {
 	var day_data_array_amps = new Array();
 	var all_devices_data_array_amps = []
 
-	for (var i in full_day_data["3"]) { //Device id 3 are FM/MX charge controllers
-		for (y = 0; y < full_day_data["3"][i].length; y++) {
-			split_date = full_day_data["3"][i][y].date.split(/[- :]/);
+	for (var i in full_day_data[CC_ID]) { //Device id 3 are FM/MX charge controllers
+		for (y = 0; y < full_day_data[CC_ID][i].length; y++) {
+			split_date = full_day_data[CC_ID][i][y].date.split(/[- :]/);
 			day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
 
 
-			//[day_date, full_day_data["3"][j][y].charge_current*1];
+			//[day_date, full_day_data[CC_ID][j][y].charge_current*1];
 			if (!day_data_array_amps[i]) {
 				day_data_array_amps[i] = []
 			};
-			day_data_array_amps[i][y] = [day_date, full_day_data["3"][i][y].pv_current * 1];
+			day_data_array_amps[i][y] = [day_date, full_day_data[CC_ID][i][y].pv_current * 1];
 		}
 	}
 
@@ -1342,23 +1323,20 @@ function battery_volts() {
 	day_data_volts = [];
 
 
-	if (full_day_data["4"]) {
-		for (var i in full_day_data["4"]) {
-			for (j = 0; j < full_day_data["4"][i].length; j++) {
-				split_date = full_day_data["4"][i][j].date.split(/[- :]/);
+	if (full_day_data[FNDC_ID]) {
+		for (var i in full_day_data[FNDC_ID]) {
+			for (j = 0; j < full_day_data[FNDC_ID][i].length; j++) {
+				split_date = full_day_data[FNDC_ID][i][j].date.split(/[- :]/);
 				day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
-				day_data_volts[j] = [day_date, full_day_data["4"][i][j].battery_volt];
-
+				day_data_volts[j] = [day_date, full_day_data[FNDC_ID][i][j].battery_volt];
 			}
 		}
 	} else {
-		for (var i in full_day_data["3"]) {
-			for (j = 0; j < full_day_data["3"][i].length; j++) {
-				split_date = full_day_data["3"][i][j].date.split(/[- :]/);
+		for (var i in full_day_data[CC_ID]) {
+			for (j = 0; j < full_day_data[CC_ID][i].length; j++) {
+				split_date = full_day_data[CC_ID][i][j].date.split(/[- :]/);
 				day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
-				day_data_volts[j] = [day_date, full_day_data["3"][i][j].battery_volts];
-
-
+				day_data_volts[j] = [day_date, full_day_data[CC_ID][i][j].battery_volts];
 			}
 
 		}
@@ -1414,5 +1392,5 @@ function battery_volts() {
 // this is the crazy way to get shit started in jQuery. Seriously.
 //
 $( document ).ready(function() {
-	on_load();
+	load_data();
 });
