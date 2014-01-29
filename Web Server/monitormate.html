@@ -38,22 +38,15 @@
 	</div>
 	<script>
 		function load_data() {
-			// moved this from html
-			chart_years();
-			
+
 			// no reason to get url vars anymore...
+			// get_datastream(get_URLvars()["date"]);
 			// get_months(get_URLvars()["date"]);
-			chart_months();
-		
-			// no reason to get url vars anymore...
 			// get_month_days(get_URLvars()["date"]);
-			chart_days_of_month();
-			
-			// no reason to get url vars anymore...
-			// get_day(get_URLvars()["date"]);
-			// I have no idea why we wouldn't get the day first and then pass it on to the charting functions one-by-one.
-			get_day();
-			
+
+			get_dataStream();
+			set_deviceNames();									
+
 			populate_status();
 			get_cookies();
 			get_status();
@@ -65,9 +58,13 @@
 			set_chart("multichart1", chart_content["multichart1"]);
 			set_chart("multichart2", chart_content["multichart2"]);
 			set_chart("multichart3", chart_content["multichart3"]);
+
+			chart_years();
+			chart_months();
+			chart_days_of_month();
 		
 			setInterval("get_status()", 5000);
-			
+
 		}
 	</script>
 </body>

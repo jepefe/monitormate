@@ -13,6 +13,14 @@ a:link {
 	text-decoration: none;
 }
 
+h2 {
+	color: #282828;
+	font-size: 18px;
+	text-align: left;
+	font-weight: normal;
+	font-style: normal;
+}
+
 #left-col table {
 	width: 100%;
 	table-layout: fixed;

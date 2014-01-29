@@ -92,7 +92,7 @@ Highcharts.theme2 = {
 		align: 'left',
 		verticalAlign: 'top',
 		x: 2,
-		y: 15   
+		y: 8   
 	},
 	colors: ['#0396A6', '#F2B807', '#4c328a'],
 	plotOptions: {
