@@ -59,9 +59,15 @@ if(isset($_POST)){
 						$fmmx_total["total_daily_ah"] = $fmmx_total["total_daily_ah"] + $i["daily_ah"];
 						register_fmmx($i, $date_time);
 						break;
+
 					case '2': //FX device id
 						register_fxinv($i, $date_time);
 						break;
+
+					case '6': //Radian device id
+						register_radian($i, $date_time);
+						break;
+						
 					
 					default:
 						break;
@@ -237,6 +243,64 @@ function register_fxinv($device_array,$date_time){
 	mysql_query($query,$connection);		
 }
 
+function register_radian($device_array,$date_time){
+
+	$query = "INSERT INTO monitormate3_radian
+		(
+			date,
+			address,
+			device_id,
+			inverter_current_l1,
+			inverter_current_l2,
+			charge_current_l1,
+			charge_current_l2,
+			buy_current_l1,
+			buy_current_l2,
+			ac_input_voltage_l1,
+			ac_output_voltage_l1,
+			ac_input_voltage_l2,
+			ac_output_voltage_l2,
+			ac2_input_voltage_l1,
+			ac2_input_voltage_l2,
+			sell_current_l1,
+			sell_current_l2,
+			operational_mode,
+			error_modes,
+			ac_mode,
+			battery_volt,
+			misc,
+			warning_modes
+		) VALUES (
+			'".$date_time."',
+			'".$device_array['address']."',
+			'".$device_array['device_id']."',
+			'".$device_array['inverter_current_l1']."',
+			'".$device_array['inverter_current_l2']."',
+			'".$device_array['charge_current_l1']."',
+			'".$device_array['charge_current_l2']."',
+			'".$device_array['buy_current_l1']."',
+			'".$device_array['buy_current_l2']."',
+			'".$device_array['ac_input_voltage_l1']."',
+			'".$device_array['ac_output_voltage_l1']."',
+			'".$device_array['ac_input_voltage_l2']."',
+			'".$device_array['ac_output_voltage_l2']."',
+			'".$device_array['ac2_input_voltage_l1']."',
+			'".$device_array['ac2_input_voltage_l2']."',
+			'".$device_array['sell_current_l1']."',
+			'".$device_array['sell_current_l2']."',
+			'".$device_array['operational_mode']."',
+			'".implode(",", $device_array['error_modes'])."',
+			'".$device_array['ac_mode']."',
+			'".$device_array['battery_volt']."',
+			'".implode(",", $device_array['misc'])."',
+			'".implode(",", $device_array['warning_modes'])."'
+		)";
+	
+
+	$connection = db_connection();
+	mysql_query($query,$connection);		
+}
+
 
 function register_summary($summary) {
 	
@@ -278,8 +342,7 @@ function register_summary($summary) {
 	ah_in=".$summary['ah_in'].", ah_out=".$summary['ah_out'].", max_temp=".$summary['max_temp'].", min_temp=".$summary['min_temp'].
 	", max_soc=".$summary['max_soc'].", min_soc=".$summary['min_soc'].", max_pv_voltage=".$summary['max_pv_voltage']." where date(date)='".$summary['date']."'";
 	
-	$file22 = "matelog22";
-	file_put_contents($file22, $update_query);
+	
 		
 	if ($not_first_record) {
 		mysql_query($update_query,$connection);

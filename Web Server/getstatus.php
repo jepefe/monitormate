@@ -20,16 +20,16 @@ if (isset($_GET) && isset($_GET["q"])) {
 	}
 	
 	switch ($_GET["q"]) {
-		case 'years': //Flexnet device id
+		case 'years': 
 			send_year($date);
 			break;
-		case 'months': //FM/MX device id
+		case 'months': 
 			send_month_totals($date);
 			break;
-		case 'month_days': //FM/MX device id
+		case 'month_days': 
 			send_month_days($date);
 			break;
-		case 'day': //FX device id
+		case 'day': 
 			send_day($date);
 			break;
 		
@@ -144,13 +144,18 @@ function send_day($date){
 	$query_fxinv =		"SELECT *
 						FROM monitormate3_fxinv WHERE date(date) = date('".$date."')
 						ORDER BY date";
+
+	$query_radian =		"SELECT *
+						FROM monitormate3_radian WHERE date(date) = date('".$date."')
+						ORDER BY date";
 	
 	$result_summary = mysql_query($query_summary, $connection);
 	$result_fmmx = mysql_query($query_fmmx, $connection);
 	$result_flexnet = mysql_query($query_flexnet, $connection);
 	$result_fxinv = mysql_query($query_fxinv, $connection);
+	$result_radian = mysql_query($query_radian, $connection);
 	
-	$allday_querys = array("fmmx"=>$result_fmmx,"flexnet"=>$result_flexnet,"fxinv"=>$result_fxinv);
+	$allday_querys = array("fmmx"=>$result_fmmx,"flexnet"=>$result_flexnet,"fxinv"=>$result_fxinv,"radian"=>$result_radian);
 	$allday_data["summary"] =  mysql_fetch_assoc($result_summary);
 	
 	foreach ($allday_querys as $i) {

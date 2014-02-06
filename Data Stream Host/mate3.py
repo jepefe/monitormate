@@ -18,6 +18,7 @@
 import fmmx
 import flexnetdc
 import fxinv
+import radian
 
 
 class mate3:
@@ -35,7 +36,7 @@ class mate3:
         
     def parse_raw_data(self, mate_raw_data):
         #Erase unnecessary network data
-        mate_raw_data = mate_raw_data[mate_raw_data.find('<'):mate_raw_data.rfind('>')]
+        mate_raw_data = mate_raw_data[mate_raw_data.find('<'):mate_raw_data.rfind('>')+1]
         #Every device string starts with "<" count them to get total number of connected devices
         if self.total_devices == None:
             self.total_devices = mate_raw_data.count('<')
@@ -47,20 +48,25 @@ class mate3:
         symbol2 = mate_raw_data.find('>')
         devices_data = [] #Data string of each device
         datastring = []
+        raw_string = mate_raw_data
+
         for i in range(self.total_devices):
-            
-            aux = str(mate_raw_data[symbol1:symbol2])
+
+            aux = str(raw_string[symbol1:symbol2])
             datastring.append(aux.split(','))
             devices_data.append(datastring[i])
-            symbol1 = symbol2+2
-            symbol2 = mate_raw_data.find('>') + symbol1-1
+            raw_string = raw_string[symbol2+1:len(raw_string)]
+            symbol1 = raw_string.find('<')+1
+            symbol2 = raw_string.find('>')
+            
+
             
         return devices_data
     
     def process_datastream(self, raw_datastream):
         parsed = self.parse_raw_data(raw_datastream)
         for i in parsed:
-            
+
             #Fx inverters
             if i[1] == '2':             
                 if  self.matedevices[int(i[0])-1] == 0:
@@ -69,7 +75,9 @@ class mate3:
                         self.matedevices[int(i[0])-1].enable_modifiers()
                 self.matedevices[int(i[0])-1].set_status(i)
                 self.matedevices[int(i[0])-1].dev_address = int(i[0])
-                self.matedevices[int(i[0])-1].get_values_with_names()  
+                self.matedevices[int(i[0])-1].get_values_with_names()
+            
+              
             
             #Fm or Mx data
             if i[1] == '3':             
@@ -86,7 +94,19 @@ class mate3:
                     self.matedevices[int(i[0])-1] = flexnetdc.flexnetdc()
                 self.matedevices[int(i[0])-1].set_status(i)
                 self.matedevices[int(i[0])-1].dev_address = int(i[0])
-                self.matedevices[int(i[0])-1].get_values_with_names()     
+                self.matedevices[int(i[0])-1].get_values_with_names()  
+
+            #Radian inverters
+            if i[1] == '6':             
+                if  self.matedevices[int(i[0])-1] == 0:
+                    self.matedevices[int(i[0])-1] = radian.fxinv()
+                    if self.fxmodifiers:
+                        self.matedevices[int(i[0])-1].enable_modifiers()
+                self.matedevices[int(i[0])-1].set_status(i)
+                self.matedevices[int(i[0])-1].dev_address = int(i[0])
+                self.matedevices[int(i[0])-1].get_values_with_names()
+
+               
                 
     
     def get_status(self):
@@ -94,6 +114,7 @@ class mate3:
         if self.total_devices != None:
             for i in self.matedevices:
                 if i != 0:
+                    print '-------------'+i.name+'----------------'
                     for val in range(i.valuenames_formatted.__len__()):
                         print str(i.get_values_with_names().keys()[val])+": \t\t\t\t"+str(i.get_values_with_names().values()[val])
                         
