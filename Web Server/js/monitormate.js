@@ -53,6 +53,7 @@ function on_load() {
 	// get_months(getUrlVars()["date"]);
 	get_months();
 
+
 	addDateTooltip("months_chart", "m");
 
 	$("#months_chart").bind("plotclick", function (event, pos, item) {
@@ -173,6 +174,7 @@ function populate_status() {
 
 	// i is the ID
 	for (var i in full_day_data) {
+
 		if (i == "summary") {
 			name = "Summary";
 			val = "summary";
@@ -182,6 +184,7 @@ function populate_status() {
 		} else {
 			// j is the port number
 			for (var j in full_day_data[i]) {
+				
 				var name = '';
 				var val = '';
 
@@ -195,6 +198,7 @@ function populate_status() {
 					//	2 is an inverter (FX)
 					//	3 is a Charge Controller (FM/MX)
 					//	4 is a FLEXnet DC
+					//  6 is a Radian Inverter
 					switch (i) {
 					case "2":
 						name = "FX Inverter - Port " + full_day_data[i][j][0].address;
@@ -204,7 +208,12 @@ function populate_status() {
 						break;
 					case "4":
 						name = "FLEXnet DC - Port " + full_day_data[i][j][0].address;
+
 						break;
+					case "6":
+						name = "Radian - Port " + full_day_data[i][j][0].address;
+						
+						break; 
 					}
 				}
 				val = i + ":" + j;
@@ -317,6 +326,29 @@ function set_status(div, value) {
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.accumulated_ah_shunt_a + ' Ah, ' + device.accumulated_kwh_shunt_a + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.accumulated_ah_shunt_b + ' Ah, ' + device.accumulated_kwh_shunt_b + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.accumulated_ah_shunt_c + ' Ah, ' + device.accumulated_kwh_shunt_c + ' kWh</td></tr>\
+						</table>';
+			break;
+		case "6": // radian inverter
+			content =	'<table><caption>Radian<div>Port ' + device.address + '</div></caption>\
+						<tr><td class="label">AC Output Voltage L1:</td><td>' + device.ac_output_voltage_l1 + ' V</td></tr>\
+						<tr><td class="label">AC Output Voltage L2:</td><td>' + device.ac_output_voltage_l2 + ' V</td></tr>\
+						<tr><td class="label">Inverter Current L1:</td><td>' + device.inverter_current_l1 + ' A</td></tr>\
+						<tr><td class="label">Inverter Current L1:</td><td>' + device.inverter_current_l2 + ' A</td></tr>\
+						<tr><td class="label">Charge Current L1:</td><td>' + device.charge_current_l1 + ' A</td></tr>\
+						<tr><td class="label">Charge Current L2:</td><td>' + device.charge_current_l2 + ' A</td></tr>\
+						<tr><td class="label">AC Input Voltage L1:</td><td>' + device.ac_input_voltage_l1 + ' V</td></tr>\
+						<tr><td class="label">AC Input Voltage L2:</td><td>' + device.ac_input_voltage_l2 + ' V</td></tr>\
+						<tr><td class="label">AC 2 Input Voltage L1:</td><td>' + device.ac2_input_voltage_l1 + ' V</td></tr>\
+						<tr><td class="label">AC 2 Input Voltage L2:</td><td>' + device.ac2_input_voltage_l2 + ' V</td></tr>\
+						<tr><td class="label">Buy Current L1:</td><td>' + device.buy_current_l1 + ' A</td></tr>\
+						<tr><td class="label">Buy Current L2:</td><td>' + device.buy_current_l2 + ' A</td></tr>\
+						<tr><td class="label">Sell Current L1:</td><td>' + device.sell_current_l1 + ' A</td></tr>\
+						<tr><td class="label">Sell Current L2:</td><td>' + device.sell_current_l2 + ' A</td></tr>\
+						<tr><td class="label">AC Mode:</td><td>' + device.ac_mode + '</td></tr>\
+						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
+						<tr><td class="label">Error Modes:</td><td>' + device.error_modes + '</td></tr>\
+						<tr><td class="label">Warning Modes:</td><td>' + device.warning_modes + '</td></tr>\
+						<tr><td class="label">Misc:</td><td>' + device.misc + '</td></tr>\
 						</table>';
 			break;
 
@@ -951,7 +983,9 @@ function charge_power() {
 			day_date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
 
 			total_watts = 0;
+
 			for (var j in full_day_data["3"]) { //Get wh for all FM/MX devices
+				if(full_day_data["3"][j][y] != null)
 				total_watts += (full_day_data["3"][j][y].charge_current) * 1 * full_day_data["3"][i][y].battery_volts;
 			}
 			//[day_date, full_day_data["3"][j][y].charge_current*1];
@@ -1163,6 +1197,7 @@ function charge_current() {
 
 			total_amps = 0;
 			for (var j in full_day_data["3"]) { //Get wh for all FM/MX devices
+				if(full_day_data["3"][j][y] != null)
 				total_amps += (full_day_data["3"][j][y].charge_current) * 1;
 			}
 			//[day_date, full_day_data["3"][j][y].charge_current*1];
