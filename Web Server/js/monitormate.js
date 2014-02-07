@@ -368,8 +368,8 @@ function chart_years() {
 		comp_date = new Date(split_date[0], 0, 1);				// use the year to make a date object for jan 1st of that year
 		year = comp_date.getTime();								// turn it into millisecond timestamp
 
-		years_data_kwhin[i] = [year, eval(available_years[i].kwh_in)];
-		years_data_kwhout[i] = [year, eval(available_years[i].kwh_out)];
+		years_data_kwhin[i] = [year, parseInt(available_years[i].kwh_in)];
+		years_data_kwhout[i] = [year, parseInt(available_years[i].kwh_out)];
 		
 	}
 
@@ -440,8 +440,8 @@ function chart_months(date) {
 		month_date = new Date(split_date[0], split_date[1] - 1, 1);	// use the month to make a date object for the 1st of the month
 		month = month_date.getTime();								// turn it into millisecond timestamp
 
-		months_data_kwhin[i]  = [month, eval(available_months[i].kwh_in)];
-		months_data_kwhout[i] = [month, eval(available_months[i].kwh_out)];
+		months_data_kwhin[i]  = [month, parseInt(available_months[i].kwh_in)];
+		months_data_kwhout[i] = [month, parseInt(available_months[i].kwh_out)];
 
 	}
 
@@ -516,11 +516,11 @@ function chart_days_of_month(date) {
 		month_days_date = new Date(split_date[0], split_date[1] - 1, split_date[2]);	// use the month to make a date object for the 1st of the month
 		day = month_days_date.getTime();												// turn it into millisecond timestamp
 	
-		month_days_data_kwhin[i]  = [day, eval(available_month_days[i].kwh_in)];
-		month_days_data_kwhout[i] = [day, eval(available_month_days[i].kwh_out)];
+		month_days_data_kwhin[i]  = [day, parseInt(available_month_days[i].kwh_in)];
+		month_days_data_kwhout[i] = [day, parseInt(available_month_days[i].kwh_out)];
 		
-		month_total_kwhin += eval(available_month_days[i].kwh_in);
-		month_total_kwhout += eval(available_month_days[i].kwh_out)
+		month_total_kwhin += parseInt(available_month_days[i].kwh_in);
+		month_total_kwhout += parseInt(available_month_days[i].kwh_out)
 	}
 
 	month_avg_kwhin = month_total_kwhin/available_month_days.length;
@@ -682,25 +682,23 @@ function get_cc_chargePower() {
 		}
 	}
 
-	//
-	// Set up each series.
-	//	
-	for (var i in day_data_watts) {
 
+	// Set up each series.
+	for (var i in day_data_watts) {
 		device_data = {
 			name: deviceLabel[i],
 			type: 'line',
 			data: day_data_watts[i]
 		};
-		
 		all_devices_data.push(device_data);
 	}
 
+	// If there was a total, set up that series
 	if (total_day_data_watts.length > 0) {
 		total_data = {
 			name: 'Total',
 			type: 'areaspline',
-			fillOpacity: 0.1,
+			fillOpacity: 0.125,
 			lineWidth: 0,
 			zIndex: -1,
 			data: total_day_data_watts
@@ -716,8 +714,7 @@ function get_cc_chargePower() {
     		min: 0,
 		    labels: {
 		        format: '{value} W'
-		    },
-		    
+		    }
 		},
 		tooltip: {
 			formatter: function() {
@@ -748,63 +745,58 @@ function get_cc_chargeCurrent() {
 	var all_devices_data_amps = [];
 	var count;
 
-	for (var port in full_day_data[CC_ID]) { 
+	for (var port in full_day_data[CC_ID]) {
+
+		if (port != "totals") {
+			day_data_amps[port] = []
+		}
+
 		for (y = 0; y < full_day_data[CC_ID][port].length; y++) {
 
 			day_date = convert_date(full_day_data[CC_ID][port][y].date);
 			
-// BUG: the totalling stuff doesn't work if a al devices weren't present for the entire time span
-//
-//			total_amps = 0;
-//			for (var j in full_day_data[CC_ID]) { //Get wh for all FM/MX devices
-//				if (full_day_data[CC_ID][j][y] !== undefined) {
-//					total_amps += (full_day_data[CC_ID][j][y].charge_current) * 1;
-//				}
-//			}
+			if (port == "totals") {
 
-			if (!day_data_amps[port]) {
-				day_data_amps[port] = []
-			};
-			chrg_mode = full_day_data[CC_ID][port][y].charge_mode
+				total_amps = parseInt(full_day_data[CC_ID][port][y].total_current);
+				total_day_data_amps[y] = [day_date, total_amps];
 
-			// make an object with some extra data (charge mode) that we can display in tooltips.
-			day_data_amps[port][y] = {
-				x: day_date,
-				y: eval(full_day_data[CC_ID][port][y].charge_current),
-				mode: chrg_mode
-			};
+			} else {
 
-			// old way of doing it without extra data.
-			//day_data_amps[port][y] = [day_date, full_day_data[CC_ID][port][y].charge_current * 1];
+				// make an object with some extra data (charge mode) that we can display in tooltips.
+				day_data_amps[port][y] = {
+					x: day_date,
+					y: parseInt(full_day_data[CC_ID][port][y].charge_current),
+					mode: full_day_data[CC_ID][port][y].charge_mode
+				};
+	
+				// old way of doing it without extra data.
+				//day_data_amps[port][y] = [day_date, full_day_data[CC_ID][port][y].charge_current * 1];
 
-
-// BUG: the totalling stuff doesn't work if a al devices weren't present for the entire time span
-//			total_day_data_amps[y] = [day_date, total_amps];
+			}
 		}
 	}
 
-	//
-	// Check to see if there's more than one charger
-	// If so, then label each series.
-	//	
-	if (day_data_amps.length > 1) {
-		for (var i in day_data_amps) {
-
-			series = {
-				name: deviceLabel[i],
-				type: 'line',
-				data: day_data_amps[i]
-			};
-			all_devices_data_amps.push(series);
-		}
+	// Set up each series
+	for (var i in day_data_amps) {
+		device_data = {
+			name: deviceLabel[i],
+			type: 'line',
+			data: day_data_amps[i]
+		};
+		all_devices_data_amps.push(device_data);
+	}
 		
-		// add the total series
-		total = {
+	// If there was a total, set up that series
+	if (total_day_data_amps.length > 0) {
+		total_data = {
 			name: 'Total',
+			type: 'areaspline',
+			fillOpacity: 0.125,
+			lineWidth: 0,
+			zIndex: -1,
 			data: total_day_data_amps
 		};
-		all_devices_data_amps.push(total);
-	
+		all_devices_data_amps.push(total_data);
 	}
 
 	// Apply the line chart theme
@@ -815,7 +807,7 @@ function get_cc_chargeCurrent() {
     		min: 0,
 		    labels: {
 		        format: '{value} A'
-		    },		    
+		    }
 		},
 		tooltip: {
 			formatter: function() {
@@ -842,25 +834,25 @@ function get_cc_inputVolts() {
 	var all_devices_data_array_volts = [];
 
 	for (var port in full_day_data[CC_ID]) { 
-		for (y = 0; y < full_day_data[CC_ID][port].length; y++) {
 
-			day_date = convert_date(full_day_data[CC_ID][port][y].date);
-			
-			if (!day_data_array_volts[port]) {
-				day_data_array_volts[port] = []
-			};
+		if (port != "totals") {	
 
-			chrg_mode = full_day_data[CC_ID][port][y].charge_mode
-
-			// make an object with some extra data (charge mode) that we can display in tooltips.
-			day_data_array_volts[port][y] = {
-				x: day_date,
-				y: eval(full_day_data[CC_ID][port][y].pv_voltage),
-				mode: chrg_mode
-			};
-
-			// old way of doing it without extra data.
-			//day_data_array_volts[port][y] = [day_date, full_day_data[CC_ID][port][y].pv_voltage * 1];
+			day_data_array_volts[port] = []
+	
+			for (y = 0; y < full_day_data[CC_ID][port].length; y++) {
+				
+				day_date = convert_date(full_day_data[CC_ID][port][y].date);
+				
+				// make an object with some extra data (charge mode) that we can display in tooltips.
+				day_data_array_volts[port][y] = {
+					x: day_date,
+					y: parseInt(full_day_data[CC_ID][port][y].pv_voltage),
+					mode: full_day_data[CC_ID][port][y].charge_mode
+				};
+	
+				// old way of doing it without extra data.
+				//day_data_array_volts[port][y] = [day_date, full_day_data[CC_ID][port][y].pv_voltage * 1];
+			}
 		}
 	}
 
@@ -910,25 +902,25 @@ function get_cc_inputCurrent() {
 	var all_devices_data_array_amps = []
 
 	for (var port in full_day_data[CC_ID]) { 
-		for (y = 0; y < full_day_data[CC_ID][port].length; y++) {
 
-			day_date = convert_date(full_day_data[CC_ID][port][y].date);
+		if (port != "totals") {	
 
-			if (!day_data_array_amps[port]) {
-				day_data_array_amps[port] = []
-			};
-
-			chrg_mode = full_day_data[CC_ID][port][y].charge_mode
-
-			// make an object with some extra data (charge mode) that we can display in tooltips.
-			day_data_array_amps[port][y] = {
-				x: day_date,
-				y: eval(full_day_data[CC_ID][port][y].pv_current),
-				mode: chrg_mode
-			};
-
-			// old way of doing it without extra data.
-			//day_data_array_amps[port][y] = [day_date, full_day_data[CC_ID][port][y].pv_current * 1];
+			day_data_array_amps[port] = []
+		
+			for (y = 0; y < full_day_data[CC_ID][port].length; y++) {
+	
+				day_date = convert_date(full_day_data[CC_ID][port][y].date);
+	
+				// make an object with some extra data (charge mode) that we can display in tooltips.
+				day_data_array_amps[port][y] = {
+					x: day_date,
+					y: parseInt(full_day_data[CC_ID][port][y].pv_current),
+					mode: full_day_data[CC_ID][port][y].charge_mode
+				};
+	
+				// old way of doing it without extra data.
+				//day_data_array_amps[port][y] = [day_date, full_day_data[CC_ID][port][y].pv_current * 1];
+			}
 		}
 	}
 
@@ -982,7 +974,7 @@ function get_battery_volts() {
 
 				day_date = convert_date(full_day_data[FNDC_ID][port][j].date);
 				
-				day_data_volts[j] = [day_date, eval(full_day_data[FNDC_ID][port][j].battery_volt)];
+				day_data_volts[j] = [day_date, parseInt(full_day_data[FNDC_ID][port][j].battery_volt)];
 			}
 		}
 	} else {
@@ -992,7 +984,7 @@ function get_battery_volts() {
 
 				day_date = convert_date(full_day_data[CC_ID][port][j].date);
 
-				day_data_volts[j] = [day_date, eval(full_day_data[CC_ID][port][j].battery_volts)];
+				day_data_volts[j] = [day_date, parseInt(full_day_data[CC_ID][port][j].battery_volts)];
 			}
 
 		}
@@ -1097,8 +1089,19 @@ function get_fndc_shunts() {
 			shared: false,
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
+
+				// single non-shared tooltip
 				tipSeries = this.y.toFixed(0) + ' Watts: ' + this.series.name;
 				return '<strong>' + tipTitle + '</strong><br/>' + tipSeries;
+
+				// shared tooltip
+//				tipSeries = '';
+//				for (var i = 0; i < this.points.length; i++) {
+//					string = this.points[i].y.toFixed(0) + ' Watts ' + this.points[i].series.name;
+//					tipSeries = tipSeries + '<br/>' + string;
+//				}
+//				return '<strong>' + tipTitle + '</strong><p style="font-size:10px">' + tipSeries + '</p>';
+				
 			}
 		},
 	    series: [{
@@ -1136,7 +1139,7 @@ function get_fndc_soc() {
 				
 				day_date = convert_date(full_day_data[FNDC_ID][port][j].date);
 				
-				day_data_soc[j] = [day_date, eval(full_day_data[FNDC_ID][port][j].soc)];
+				day_data_soc[j] = [day_date, parseInt(full_day_data[FNDC_ID][port][j].soc)];
 			}
 		}
 	}
