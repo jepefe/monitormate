@@ -5,6 +5,37 @@
 // SAMPLE: http://finleyridge.com/power/getstatus.php?q=months&date=2013-12-02
 //
 
+function print_array($array, $depth = 1, $indentation = 0) {
+	if (is_array($array)){
+		echo "Array(\n";
+		foreach ($array as $key=>$value) {
+			if (is_array($value)) {
+				if ($depth) {
+					echo "max depth reached.\n";
+				} else {
+					for ($i = 0; $i < $indentation; $i++) {
+						echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+					}
+					echo $key."=Array(";
+					print_array($value, $depth - 1, $indentation + 1);
+					for ($i = 0; $i < $indentation; $i++) {
+						echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+					}
+					echo ");";
+				}
+			} else {
+				for ($i = 0; $i < $indentation; $i++){
+					echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+				}
+				echo $key."=>".$value."\n";
+			}
+		}
+		echo ");\n";
+	} else {
+		echo "It is not an array\n";
+	}
+}
+
 if (isset($_GET) && isset($_GET["q"])) {
 	ob_start(); //Redirect output to internal buffer
     require_once './config/config.php';
@@ -20,16 +51,16 @@ if (isset($_GET) && isset($_GET["q"])) {
 	}
 	
 	switch ($_GET["q"]) {
-		case 'years': //Flexnet device id
+		case 'years':
 			send_year($date);
 			break;
-		case 'months': //FM/MX device id
+		case 'months':
 			send_month_totals($date);
 			break;
-		case 'month_days': //FM/MX device id
+		case 'month_days':
 			send_month_days($date);
 			break;
-		case 'day': //FX device id
+		case 'day':
 			send_day($date);
 			break;
 		
@@ -135,7 +166,13 @@ function send_day($date){
 						FROM monitormate3_fmmx
 						WHERE date(date) = date('".$date."')
 						ORDER BY date";
-
+	
+	// if there's more than one charge controller (fmmx) we should get the cc totals.
+	$query_fmmx_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts 
+							FROM `monitormate3_fmmx`
+							WHERE date(date) = date('".$date."')
+							GROUP BY date";
+	 
 	$query_flexnet =	"SELECT *
 						FROM monitormate3_flexnet
 						WHERE date(date) = date('".$date."')
@@ -151,20 +188,33 @@ function send_day($date){
 	$result_fxinv = mysql_query($query_fxinv, $connection);
 	
 	$allday_querys = array("fmmx"=>$result_fmmx,"flexnet"=>$result_flexnet,"fxinv"=>$result_fxinv);
-	$allday_data["summary"] =  mysql_fetch_assoc($result_summary);
+	$allday_data["summary"] = mysql_fetch_assoc($result_summary);
 	
 	foreach ($allday_querys as $i) {
-		while($row = mysql_fetch_assoc($i)){
+		while ($row = mysql_fetch_assoc($i)) {
 			$allday_data[$row["device_id"]][$row["address"]][] = $row;
 		}
 	}
-	
-	//var_dump($result_fmmx);
-	//echo $query_fmmx;
+
+	if (count($allday_data[3]) > 1) {
+		// there's more than one charge controller, query the totals
+		$result_fmmx_totals = mysql_query($query_fmmx_totals, $connection);
+		while ($row = mysql_fetch_assoc($result_fmmx_totals)) {
+			$allday_data[3]["totals"][] = $row;
+		}
+	}
+
 	//$allday = array("summary"=>$result_summary,"fmmx"=>$result_fmmx,"flexnet"=>$result_flexnet,"fxinv"=>$result_fxinv);
 	
-	$json_summary = json_encode($allday_data);
-	echo $json_summary;
+	if (isset($_GET["debug"])) {
+		echo $query_fmmx.'<br/>';
+		echo '<pre>';
+		print_r($allday_data);
+		echo '</pre>';
+	} else {
+		$json_summary = json_encode($allday_data);
+		echo $json_summary;
+	}
 }
 
 

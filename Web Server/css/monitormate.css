@@ -60,6 +60,7 @@ td.label {
 #left-col {
 	float: left;
 	width: 320px; /* if you change this, change top chart's left margin. */
+	height: 880px;
 	margin-bottom: 20px;
 	background-color: white;
 	border-radius: 6px;
@@ -84,7 +85,7 @@ td.label {
 
 .bottom-double-charts {
 	position: relative;
-	height: 10px;  /* just so you can see it */
+	height: 300px;  /* just so you can see it */
 	margin: 20px 0px;
 	min-width: 720px;
 }

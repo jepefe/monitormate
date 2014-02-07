@@ -4,9 +4,11 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=800">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
+	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/highcharts-more.js"></script>
 	<script src="./config/highcharts-themes.js"></script>
 	<script src="./config/labels.js"></script>
 	<script src="./js/monitormate.js"></script>
@@ -14,6 +16,7 @@
 </head>
 <body>
 	<div id="left-col">
+		<div id="soc_gauge" class="gauge-chart"></div>
 		<select id="status_top_select" onchange="set_status('status_top',this.options[this.selectedIndex].value)"></select>
 		<select id="status_bottom_select" onchange="set_status('status_bottom',this.options[this.selectedIndex].value)"></select>
 		<div id="status_top" class="status_content"></div>
@@ -27,15 +30,14 @@
 	<div id="multichart2" class="top-chart"></div>
 
 	<select id="multichart3_select" onchange="set_chart('multichart3',this.options[this.selectedIndex].value)"></select>
-	<div id="multichart3" class="bottom-wide-chart"></div>
-
-	<h2>Historical Production/Usage <a href="historical.html">(see all)</a>:</h2>
+	<div id="multichart3" class="top-chart"></div>
 
 	<div id="month_days_chart" class="bottom-wide-chart"></div>
-	<div class="bottom-double-charts">
+<!--	<div class="bottom-double-charts">
 		<div id="months_chart" class="left-chart"></div>
 		<div id="years_chart" class="right-chart"></div>
-	</div>
+	</div>-->
+	<a href="historical.html">Browse Historical Production/Usage</a>
 	<script>
 		function load_data() {
 
@@ -55,12 +57,13 @@
 			populate_select("multichart2_select");
 			populate_select("multichart3_select");
 			
+			set_chart("soc_gauge", "flexnet_soc_gauge");
 			set_chart("multichart1", chart_content["multichart1"]);
 			set_chart("multichart2", chart_content["multichart2"]);
 			set_chart("multichart3", chart_content["multichart3"]);
 
-			chart_years();
-			chart_months();
+//			chart_years();
+//			chart_months();
 			chart_days_of_month();
 		
 			setInterval("get_status()", 5000);

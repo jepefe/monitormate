@@ -4,9 +4,9 @@
 Highcharts.theme1 = {
 	global: {
 		// all the mate data is stored in local timezone in the database, so turn off the UTC default for highcharts
-		useUTC: false
 		// I guess we don't need to set the timezone offset, but i'm not totally sure.
-		// timezoneOffset: 8
+		useUTC: true,
+		//timezoneOffset: 480
 	},
 	chart: {
 	    type: 'column',
@@ -15,8 +15,20 @@ Highcharts.theme1 = {
 	title: {
 	   text: null
 	},
+//	legend: {
+//		enabled: false  
+//	},
 	legend: {
-		enabled: false  
+		enabled: true,
+		layout: 'vertical',
+		backgroundColor: '#FFFFFF',
+		borderWidth: 0,
+		borderRadius: 0, 
+		floating: true,
+		align: 'left',
+		verticalAlign: 'top',
+		x: 2,
+		y: 8   
 	},
 	colors: ['#F2B807', '#0396A6'],
 	plotOptions: {
@@ -28,15 +40,15 @@ Highcharts.theme1 = {
 		},
 		series: {
 			cursor: 'pointer',
-			point: {
-				events: {
-					click: function() {
-						var myDate = new Date(this.x);
-						alert (myDate.toUTCString() +' :: '+ this.y);
-					}
-				}
-			}
-
+			stickyTracking: false,
+//			point: {
+//				events: {
+//					click: function() {
+//						var myDate = new Date(this.x);
+//						alert (myDate.toUTCString() +' :: '+ this.y);
+//					}
+//				}
+//			}
 		}
 	},
 	xAxis: {
@@ -55,10 +67,9 @@ Highcharts.theme1 = {
 	    }
 	},
 	tooltip: {
-		formatter: function() {
-			var string1 = this.series.name + ': <strong>' + this.y.toFixed(2) + ' kWh</strong>';
-			return string1;
-		}
+		shared: true,
+		borderColor: '#333',
+		crosshairs: false,
 	},
 	credits: {
 		enabled: false
@@ -72,9 +83,9 @@ Highcharts.theme1 = {
 Highcharts.theme2 = {
 	global: {
 		// all the mate data is stored in local timezone in the database, so turn off the UTC default for highcharts
-		useUTC: true
 		// I guess we don't need to set the timezone offset, but i'm not totally sure.
-		// timezoneOffset: 8
+		useUTC: true,
+		//timezoneOffset: 480
 	},
 	chart: {
 	    type: 'line'
@@ -98,29 +109,30 @@ Highcharts.theme2 = {
 	plotOptions: {
 		series: {
 			cursor: 'pointer',
+			stickyTracking: false,
 			lineWidth: 2,
 			marker: {
 				enabled: false,
+				symbol: 'circle',
 				lineColor: null, // inherit from series color
 				fillColor: null, // inherit from series color
 				states: {
 					hover: {
 						enabled: true,
-						radius: 3,
-						lineWidth: 2,
-						fillColor: '#FFFFFF'
+						radius: 4,
+						lineWidth: 1,
+						lineColor: '#FFFFFF'
 					}
 				}
 			},
-			point: {
-				events: {
-					click: function() {
-						var myDate = new Date(this.x);
-						alert (myDate.toUTCString() +' :: '+ this.y);
-					}
-				}
-			}
-
+//			point: {
+//				events: {
+//					click: function() {
+//						var myDate = new Date(this.x);
+//						alert (myDate.toUTCString() +' :: '+ this.y);
+//					}
+//				}
+//			}
 		}
 	},
 	xAxis: {
@@ -139,8 +151,13 @@ Highcharts.theme2 = {
 	        text: null
 	    }
 	},
+	tooltip: {
+		shared: true,
+		borderColor: '#333',
+		crosshairs: true
+	},
 	credits: {
 		enabled: false
-	},
+	}
 
 };
