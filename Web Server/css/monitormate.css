@@ -67,7 +67,7 @@ td.label {
 }
 
 .top-chart {
-	height: 260px;
+	height: 250px;
 	min-width: 380px; /* should be double-wide width minus left margin (below) - */	
 	margin-left: 340px; /* shoud be 20px more than the left-col width. */
 	margin-right: 0px;
@@ -79,13 +79,13 @@ td.label {
 	clear: both;
 	width: 100%;
 	min-width: 720px;
-	height: 300px;
+	height: 250px;
 	margin-top: 20px;	
 }
 
 .bottom-double-charts {
 	position: relative;
-	height: 300px;  /* just so you can see it */
+	height: 250px;
 	margin: 20px 0px;
 	min-width: 720px;
 }
@@ -94,7 +94,7 @@ td.label {
 	position: absolute;
 	left: 0px;
 	width: 48%;
-	height: 300px;
+	height: 250px;
 	margin-right: 20px;
 }
 
@@ -102,6 +102,6 @@ td.label {
 	position: absolute;
 	right: 0px;
 	width: 48%;
-	height: 300px;
+	height: 250px;
 	margin-left: 20px;
 }
