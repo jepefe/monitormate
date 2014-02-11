@@ -22,16 +22,20 @@
 		<div id="status_top" class="status_content"></div>
 		<div id="status_bottom" class="status_content"></div>
 	</div>
-
-	<select id="multichart1_select" onchange="set_chart('multichart1',this.options[this.selectedIndex].value)"></select>
-	<div id="multichart1" class="top-chart"></div>
-
-	<select id="multichart2_select" onchange="set_chart('multichart2',this.options[this.selectedIndex].value)"></select>
-	<div id="multichart2" class="top-chart"></div>
-
-	<select id="multichart3_select" onchange="set_chart('multichart3',this.options[this.selectedIndex].value)"></select>
-	<div id="multichart3" class="top-chart"></div>
-
+	
+	<div class="right-col">
+		<select id="multichart1_select" onchange="set_chart('multichart1',this.options[this.selectedIndex].value)"></select>
+		<div id="multichart1" class="multichart"></div>
+	</div>
+	<div class="right-col">	
+		<select id="multichart2_select" onchange="set_chart('multichart2',this.options[this.selectedIndex].value)"></select>
+		<div id="multichart2" class="multichart"></div>
+	</div>
+	<div class="right-col">		
+		<select id="multichart3_select" onchange="set_chart('multichart3',this.options[this.selectedIndex].value)"></select>
+		<div id="multichart3" class="multichart"></div>
+	</div>
+	
 	<div id="month_days_chart" class="bottom-wide-chart"></div>
 <!--	<div class="bottom-double-charts">
 		<div id="months_chart" class="left-chart"></div>
