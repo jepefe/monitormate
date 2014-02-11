@@ -98,7 +98,8 @@ function get_dataStream(date) {
 		async: false,
 		type: 'GET',
 		dataType: 'json',
-		url: 'getstatus.php?q=day&date=' + date,
+//		url: 'getstatus.php?q=day&date=' + date,
+		url: 'getstatus.php?q=day',
 		success: function (data) {
 			full_day_data = data;
 		}
@@ -190,13 +191,14 @@ function populate_status() {
 			tabs.splice(0, 0, "<option value=" + val + ">" + name + "</option>");
 			tabs.splice(1, 0, '<optgroup label="Devices">');
 		} else {
-			// j is the port number
-			for (var j in full_day_data[i]) {
-				var name = '';
-				var val = '';
-
-				val = i + ":" + j;
-				tabs.push("<option value=" + val + ">" + deviceLabel[j] + "</option>");
+			for (var port in full_day_data[i]) {
+				if (port != "totals") {
+					var name = '';
+					var val = '';
+	
+					val = i + ":" + port;
+					tabs.push("<option value=" + val + ">" + deviceLabel[port] + "</option>");
+				}
 			}
 		}
 	}
@@ -368,8 +370,8 @@ function chart_years() {
 		comp_date = new Date(split_date[0], 0, 1);				// use the year to make a date object for jan 1st of that year
 		year = comp_date.getTime();								// turn it into millisecond timestamp
 
-		years_data_kwhin[i] = [year, parseInt(available_years[i].kwh_in)];
-		years_data_kwhout[i] = [year, parseInt(available_years[i].kwh_out)];
+		years_data_kwhin[i] = [year, Math.round(available_years[i].kwh_in)];
+		years_data_kwhout[i] = [year, Math.round(available_years[i].kwh_out)];
 		
 	}
 
@@ -394,7 +396,7 @@ function chart_years() {
 				tipTitle = Highcharts.dateFormat('%Y', this.x);
 				tipSeries = '';
 				for (var i = 0; i < this.points.length; i++) {
-					string = this.points[i].y.toFixed(0) + ' kWh ' + this.points[i].series.name;
+					string = this.points[i].y + ' kWh ' + this.points[i].series.name;
 					tipSeries = tipSeries + '<br/>' + string;
 				}
 				return '<strong>' + tipTitle + '</strong>' + tipSeries;
@@ -425,7 +427,8 @@ function chart_months(date) {
 		async: false,
 		type: 'GET',
 		dataType: 'json',
-		url: 'getstatus.php?q=months&date=' + date,
+//		url: 'getstatus.php?q=months&date=' + date,
+		url: 'getstatus.php?q=months',
 		success: function (data) {
 			available_months = data;
 
@@ -440,8 +443,8 @@ function chart_months(date) {
 		month_date = new Date(split_date[0], split_date[1] - 1, 1);	// use the month to make a date object for the 1st of the month
 		month = month_date.getTime();								// turn it into millisecond timestamp
 
-		months_data_kwhin[i]  = [month, parseInt(available_months[i].kwh_in)];
-		months_data_kwhout[i] = [month, parseInt(available_months[i].kwh_out)];
+		months_data_kwhin[i]  = [month, Math.round(available_months[i].kwh_in)];
+		months_data_kwhout[i] = [month, Math.round(available_months[i].kwh_out)];
 
 	}
 
@@ -466,7 +469,7 @@ function chart_months(date) {
 				tipTitle = Highcharts.dateFormat('%B', this.x);
 				tipSeries = '';
 				for (var i = 0; i < this.points.length; i++) {
-					string = this.points[i].y.toFixed(0) + ' kWh ' + this.points[i].series.name;
+					string = this.points[i].y + ' kWh ' + this.points[i].series.name;
 					tipSeries = tipSeries + '<br/>' + string;
 				}
 				return '<strong>' + tipTitle + '</strong>' + tipSeries;
@@ -501,7 +504,8 @@ function chart_days_of_month(date) {
 		async: false,
 		type: 'GET',
 		dataType: 'json',
-		url: 'getstatus.php?q=month_days&date=' + date,
+//		url: 'getstatus.php?q=month_days&date=' + date,
+		url: 'getstatus.php?q=month_days',
 		success: function (data) {
 			available_month_days = data;
 		}
@@ -516,11 +520,11 @@ function chart_days_of_month(date) {
 		month_days_date = new Date(split_date[0], split_date[1] - 1, split_date[2]);	// use the month to make a date object for the 1st of the month
 		day = month_days_date.getTime();												// turn it into millisecond timestamp
 	
-		month_days_data_kwhin[i]  = [day, parseInt(available_month_days[i].kwh_in)];
-		month_days_data_kwhout[i] = [day, parseInt(available_month_days[i].kwh_out)];
+		month_days_data_kwhin[i]  = [day, parseFloat(available_month_days[i].kwh_in)];
+		month_days_data_kwhout[i] = [day, parseFloat(available_month_days[i].kwh_out)];
 		
-		month_total_kwhin += parseInt(available_month_days[i].kwh_in);
-		month_total_kwhout += parseInt(available_month_days[i].kwh_out)
+		month_total_kwhin += parseFloat(available_month_days[i].kwh_in);
+		month_total_kwhout += parseFloat(available_month_days[i].kwh_out);
 	}
 
 	month_avg_kwhin = month_total_kwhin/available_month_days.length;
@@ -572,7 +576,7 @@ function chart_days_of_month(date) {
 				tipTitle = Highcharts.dateFormat('%A, %b %e', this.x);
 				tipSeries = '';
 				for (var i = 0; i < this.points.length; i++) {
-					string = this.points[i].y.toFixed(0) + ' kWh ' + this.points[i].series.name;
+					string = this.points[i].y.toFixed(1) + ' kWh ' + this.points[i].series.name;
 					tipSeries = tipSeries + '<br/>' + string;
 				}
 				return '<strong>' + tipTitle + '</strong>' + tipSeries;
@@ -712,6 +716,7 @@ function get_cc_chargePower() {
 	chart_options = {
     	yAxis: {
     		min: 0,
+    		minRange: cfg_pvWattage/3,
 		    labels: {
 		        format: '{value} W'
 		    }
@@ -805,6 +810,7 @@ function get_cc_chargeCurrent() {
 	chart_options = {
     	yAxis: {
     		min: 0,
+    		minRange: cfg_pvWattage/cfg_sysVoltage/3,
 		    labels: {
 		        format: '{value} A'
 		    }
@@ -846,7 +852,7 @@ function get_cc_inputVolts() {
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_array_volts[port][y] = {
 					x: day_date,
-					y: parseInt(full_day_data[CC_ID][port][y].pv_voltage),
+					y: parseFloat(full_day_data[CC_ID][port][y].pv_voltage),
 					mode: full_day_data[CC_ID][port][y].charge_mode
 				};
 	
@@ -914,7 +920,7 @@ function get_cc_inputCurrent() {
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_array_amps[port][y] = {
 					x: day_date,
-					y: parseInt(full_day_data[CC_ID][port][y].pv_current),
+					y: parseFloat(full_day_data[CC_ID][port][y].pv_current),
 					mode: full_day_data[CC_ID][port][y].charge_mode
 				};
 	
@@ -940,10 +946,10 @@ function get_cc_inputCurrent() {
 	chart_options = {
     	yAxis: {
     		min: 0,
+    		minRange: cfg_pvWattage/cfg_sysVoltage/3,
 		    labels: {
 		        format: '{value} A'
-		    },
-		    
+		    }, 
 		},
 		tooltip: {
 			formatter: function() {
@@ -974,7 +980,7 @@ function get_battery_volts() {
 
 				day_date = convert_date(full_day_data[FNDC_ID][port][j].date);
 				
-				day_data_volts[j] = [day_date, parseInt(full_day_data[FNDC_ID][port][j].battery_volt)];
+				day_data_volts[j] = [day_date, parseFloat(full_day_data[FNDC_ID][port][j].battery_volt)];
 			}
 		}
 	} else {
@@ -984,7 +990,7 @@ function get_battery_volts() {
 
 				day_date = convert_date(full_day_data[CC_ID][port][j].date);
 
-				day_data_volts[j] = [day_date, parseInt(full_day_data[CC_ID][port][j].battery_volts)];
+				day_data_volts[j] = [day_date, parseFloat(full_day_data[CC_ID][port][j].battery_volts)];
 			}
 
 		}
@@ -998,6 +1004,13 @@ function get_battery_volts() {
 	    	enabled: false  
 	    },
     	yAxis: {
+    		minRange: cfg_sysVoltage/6,
+		    plotBands: {
+		    	// red for below the system voltage plus a tad: 12.2, 24.4, or 48.8
+                color: '#ffedee',
+                from: 0,
+                to: cfg_sysVoltage * 1.0167
+			},
 		    labels: {
 		        format: '{value} V'
 		    }
@@ -1216,8 +1229,10 @@ function get_fndc_soc_gauge() {
 	        plotBackgroundColor: 'white',
 	        plotBackgroundImage: null,
             plotBorderWidth: 0,
-	        height: 120,
-            width: 320
+	        height: 100,
+            width: 300,
+            margin: [1, 1, 1, 1],
+            spacing: [0, 0, 0, 0]
 		},
 		title: {
 	        text: null
@@ -1229,8 +1244,8 @@ function get_fndc_soc_gauge() {
 			startAngle: -18,
 			endAngle: 18,
 			background: null,
-			size: 680,
-            center: ['50%', '390%'],
+			size: 800,
+            center: ['50%', '430%'],
 		},
 		plotOptions: {
 			gauge: {
@@ -1238,7 +1253,7 @@ function get_fndc_soc_gauge() {
 					enabled: true,
 					borderWidth: 0,
 					zIndex: 10,
-					y: -274,
+					y: -355,
 					useHTML: true,
 					formatter: function() {
 						var string1 = this.series.name + ': <emphasis>' + this.y + '%</emphasis>';
@@ -1246,12 +1261,12 @@ function get_fndc_soc_gauge() {
 					}
 				},
 				dial: {
-					radius: '97%',
+					radius: '98%',
                     baseWidth: 4,
-                    baseLength: '97%'
+                    baseLength: '98%'
 				},
                 pivot: {
-					radius: 300,
+					radius: 360,
 					borderWidth: 0,
 					borderColor: 'gray',
 					backgroundColor: 'white'	
@@ -1278,13 +1293,13 @@ function get_fndc_soc_gauge() {
 		    	// red from 0 to 59
                 color: '#f88',
                 from: 0,
-                to: 59.9,
+                to: 60,
                 thickness: '18'
             }, {
             	// yellow from 60 to 79
 				color: '#ffff44',
 				from: 60,
-				to: 79.9,
+				to: 80,
                 thickness: '18'
             }, {
 				// green from 80 to 100
@@ -1297,7 +1312,7 @@ function get_fndc_soc_gauge() {
                 color: 'rgba(24,150,160,0.25)',
                 from: min_soc,
                 to: max_soc,
-                outerRadius: '318',
+                outerRadius: '378',
                 thickness: '18'
             }]
 		},
