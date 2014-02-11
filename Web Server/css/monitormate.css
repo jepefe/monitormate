@@ -1,5 +1,5 @@
 body {
-	margin: 20px;
+	margin: 16px;
 	font-family: Verdana;
 	font-size: 11px;
 	background-color: #eeeff9;
@@ -59,21 +59,27 @@ td.label {
 
 #left-col {
 	float: left;
-	width: 320px; /* if you change this, change top chart's left margin. */
+	width: 300px; /* if you change this, change right-col left margin. */
 	height: 880px;
 	margin-bottom: 20px;
 	background-color: white;
 	border-radius: 6px;
+	padding: 10px;
 }
 
-.top-chart {
+.right-col {
+	margin-left: 330px; /* shoud be 20px more than the left-col width. */
+	margin-right: 0px;
+	margin-bottom: 10px;
+	background-color: white;
+	border-radius: 6px;	
+	padding: 10px 10px 0px 10px;
+}
+
+.multichart {
 	height: 250px;
 	min-width: 380px; /* should be double-wide width minus left margin (below) - */	
-	margin-left: 340px; /* shoud be 20px more than the left-col width. */
-	margin-right: 0px;
-	margin-bottom: 20px;	
 }
-
 
 .bottom-wide-chart {
 	clear: both;
