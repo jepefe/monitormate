@@ -5,8 +5,8 @@ Highcharts.theme1 = {
 	global: {
 		// all the mate data is stored in local timezone in the database, so turn off the UTC default for highcharts
 		// I guess we don't need to set the timezone offset, but i'm not totally sure.
-		useUTC: true,
-		//timezoneOffset: 480
+		useUTC: false,
+		timezoneOffset: 480
 	},
 	chart: {
 	    type: 'column',
@@ -21,14 +21,15 @@ Highcharts.theme1 = {
 	legend: {
 		enabled: true,
 		layout: 'vertical',
-		backgroundColor: '#FFFFFF',
-		borderWidth: 0,
-		borderRadius: 0, 
+		backgroundColor: '#FFF',
+		borderColor: '#CCC',
+		borderWidth: 1,
+		borderRadius: 2, 
 		floating: true,
 		align: 'left',
 		verticalAlign: 'top',
-		x: 2,
-		y: 8   
+		x: 0,
+		y: 2   
 	},
 	colors: ['#F2B807', '#0396A6'],
 	plotOptions: {
@@ -55,7 +56,9 @@ Highcharts.theme1 = {
 		type: 'datetime',
 	    title: {
 	    	text: null
-		}
+		},
+		minorTickWidth: 0,
+		minorGridLineWidth: 0
 	},
 	yAxis: {
 		opposite: true,
@@ -84,8 +87,8 @@ Highcharts.theme2 = {
 	global: {
 		// all the mate data is stored in local timezone in the database, so turn off the UTC default for highcharts
 		// I guess we don't need to set the timezone offset, but i'm not totally sure.
-		useUTC: true,
-		//timezoneOffset: 480
+		useUTC: false,
+		timezoneOffset: 480
 	},
 	chart: {
 	    type: 'line'
@@ -96,21 +99,22 @@ Highcharts.theme2 = {
 	legend: {
 		enabled: true,
 		layout: 'vertical',
-		backgroundColor: '#FFFFFF',
-		borderWidth: 0,
-		borderRadius: 0, 
+		backgroundColor: '#FFF',
+		borderColor: '#CCC',
+		borderWidth: 1,
+		borderRadius: 2, 
 		floating: true,
 		align: 'left',
 		verticalAlign: 'top',
-		x: 2,
-		y: 8   
+		x: 0,
+		y: 2   
 	},
 	colors: ['#0396A6', '#F2B807', '#4c328a'],
 	plotOptions: {
 		series: {
 			cursor: 'pointer',
-			stickyTracking: false,
-			lineWidth: 2,
+			stickyTracking: true,
+			lineWidth: 1.5,
 			marker: {
 				enabled: false,
 				symbol: 'circle',
@@ -140,6 +144,9 @@ Highcharts.theme2 = {
 	    title: {
 	    	text: null
 		},
+		minorTickInterval: 1000 * 60 * 60,
+		minorTickWidth: 1,
+		minorGridLineWidth: 0,
 		dateTimeLabelFormats: {
 			hour: '%l%P',
 			day: '%l%P'
