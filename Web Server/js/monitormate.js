@@ -24,6 +24,8 @@ var available_years;
 var available_months = [];
 var available_month_days;
 
+// default charts for the monitormate.html page. 
+// this can/will get overwritten by the cookies.
 var chart_content = {
 	multichart1: "battery_volts",
 	multichart2: "charge_current",
@@ -87,19 +89,28 @@ function set_deviceNames() {
 }
 
 
-function get_dataStream(date) {
+function get_dataStream(scope) {
 	var chart_data;
 
-	if (!date) {
-		date = get_formatted_date();
+
+// why would we ever pass the current date to the server?
+// The server is perfectly capable of doing that itself.
+
+//	if (!date) {
+//		date = get_formatted_date();
+//	}
+
+	if (typeof scope == "number") {
+		urlArguments = '?q=day&scope=' + scope;
+	} else {
+		urlArguments = '?q=day&date=' + get_formatted_date();
 	}
 
 	$.ajax({
 		async: false,
 		type: 'GET',
 		dataType: 'json',
-//		url: 'getstatus.php?q=day&date=' + date,
-		url: 'getstatus.php?q=day',
+		url: 'getstatus.php' + urlArguments,
 		success: function (data) {
 			full_day_data = data;
 		}
@@ -135,7 +146,7 @@ function convert_date(dateString) {
 	// a javascript date, then convert it to milliseconds
 	// for highcharts to use it properly.
 	split_date = dateString.split(/[- :]/);
-	date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() - ((new Date().getTimezoneOffset()) * 60000))));
+	date = (new Date((new Date(split_date[0], split_date[1] - 1, split_date[2], split_date[3], split_date[4]).getTime() )));
 	dateMS = date.getTime(); // convert to milliseconds
 	
 	return dateMS;
@@ -216,13 +227,15 @@ function set_status(div, value) {
 	var device;
 	var value = value;
 	var div = div;
+	// Why declare a variable that's an argument??
 	
 	// TODO: I don't like the use of "value", don't all variables have a value??
 	
 	if (value == "none") {
 		for (var i in json_status) {
 			switch (json_status[i].device_id) {
-				case DEVICE["CC"]:
+				// what's this?
+				case CC_ID:
 					value = json_status[i].device_id + ":" + Math.round(json_status[i].address);
 					break;
 			}
@@ -516,10 +529,8 @@ function chart_days_of_month(date) {
 	//Fill array with series
 	for (i = 0; i < available_month_days.length; i++) {
 			
-		split_date = available_month_days[i].date.split(/[- :]/);						// split the YYYY-MM-DD into an array
-		month_days_date = new Date(split_date[0], split_date[1] - 1, split_date[2]);	// use the month to make a date object for the 1st of the month
-		day = month_days_date.getTime();												// turn it into millisecond timestamp
-	
+		day = available_month_days[i].timestamp;	
+			
 		month_days_data_kwhin[i]  = [day, parseFloat(available_month_days[i].kwh_in)];
 		month_days_data_kwhout[i] = [day, parseFloat(available_month_days[i].kwh_out)];
 		
@@ -604,11 +615,16 @@ function set_chart(chart_id, content) {
 function draw_chart(chart_id, content) {
 	var chart_data = 0;
 
-	if (!content) {
-		content = chart_content[chart_id];
-	}
+// i have no idea what this crap is for...
+// this function should require both arguments... 
+// it's kinda messed up to set one variable to the element of the array
+// then set the element of that same array to the variable.
 
-	chart_content[chart_id] = content;
+//	if (!content) {
+//		content = chart_content[chart_id];
+//	}
+//
+//	chart_content[chart_id] = content;
 
 	switch (content) {
 		case "charge_power":
@@ -664,7 +680,13 @@ function get_cc_chargePower() {
 			// y is the datapoint (from 0 to n)
 
 			day_date = convert_date(full_day_data[CC_ID][port][y].date);
+			day_timestamp = full_day_data[CC_ID][port][y].timestamp;
+			
+			if (day_date == day_timestamp) {
+				var temp = day_timestamp + 1;
+			}
 
+			// FIXME: using timestamp locks my computer up in the totals...
 			if (port == "totals") {
 
 				total_watts = (full_day_data[CC_ID][port][y].total_current) * 1 * full_day_data[CC_ID][port][y].battery_volts;
@@ -718,7 +740,10 @@ function get_cc_chargePower() {
     		min: 0,
     		minRange: cfg_pvWattage/3,
 		    labels: {
-		        format: '{value} W'
+//		        format: '{value} W'
+				formatter: function () {
+					return (this.value/1000).toFixed(1) + ' kW'
+				}
 		    }
 		},
 		tooltip: {
@@ -820,8 +845,12 @@ function get_cc_chargeCurrent() {
 				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
 				tipSeries = '';
 				for (var i = 0; i < this.points.length; i++) {
-					string =  this.points[i].y.toFixed(0) + ' Amps: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')';
-					tipSeries = tipSeries + '<br/>' + string;
+					if (this.points[i].series.name == "Total") {
+						string =  this.points[i].y.toFixed(0) + ' Amps ' + this.points[i].series.name;
+					} else {
+						string =  this.points[i].y.toFixed(0) + ' Amps: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')';
+					}
+					tipSeries = tipSeries + '<br/>' + string;										
 				}			
 				return '<strong>' + tipTitle + '</strong>' + tipSeries;
 			}
@@ -880,8 +909,7 @@ function get_cc_inputVolts() {
     		min: 0,
 		    labels: {
 		        format: '{value} V'
-		    },
-		    
+			}
 		},
 		tooltip: {
 			formatter: function() {
@@ -1087,22 +1115,24 @@ function get_fndc_shunts() {
 		chart: {
 		    type: 'line'
 		},
-		plotOptions: {
-			series: {
-				lineWidth: 2,
+//		plotOptions: {
+//			series: {
+//				lineWidth: 1.5,
 //				fillOpacity: 0.25
-			}
-		},
+//			}
+//		},
     	yAxis: {
 		    labels: {
-		        format: '{value} W'
+//		        format: '{value} W'
+				formatter: function () {
+					return (this.value/1000).toFixed(1) + ' kW'
+				}
 		    }
 		},
 		tooltip: {
 			shared: false,
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-
 				// single non-shared tooltip
 				tipSeries = this.y.toFixed(0) + ' Watts: ' + this.series.name;
 				return '<strong>' + tipTitle + '</strong><br/>' + tipSeries;

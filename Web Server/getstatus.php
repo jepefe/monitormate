@@ -12,14 +12,16 @@ if (isset($_GET) && isset($_GET["q"])) {
 	ob_end_clean(); 
 
 	$date = '';
+	$scope = null;
 		
-	// TODO: check for "q" and "date"
 	if (isset($_GET["date"])) {
 		// TODO: I should verify that the date is properly formatted.
 		$date = $_GET["date"];
-//	} else {
-//		// set it to today (local server time?)
-//		$date = date("Y-m-d");
+	}
+	
+	if (isset($_GET["scope"])) {
+		// TODO: I should verify that it's an integer in a valid range.
+		$scope = $_GET["scope"];
 	}
 	
 	switch ($_GET["q"]) {
@@ -33,10 +35,10 @@ if (isset($_GET) && isset($_GET["q"])) {
 			send_month_days($date);
 			break;
 		case 'day':
-			send_day($date);
+			send_day($date, $scope);
 			break;
-		
 		default:
+			echo("ERROR: unknown parameters set.");
 			break;
 	}
 } else {
@@ -115,6 +117,9 @@ function send_month_days($date) {
 		$whereClause = "year(date) = year('".$date."') AND month(date) = month('".$date."')"; 		
 	}
 	
+	
+	// DATE_FORMAT(date,'%M %d, %Y %H:%i:%S') would return a more easily javascript usable date string.
+	
 	$query =	"SELECT
 					date,
 					kwh_in,
@@ -126,15 +131,17 @@ function send_month_days($date) {
 	$result=NULL;
 	
 	while($row = mysql_fetch_assoc($query_result)){
-			$result[] = $row;
+			$timestamp = strtotime($row['date'])*1000;				// get timestamp in seconds, convert to milliseconds
+			$stampedRow = array("timestamp"=>$timestamp) + $row;	// put it in an assoc array and merge them
+			$result[] = $stampedRow;
 	}
-	
+		
 	$json_month_days = json_encode($result);
 	echo $json_month_days;
 }
 
-
-function send_day($date){
+// FIXME: the default scope of 12 doesn't seem to work. odd.
+function send_day($date, $scope = 12){
 	//
 	// Used to generate all three of the "current" charts that shows daily activity.
 	// TODO:	allow this one to generate based on a rolling window, rather than day-by-day boundries.
@@ -143,7 +150,7 @@ function send_day($date){
 	$connection = db_connection();
 		
 	if ($date == '') {
-		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 36 HOUR)";
+		$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
 	} else {
 		$whereClause = "date(date) = date('".$date."')";
 	}
@@ -184,7 +191,9 @@ function send_day($date){
 	
 	foreach ($allday_querys as $i) {
 		while ($row = mysql_fetch_assoc($i)) {
-			$allday_data[$row["device_id"]][$row["address"]][] = $row;
+			$timestamp = strtotime($row['date'])*1000;				// get timestamp in seconds, convert to milliseconds
+			$stampedRow = array("timestamp"=>$timestamp) + $row;	// put it in an assoc array and merge them
+			$allday_data[$row["device_id"]][$row["address"]][] = $stampedRow;
 		}
 	}
 

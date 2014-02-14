@@ -3,6 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=800">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
@@ -35,13 +37,18 @@
 		<select id="multichart3_select" onchange="set_chart('multichart3',this.options[this.selectedIndex].value)"></select>
 		<div id="multichart3" class="multichart"></div>
 	</div>
-	
+		
 	<div id="month_days_chart" class="bottom-wide-chart"></div>
 <!--	<div class="bottom-double-charts">
 		<div id="months_chart" class="left-chart"></div>
 		<div id="years_chart" class="right-chart"></div>
 	</div>-->
-	<a href="historical.html">Browse Historical Production/Usage</a>
+	<p>
+		<a href="historical.html">Browse Historical Production/Usage</a>
+		&nbsp;&bull;&nbsp;
+		<a href="daily.html">Show All Daily Graphs</a>
+	</p>
+
 	<script>
 		function load_data() {
 
@@ -50,7 +57,7 @@
 			// get_months(get_URLvars()["date"]);
 			// get_month_days(get_URLvars()["date"]);
 
-			get_dataStream();
+			get_dataStream(16); // get 16 hours of data
 			set_deviceNames();									
 
 			populate_status();
@@ -61,7 +68,7 @@
 			populate_select("multichart2_select");
 			populate_select("multichart3_select");
 			
-			set_chart("soc_gauge", "flexnet_soc_gauge");
+			draw_chart("soc_gauge", "flexnet_soc_gauge");
 			set_chart("multichart1", chart_content["multichart1"]);
 			set_chart("multichart2", chart_content["multichart2"]);
 			set_chart("multichart3", chart_content["multichart3"]);
