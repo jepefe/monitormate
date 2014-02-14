@@ -141,20 +141,24 @@ function send_month_days($date) {
 }
 
 // FIXME: the default scope of 12 doesn't seem to work. odd.
-function send_day($date, $scope = 12){
+function send_day($date, $scope){
 	//
 	// Used to generate all three of the "current" charts that shows daily activity.
 	// TODO:	allow this one to generate based on a rolling window, rather than day-by-day boundries.
 	//			Historical charts will use day bounderies still, but main monitor will show rolling 12/18/24 hours.
 	//	
 	$connection = db_connection();
+
+	if ($scope == null) {
+		$scope = 12;
+	}
 		
 	if ($date == '') {
 		$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
 	} else {
 		$whereClause = "date(date) = date('".$date."')";
 	}
-	
+		 
 	$query_summary =		"SELECT *
 							FROM monitormate3_summary
 							WHERE date(date) = date(NOW())
@@ -201,7 +205,9 @@ function send_day($date, $scope = 12){
 		// there's more than one charge controller, query the totals
 		$result_fmmx_totals = mysql_query($query_fmmx_totals, $connection);
 		while ($row = mysql_fetch_assoc($result_fmmx_totals)) {
-			$allday_data[3]["totals"][] = $row;
+			$timestamp = strtotime($row['date'])*1000;				// get timestamp in seconds, convert to milliseconds
+			$stampedRow = array("timestamp"=>$timestamp) + $row;	// put it in an assoc array and merge them
+			$allday_data[3]["totals"][] = $stampedRow;
 		}
 	}
 
