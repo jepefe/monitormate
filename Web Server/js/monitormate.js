@@ -69,17 +69,17 @@ function set_deviceNames() {
 			// not the summary data, only the numberical entries
 			for (var port in full_day_data[type]) {
 				// j is the port number
-				if (deviceLabel[port] == "") {
+				if (deviceLabel[port] == "") { // FIXME: i should check if it's null or empty string etc...
 					// Assign default name based on ID type 
 					switch (type) {
 						case FX_ID:
-							deviceLabel[port] = "FX Inverter - Port " + full_day_data[type][port][0].address;
+							deviceLabel[port] = "FX Inverter (" + full_day_data[type][port][0].address + ")";
 							break;
 						case CC_ID:
-							deviceLabel[port] = "FM/MX - Port " + full_day_data[type][port][0].address;
+							deviceLabel[port] = "FM/MX (" + full_day_data[type][port][0].address + ")";
 							break;
 						case FNDC_ID:
-							deviceLabel[port] = "FLEXnet DC - Port " + full_day_data[type][port][0].address;
+							deviceLabel[port] = "FLEXnet DC (" + full_day_data[type][port][0].address + ")";
 							break;
 					}
 				}
@@ -138,15 +138,6 @@ function get_formatted_date(date) {
 	var year = d.getFullYear();
 	date = year + "-" + month + "-" + day;
 	return date;
-}
-
-
-// not currently using this...
-function round_decimals(number, places) {
-    placeholder = number * Math.pow(10,places);
-	placeholder = Math.round(placeholder);
-	rounded = placeholder / Math.pow(10,places);
-	return rounded;
 }
 
 
@@ -258,7 +249,7 @@ function set_status(div, value) {
 			break;
 
 		case FX_ID:
-			content =	'<table><caption>FX Inverter<div>Port ' + device.address + '</div></caption>\
+			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">AC Output Voltage:</td><td>' + device.ac_output_voltage + ' V</td></tr>\
 						<tr><td class="label">Inverter Current:</td><td>' + device.inverter_current + ' A</td></tr>\
 						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
@@ -274,7 +265,7 @@ function set_status(div, value) {
 			break;
 
 		case CC_ID:
-			content =	'<table><caption>FX/MX Charge Controller<div>Port ' + device.address + '</div></caption>\
+			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
 						<tr><td class="label">Charge Mode:</td><td>' + device.charge_mode + '</td></tr>\
 						<tr><td class="label">PV Current:</td><td>' + device.pv_current + ' A</td></tr>\
@@ -289,8 +280,8 @@ function set_status(div, value) {
 
 		case FNDC_ID:
 			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
-			content =	'<table><caption>FLEXnet DC<div>Port ' + device.address + '</div></caption>\
-						<tr><td class="label">SOC:</td><td>' + device.soc + '%</td></tr>\
+			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
+						<tr><td class="label">State of Charge:</td><td>' + device.soc + '%</td></tr>\
 						<tr><td class="label">Charge Parameters Met:</td><td>' + device.charge_params_met + '</td></tr>\
 						<tr><td class="label">Days Since Full:</td><td>' + (Math.round(device.days_since_full * 100) / 100) + ' Days</td></tr>\
 						<tr><td class="label">Charge Corrected Net:</td><td>' + device.charge_factor_corrected_net_batt_ah + ' Ah, ' + device.charge_factor_corrected_net_batt_kwh + ' kWh</td></tr>\
