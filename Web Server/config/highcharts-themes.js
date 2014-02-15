@@ -178,7 +178,7 @@ Highcharts.theme2 = {
 		crosshairs: true,
 		style: {
 			color: '#333333',
-			fontSize: '10px',
+			fontSize: '11px',
 			padding: '6px'
 		}
 	},
