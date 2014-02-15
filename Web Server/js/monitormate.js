@@ -291,25 +291,26 @@ function set_status(div, value) {
 			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
 			content =	'<table><caption>FLEXnet DC<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">SOC:</td><td>' + device.soc + '%</td></tr>\
-						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
-						<tr><td class="label">Battery Temperature:</td><td>' + device.battery_temp + ' &deg;C (' + ((device.battery_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
 						<tr><td class="label">Charge Parameters Met:</td><td>' + device.charge_params_met + '</td></tr>\
 						<tr><td class="label">Days Since Full:</td><td>' + (Math.round(device.days_since_full * 100) / 100) + ' Days</td></tr>\
 						<tr><td class="label">Charge Corrected Net:</td><td>' + device.charge_factor_corrected_net_batt_ah + ' Ah, ' + device.charge_factor_corrected_net_batt_kwh + ' kWh</td></tr>\
-						<tr><td class="label">Relay Mode:</td><td>' + device.relay_mode + '</td></tr>\
-						<tr><td class="label">Relay Status:</td><td>' + device.relay_status + '</td></tr>\
+						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
+						<tr><td class="label">Battery Temperature:</td><td>' + device.battery_temp + ' &deg;C (' + ((device.battery_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
+						<th class="subhead">Auxiliary Relay</th>\
+						<tr><td class="label">Mode:</td><td>' + device.relay_mode + '</td></tr>\
+						<tr><td class="label">Status:</td><td>' + device.relay_status + '</td></tr>\
 						<th class="subhead">Shunts</th>\
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.shunt_a_amps + ' A, ' + Math.round(device.shunt_a_amps * device.battery_volt) + ' W</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.shunt_b_amps + ' A, ' + Math.round(device.shunt_b_amps * device.battery_volt) + ' W</td></tr>\
 						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.shunt_c_amps + ' A, ' + Math.round(device.shunt_c_amps * device.battery_volt) + ' W</td></tr>\
-						<tr><td class="label">Battery:</td><td>' + total_shunt_amps + ' A, ' + Math.round(total_shunt_amps * device.battery_volt) + ' W</td></tr>\
-						<th class="subhead">Today\'s Net</th>\
-						<tr><td class="label">Input:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
-						<tr><td class="label">Output:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\
-						<th class="subhead">Accumulation</th>\
+						<tr><td class="label">Battery:</td><td>' + total_shunt_amps.toFixed(1) + ' A, ' + Math.round(total_shunt_amps * device.battery_volt) + ' W</td></tr>\
+						<th class="subhead">Returned to Battery</th>\
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.accumulated_ah_shunt_a + ' Ah, ' + device.accumulated_kwh_shunt_a + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.accumulated_ah_shunt_b + ' Ah, ' + device.accumulated_kwh_shunt_b + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.accumulated_ah_shunt_c + ' Ah, ' + device.accumulated_kwh_shunt_c + ' kWh</td></tr>\
+						<th class="subhead">Today\'s Net</th>\
+						<tr><td class="label">Input:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
+						<tr><td class="label">Output:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\
 						</table>';
 			break;
 
@@ -346,9 +347,10 @@ function get_status() {
 
 function chart_years() {
 
-	years_data_kwhin = [];
-	years_data_kwhout = [];
-	date = get_formatted_date();
+	var years_data_kwhin = [];
+	var years_data_kwhout = [];
+	var years_net_kwh = [];
+	var date = get_formatted_date();
 	
 	//Get all years in database		
 	status = $.ajax({
@@ -373,9 +375,13 @@ function chart_years() {
 		comp_date = new Date(split_date[0], 0, 1);				// use the year to make a date object for jan 1st of that year
 		year = comp_date.getTime();								// turn it into millisecond timestamp
 
-		years_data_kwhin[i] = [year, Math.round(available_years[i].kwh_in)];
-		years_data_kwhout[i] = [year, Math.round(available_years[i].kwh_out)];
+		kwh_in = Math.round(available_years[i].kwh_in);
+		kwh_out = Math.round(available_years[i].kwh_out);
+
+		years_data_kwhin[i] = [year, kwh_in];
+		years_data_kwhout[i] = [year, kwh_out];
 		
+		years_net_kwh[i] = [year, (kwh_in - kwh_out)];
 	}
 
 	// Apply the column chart theme
@@ -411,7 +417,11 @@ function chart_years() {
 		}, {
 		    name: 'Usage',
 			data: years_data_kwhout
-	    }],
+//		}, {
+//		    name: 'Net',
+//		    type: 'areaspline',
+//			data: years_net_kwh
+	    }]
 	});
 
 }
@@ -421,6 +431,7 @@ function chart_months(date) {
 
 	var months_data_kwhin = [];
 	var months_data_kwhout = [];
+	var months_net_kwh = [];
 	
 	if (!date) {
 		date = get_formatted_date();
@@ -446,8 +457,13 @@ function chart_months(date) {
 		month_date = new Date(split_date[0], split_date[1] - 1, 1);	// use the month to make a date object for the 1st of the month
 		month = month_date.getTime();								// turn it into millisecond timestamp
 
-		months_data_kwhin[i]  = [month, Math.round(available_months[i].kwh_in)];
-		months_data_kwhout[i] = [month, Math.round(available_months[i].kwh_out)];
+		kwh_in  = Math.round(available_months[i].kwh_in);
+		kwh_out = Math.round(available_months[i].kwh_out);
+		
+		months_data_kwhin[i]  = [month, kwh_in];
+		months_data_kwhout[i] = [month, kwh_out];
+
+		months_net_kwh[i] = [month, (kwh_in - kwh_out)];
 
 	}
 
@@ -484,7 +500,11 @@ function chart_months(date) {
 		}, {
 	        name: 'Usage',
 	        data: months_data_kwhout,
-	    }],
+//	    }, {
+//	        name: 'Net',
+//	        type: 'areaspline',
+//	        data: months_net_kwh,
+	    }]
 	});
 
 }
@@ -494,6 +514,7 @@ function chart_days_of_month(date) {
 
 	var month_days_data_kwhin = [];
 	var month_days_data_kwhout = [];
+	var month_days_net_kwh = [];
 	var month_total_kwhin = 0;
 	var month_total_kwhout = 0;
 	var month_avg_kwhin = 0;
@@ -522,14 +543,16 @@ function chart_days_of_month(date) {
 		day = available_month_days[i].timestamp;	
 			
 		month_days_data_kwhin[i]  = [day, parseFloat(available_month_days[i].kwh_in)];
-		month_days_data_kwhout[i] = [day, parseFloat(available_month_days[i].kwh_out)];
+		month_days_data_kwhout[i] = [day, -parseFloat(available_month_days[i].kwh_out)];
 		
-		month_total_kwhin += parseFloat(available_month_days[i].kwh_in);
-		month_total_kwhout += parseFloat(available_month_days[i].kwh_out);
+		month_days_net_kwh[i] = [day, (parseFloat(available_month_days[i].kwh_in) - parseFloat(available_month_days[i].kwh_out))];
+		
+//		month_total_kwhin += parseFloat(available_month_days[i].kwh_in);
+//		month_total_kwhout -= parseFloat(available_month_days[i].kwh_out);
 	}
 
-	month_avg_kwhin = month_total_kwhin/available_month_days.length;
-	month_avg_kwhout = month_total_kwhout/available_month_days.length;
+//	month_avg_kwhin = month_total_kwhin/available_month_days.length;
+//	month_avg_kwhout = month_total_kwhout/available_month_days.length;
 	
 	// Apply the column chart theme
 	Highcharts.setOptions(Highcharts.theme1);
@@ -538,6 +561,17 @@ function chart_days_of_month(date) {
 		plotOptions: {
 			series: {
 				pointRange: 24 * 3600 * 1000		// 1 day
+			},
+			column: {
+				groupPadding: 0.5,	// exact overlap
+				pointWidth: 14,		// overcome that the grouppadding makes them too narrow
+			},
+			spline: {
+				states: {
+					hover: {
+						lineWidth: 1.5
+					}
+				}
 			}
 		},
 	    xAxis: {
@@ -547,31 +581,31 @@ function chart_days_of_month(date) {
 				day: '%e'
 			}
 	    },
-	    yAxis: {
-			plotLines: [{
-				color: 'rgba(241,183,44,0.25)',
-				width: 2,
-				zIndex: 1,
-				value: month_avg_kwhin,
+//	    yAxis: {
+//			plotLines: [{
+//				color: 'rgba(241,183,44,0.25)',
+//				width: 2,
+//				zIndex: 1,
+//				value: month_avg_kwhin,
 //				label: {
 //					text: month_avg_kwhin.toFixed(1) + 'kWh',
 //					align: 'right',
 //					verticalAlign: 'top',
 //					x: -2
 //				}            
-			},{
-				color: 'rgba(24,150,165,0.25)',
-				width: 2,
-				zIndex: 1,
-				value: month_avg_kwhout,
+//			},{
+//				color: 'rgba(24,150,165,0.25)',
+//				width: 2,
+//				zIndex: 1,
+//				value: month_avg_kwhout,
 //				label: {
 //					text: month_avg_kwhout.toFixed(1) + 'kWh',
 //					align: 'right',
 //					x: -2,
 //					y: 13
 //				}            
-			}]
-	    },
+//			}]
+//	    },
 	    tooltip: {
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%A, %b %e', this.x);
@@ -589,6 +623,10 @@ function chart_days_of_month(date) {
 		}, {
 	        name: 'Usage',
 	        data: month_days_data_kwhout,
+	    }, {
+	        name: 'Net',
+	        type: 'spline',
+	        data: month_days_net_kwh,
 	    }],
 	});
 

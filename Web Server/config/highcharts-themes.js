@@ -31,13 +31,22 @@ Highcharts.theme1 = {
 		x: 0,
 		y: 2   
 	},
-	colors: ['#F2B807', '#0396A6'],
+	colors: ['#F2B807', '#0396A6', '#333333'],
 	plotOptions: {
 		column: {
-			pointPadding: 0,
 			borderWidth: 0,
-			groupPadding: 0.25,
+			pointPadding: 0,		
+			groupPadding: 0.25,	
 			shadow: false
+		},
+		spline: {
+			lineWidth: 1.5,
+			color: '#333',
+			marker: {
+				fillColor: '#555',
+				radius: 2
+			},
+			showInLegend: false,
 		},
 		series: {
 			cursor: 'pointer',
@@ -73,6 +82,11 @@ Highcharts.theme1 = {
 		shared: true,
 		borderColor: '#333',
 		crosshairs: false,
+		style: {
+			color: '#333333',
+			fontSize: '10px',
+			padding: '6px'
+		}
 	},
 	credits: {
 		enabled: false
@@ -161,7 +175,12 @@ Highcharts.theme2 = {
 	tooltip: {
 		shared: true,
 		borderColor: '#333',
-		crosshairs: true
+		crosshairs: true,
+		style: {
+			color: '#333333',
+			fontSize: '10px',
+			padding: '6px'
+		}
 	},
 	credits: {
 		enabled: false

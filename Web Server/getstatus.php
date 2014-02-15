@@ -91,7 +91,8 @@ function send_month_totals($date) {
 					sum(kwh_out) AS kwh_out
 				FROM monitormate3_summary
 				WHERE ".$whereClause."
-				GROUP BY month(date)";
+				GROUP BY month(date)
+				ORDER BY date";
 
 	$query_result = mysql_query($query, $connection);
 	$result=NULL;
