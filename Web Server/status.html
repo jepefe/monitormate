@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<link rel="icon" href="./images/favicon16.png" type="image/png">
+	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="./config/highcharts-themes.js"></script>
+	<script src="./config/config.js"></script>
+	<script src="./js/monitormate.js"></script>
+	<title>MonitorMate — Status</title>
+</head>
+<body>
+	<div id="left-col">
+		<div id="status_port1" class="status_content"></div>
+		<div id="status_port2" class="status_content"></div>
+		<div id="status_port3" class="status_content"></div>
+		<div id="status_port4" class="status_content"></div>
+		<div id="status_port5" class="status_content"></div>
+		<div id="status_port6" class="status_content"></div>
+		<div id="status_port7" class="status_content"></div>
+		<div id="status_port8" class="status_content"></div>
+		<div id="status_port9" class="status_content"></div>
+		<div id="status_port10" class="status_content"></div>
+	</div>
+	
+
+	<script>
+		function load_data() {
+
+			get_dataStream(1); // get 1 hour of data
+			set_deviceNames();									
+
+			get_status();
+			
+			set_status('status_port1', 'summary');
+			set_status('status_port2', '2:1');
+			set_status('status_port3', '2:2');
+//			set_status('status_port4', '3:3');
+			set_status('status_port5', '3:4');
+			set_status('status_port6', '4:5');
+//			set_status('status_port7',);
+//			set_status('status_port8',);
+//			set_status('status_port9',);
+//			set_status('status_port10',);
+					
+			setInterval("get_status()", 5000);
+			
+		}
+	</script>
+</body>
+</html>
