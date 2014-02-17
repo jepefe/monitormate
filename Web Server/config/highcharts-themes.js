@@ -4,9 +4,7 @@
 Highcharts.theme1 = {
 	global: {
 		// all the mate data is stored in local timezone in the database, so turn off the UTC default for highcharts
-		// I guess we don't need to set the timezone offset, but i'm not totally sure.
 		useUTC: false,
-		timezoneOffset: 480
 	},
 	chart: {
 	    type: 'column',
@@ -100,9 +98,7 @@ Highcharts.theme1 = {
 Highcharts.theme2 = {
 	global: {
 		// all the mate data is stored in local timezone in the database, so turn off the UTC default for highcharts
-		// I guess we don't need to set the timezone offset, but i'm not totally sure.
 		useUTC: false,
-		timezoneOffset: 480
 	},
 	chart: {
 	    type: 'line'
