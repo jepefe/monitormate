@@ -18,6 +18,11 @@ var CC_ID	= "3";	// 3 is a FM/MX charge controller (CC)
 var FNDC_ID = "4";	// 4 is a FLEXnet DC
 var RAD_ID	= "6";	// 6 is a Radian-series inverter
 
+// some arrays for the labels for the devices and shunts.
+// these will get set up in set_labels() after get_datastream().
+var deviceLabel = [];
+var shuntLabel = [];
+
 var json_status = null;
 var full_day_data;
 var available_years;
@@ -62,14 +67,17 @@ function get_cookies() {
 }
 
 
-function set_deviceNames() {
+function set_labels() {
+	// convert all the cfg_ labels to regular ones...
+	
+	// look through the data and apply names to all the devices we found
 	for (var type in full_day_data) {
-		// i is the device type		
+				
 		if (type !== "summary") {
 			// not the summary data, only the numberical entries
 			for (var port in full_day_data[type]) {
-				// j is the port number
-				if (deviceLabel[port] == "") { // FIXME: i should check if it's null or empty string etc...
+
+				if (cfg_deviceLabel[port] === "") { 
 					// Assign default name based on ID type 
 					switch (type) {
 						case FX_ID:
@@ -82,8 +90,32 @@ function set_deviceNames() {
 							deviceLabel[port] = "FLEXnet DC (" + full_day_data[type][port][0].address + ")";
 							break;
 					}
+				} else {
+					deviceLabel[port] = cfg_deviceLabel[port];
 				}
 			}
+		}
+	}
+	
+	// the shunts are a bit more straight forward...
+	for (var channel in cfg_shuntLabel) {
+		if (cfg_shuntLabel[channel] === "") {
+			switch (channel) {
+				case 0:
+					shuntLabel[channel] = "Shunt A";
+					break;
+				case 1:
+					shuntLabel[channel] = "Shunt B";
+					break;
+				case 2:
+					shuntLabel[channel] = "Shunt C";
+					break;
+				default: 
+					shuntLabel[channel] = "Shunt";
+					break;
+			}
+		} else {
+			shuntLabel[channel] = cfg_shuntLabel[channel]; 
 		}
 	}
 }
@@ -115,7 +147,9 @@ function get_dataStream(scope) {
 			full_day_data = data;
 		}
 	});
-
+	// once we have the datastream, we should set
+	// the labels per the user configuration.
+	set_labels();
 }
 
 function get_days_in_month(year, month) {
@@ -1207,14 +1241,19 @@ function get_fndc_soc() {
 function get_fndc_soc_gauge() {
 
 	if (full_day_data["summary"]) {
-		min_soc = full_day_data["summary"].min_soc;
-		max_soc = full_day_data["summary"].max_soc;		
+		var min_soc = full_day_data["summary"].min_soc;
+		var max_soc = full_day_data["summary"].max_soc;		
 	}
 
 
 	for (var port in full_day_data[FNDC_ID]) {
-		device = json_status["device" + port];
-		current_soc = device.soc;
+		var device = json_status["device" + port];
+		var current_soc = device.soc;
+		var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
+		var chargeDirection = '&#8595'; // assume charging is false
+		if (total_shunt_amps > 0) {
+			chargeDirection = '&#8593';
+		}
 		break; // only one FNDC!
 	}
 	
@@ -1253,7 +1292,7 @@ function get_fndc_soc_gauge() {
 					y: -355,
 					useHTML: true,
 					formatter: function() {
-						var string1 = this.series.name + ': <emphasis>' + this.y + '%</emphasis>';
+						var string1 = this.series.name + ': <emphasis>' + this.y + '%</emphasis> ' + chargeDirection;
 						return string1;
 					}
 				},
@@ -1333,5 +1372,5 @@ function get_fndc_soc_gauge() {
 // this is the crazy way to get shit started in jQuery. Seriously.
 //
 $( document ).ready(function() {
-	load_data();
+	load_page();
 });
