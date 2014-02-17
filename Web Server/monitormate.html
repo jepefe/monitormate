@@ -50,7 +50,7 @@
 	</p>
 
 	<script>
-		function load_data() {
+		function load_page() {
 
 			// no reason to get url vars anymore...
 			// get_datastream(get_URLvars()["date"]);
@@ -58,8 +58,7 @@
 			// get_month_days(get_URLvars()["date"]);
 
 			get_dataStream(16); // get 16 hours of data
-			set_deviceNames();									
-
+			
 			populate_status();
 			get_cookies();
 			get_status();
@@ -73,8 +72,6 @@
 			set_chart("multichart2", chart_content["multichart2"]);
 			set_chart("multichart3", chart_content["multichart3"]);
 
-//			chart_years();
-//			chart_months();
 			chart_days_of_month();
 		
 			setInterval("get_status()", 5000);

@@ -20,19 +20,16 @@
 	</div>
 	<div id="month_days_chart" class="bottom-wide-chart"></div>
 	<script>
-		function load_data() {
-			// moved this from html
-			chart_years();
-			
+		function load_page() {
+
 			// no reason to get url vars anymore...
 			// get_months(get_URLvars()["date"]);
-			chart_months();
-		
-			// no reason to get url vars anymore...
 			// get_month_days(get_URLvars()["date"]);
+
+			chart_years();			
+			chart_months();
 			chart_days_of_month();
-					
-			// setInterval("get_status()", 5000);
+
 		}
 	</script>
 </body>
