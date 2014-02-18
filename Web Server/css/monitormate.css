@@ -31,7 +31,7 @@ caption {
 	font-size: 12px;
 	text-align: left;
 	padding: 4px;
-	border-bottom: 1px solid black;
+	border-bottom: 1px solid #999;
 }
 
 caption div {
@@ -60,7 +60,7 @@ td.label {
 #left-col {
 	float: left;
 	width: 300px; /* if you change this, change right-col left margin. */
-	height: 880px;
+	height: 840px;
 	margin-bottom: 20px;
 	background-color: white;
 	border-radius: 6px;

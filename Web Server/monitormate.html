@@ -19,8 +19,10 @@
 <body>
 	<div id="left-col">
 		<div id="soc_gauge" class="gauge-chart"></div>
-		<select id="status_top_select" onchange="set_status('status_top',this.options[this.selectedIndex].value)"></select>
-		<select id="status_bottom_select" onchange="set_status('status_bottom',this.options[this.selectedIndex].value)"></select>
+		<div style="text-align: center; margin: 20px;">
+			<select id="status_top_select" onchange="set_status('status_top',this.options[this.selectedIndex].value)"></select>
+			<select id="status_bottom_select" onchange="set_status('status_bottom',this.options[this.selectedIndex].value)"></select>
+		</div>
 		<div id="status_top" class="status_content"></div>
 		<div id="status_bottom" class="status_content"></div>
 	</div>
