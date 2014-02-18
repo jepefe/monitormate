@@ -11,8 +11,8 @@ if (isset($_GET) && isset($_GET["q"])) {
     require_once './config/config.php';
 	ob_end_clean(); 
 
-	$date = '';
-	$scope = null;
+	$date = NULL;
+	$scope = NULL;
 		
 	if (isset($_GET["date"])) {
 		// TODO: I should verify that the date is properly formatted.
@@ -52,11 +52,20 @@ function send_year($date) {
 	//
 	$connection = db_connection();
 
+	if (!empty($date)) {
+		// if there's a date, use that to define the range.
+		$whereClause = "date > DATE_SUB(year(date('".$date."')), INTERVAL 2 YEAR)";		
+	} else {
+		// if there's no date, then we just scope it from now.
+		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 4 YEAR)";
+	}
+
 	$query =	"SELECT
 					date,
 					sum(kwh_in) AS kwh_in,
 					sum(kwh_out) AS kwh_out
 				FROM monitormate3_summary
+				WHERE ".$whereClause."				
 				GROUP BY year(date)";
 
 	$query_result = mysql_query($query,$connection);
@@ -78,12 +87,13 @@ function send_month_totals($date) {
 	//
 	$connection = db_connection();
 
-	if ($date == '') {
-		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 12 MONTH)";
+	if (!empty($date)) {
+		// if there's a date, use that to define the range.
+		$whereClause = "year(date) = year(date('".$date."'))";
 	} else {
-		$whereClause = "year(date) = year(date('".$date."'))"; 		
+		// if there's no date, then we just scope it from now.
+		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 12 MONTH)";
 	}
-
 
 	$query =	"SELECT
 					date,
@@ -112,10 +122,12 @@ function send_month_days($date) {
 	//
 	$connection = db_connection();
 	
-	if ($date == '') {
-		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 31 DAY)";
-	} else {
+	if (!empty($date)) {
+		// if there's a date, use that to define the range.
 		$whereClause = "year(date) = year('".$date."') AND month(date) = month('".$date."')"; 		
+	} else {
+		// if there's no date, then we just scope it from now.
+		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 31 DAY)";
 	}
 	
 	
@@ -141,23 +153,22 @@ function send_month_days($date) {
 	echo $json_month_days;
 }
 
-// FIXME: the default scope of 12 doesn't seem to work. odd.
 function send_day($date, $scope){
 	//
 	// Used to generate all three of the "current" charts that shows daily activity.
-	// TODO:	allow this one to generate based on a rolling window, rather than day-by-day boundries.
-	//			Historical charts will use day bounderies still, but main monitor will show rolling 12/18/24 hours.
 	//	
 	$connection = db_connection();
-
-	if ($scope == null) {
-		$scope = 12;
-	}
-		
-	if ($date == '') {
-		$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
-	} else {
+	
+	if (!empty($date)) {
+		// if there's a date, use that to define the range.
 		$whereClause = "date(date) = date('".$date."')";
+	} else {
+		// if there's no date, then we just scope it from now.
+		if (empty($scope)) {
+			// defaulting to 12 hours if nothing was specified.
+			$scope = 12;
+		}
+		$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
 	}
 		 
 	$query_summary =		"SELECT *
@@ -192,7 +203,13 @@ function send_day($date, $scope){
 	$result_fxinv = mysql_query($query_fxinv, $connection);
 	
 	$allday_querys = array("fmmx"=>$result_fmmx,"flexnet"=>$result_flexnet,"fxinv"=>$result_fxinv);
-	$allday_data["summary"] = mysql_fetch_assoc($result_summary);
+//	$allday_data["summary"] = mysql_fetch_assoc($result_summary);
+	
+	while ($row = mysql_fetch_assoc($result_summary)) {
+		$row['kwh_net'] = $row['kwh_in'] - $row['kwh_out'];
+		$row['ah_net'] = $row['ah_in'] - $row['ah_out'];
+		$allday_data["summary"] = $row;
+	}
 	
 	foreach ($allday_querys as $i) {
 		while ($row = mysql_fetch_assoc($i)) {

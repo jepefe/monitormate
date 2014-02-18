@@ -270,10 +270,9 @@ function set_status(div, value) {
 
 		case "summary":
 			content =	'<table><caption>Summary<div>' + device.date + '</div></caption>\
-						<tr><td class="label">kWh In:</td><td>' + device.kwh_in + ' kWh</td></tr>\
-						<tr><td class="label">kWh Out:</td><td>' + device.kwh_out + ' kWh</td></tr>\
-						<tr><td class="label">Ah In:</td><td>' + device.ah_in + ' Ah</td></tr>\
-						<tr><td class="label">Ah Out:</td><td>' + device.ah_out + ' Ah</td></tr>\
+						<tr><td class="label">Production:</td><td>' + device.ah_in + ' Ah, ' + device.kwh_in + ' kWh</td></tr>\
+						<tr><td class="label">Usage:</td><td>' + device.ah_out + ' Ah, ' + device.kwh_out + ' kWh</td></tr>\
+						<tr><td class="label">Net:</td><td>' + device.ah_net + ' Ah, ' + device.kwh_net + ' kWh</td></tr>\
 						<tr><td class="label">Max SOC:</td><td>' + device.max_soc + '%</td></tr>\
 						<tr><td class="label">Min SOC:</td><td>' + device.min_soc + '%</td></tr>\
 						<tr><td class="label">Max Temp:</td><td>' + device.max_temp + ' &deg;C (' + ((device.max_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
@@ -314,13 +313,15 @@ function set_status(div, value) {
 
 		case FNDC_ID:
 			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
+			var today_net_ah = parseInt(device.today_net_input_ah) - parseInt(device.today_net_output_ah);
+			var today_net_kwh = parseFloat(device.today_net_input_kwh) - parseFloat(device.today_net_output_kwh);
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">State of Charge:</td><td>' + device.soc + '%</td></tr>\
 						<tr><td class="label">Charge Parameters Met:</td><td>' + device.charge_params_met + '</td></tr>\
 						<tr><td class="label">Days Since Full:</td><td>' + (Math.round(device.days_since_full * 100) / 100) + ' Days</td></tr>\
-						<tr><td class="label">Charge Corrected Net:</td><td>' + device.charge_factor_corrected_net_batt_ah + ' Ah, ' + device.charge_factor_corrected_net_batt_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
 						<tr><td class="label">Battery Temperature:</td><td>' + device.battery_temp + ' &deg;C (' + ((device.battery_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
+						<tr><td class="label">Charge Corrected Net:</td><td>' + device.charge_factor_corrected_net_batt_ah + ' Ah, ' + device.charge_factor_corrected_net_batt_kwh + ' kWh</td></tr>\
 						<th class="subhead">Auxiliary Relay</th>\
 						<tr><td class="label">Mode:</td><td>' + device.relay_mode + '</td></tr>\
 						<tr><td class="label">Status:</td><td>' + device.relay_status + '</td></tr>\
@@ -328,14 +329,15 @@ function set_status(div, value) {
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.shunt_a_amps + ' A, ' + Math.round(device.shunt_a_amps * device.battery_volt) + ' W</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.shunt_b_amps + ' A, ' + Math.round(device.shunt_b_amps * device.battery_volt) + ' W</td></tr>\
 						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.shunt_c_amps + ' A, ' + Math.round(device.shunt_c_amps * device.battery_volt) + ' W</td></tr>\
-						<tr><td class="label">Net Battery:</td><td>' + total_shunt_amps.toFixed(1) + ' A, ' + Math.round(total_shunt_amps * device.battery_volt) + ' W</td></tr>\
-						<th class="subhead">Returned to Battery</th>\
+						<tr><td class="label">Net (Batt):</td><td>' + total_shunt_amps.toFixed(1) + ' A, ' + Math.round(total_shunt_amps * device.battery_volt) + ' W</td></tr>\
+						<th class="subhead">Accumulated</th>\
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.accumulated_ah_shunt_a + ' Ah, ' + device.accumulated_kwh_shunt_a + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.accumulated_ah_shunt_b + ' Ah, ' + device.accumulated_kwh_shunt_b + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.accumulated_ah_shunt_c + ' Ah, ' + device.accumulated_kwh_shunt_c + ' kWh</td></tr>\
-						<th class="subhead">Today\'s Net</th>\
+						<th class="subhead">Today\'s Totals</th>\
 						<tr><td class="label">Input:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Output:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\
+						<tr><td class="label">Net:</td><td>' + today_net_ah + ' Ah, ' + today_net_kwh.toFixed(2) + ' kWh</td></tr>\
 						</table>';
 			break;
 
@@ -382,7 +384,8 @@ function chart_years() {
 		async: false,
 		type: 'GET',
 		dataType: 'json',
-		url: 'getstatus.php?q=years&date=' + date,
+//		url: 'getstatus.php?q=years&date=' + date,
+		url: 'getstatus.php?q=years',
 		success: function (data) {
 			available_years = data;
 		}
@@ -419,7 +422,7 @@ function chart_years() {
 			}
 		},
 	    xAxis: {
-			minRange: 157785000000, 				// 5 years in milliseconds
+			maxRange: 157785000000, 				// 5 years in milliseconds
 			tickInterval: 24 * 3600 * 1000 * 365,	// 1 year
 			dateTimeLabelFormats: {
 				year: '%Y'
@@ -502,7 +505,7 @@ function chart_months(date) {
 			}
 		},
 	    xAxis: {
-			minRange: 31600000000,					// 1 year in milliseconds
+			maxRange: 31600000000,					// 1 year in milliseconds
 			tickInterval: 24 * 3600 * 1000 * 30,	// 1 month
 			dateTimeLabelFormats: {
 				month: '%b'
@@ -1250,9 +1253,9 @@ function get_fndc_soc_gauge() {
 		var device = json_status["device" + port];
 		var current_soc = device.soc;
 		var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
-		var chargeDirection = '&#8595'; // assume charging is false
+		var chargeDirection = "⬇︎"; // assume charge is falling
 		if (total_shunt_amps > 0) {
-			chargeDirection = '&#8593';
+			chargeDirection = "⬆︎"; // if the amps are positive, then charging is going up!
 		}
 		break; // only one FNDC!
 	}
