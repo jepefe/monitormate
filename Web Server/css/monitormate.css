@@ -15,7 +15,7 @@ a:link {
 
 h2 {
 	color: #282828;
-	font-size: 18px;
+	font-size: 16px;
 	text-align: left;
 	font-weight: normal;
 	font-style: normal;
@@ -51,6 +51,10 @@ td {
 td.label {
 	text-align: right;
 	color: #aaaaaa;
+}
+
+input.datepicker {
+	width: 100px;
 }
 
 /*
