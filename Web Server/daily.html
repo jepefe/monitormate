@@ -5,14 +5,31 @@
 	<meta name="viewport" content="width=800">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
+	<link rel="stylesheet" href="./css/zebra.css" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script src="http://code.highcharts.com/highcharts.js"></script>
 	<script src="./config/highcharts-themes.js"></script>
+	<script type="text/javascript" src="./js/zebra_datepicker.js"></script>
 	<script src="./config/config.js"></script>
 	<script src="./js/monitormate.js"></script>
 	<title>MonitorMate — Daily</title>
 </head>
 <body>
+	<form action="javascript:void(0)" method="get">
+		<div style="text-align: center;">
+			Show graphs for: <input id="datepicker" class="datepicker" type="text" value="" onchange="alert('hi')">
+			<button onclick="change_day(-1)">Prev</button><button onclick="change_day(1)">Next</button>
+			&mdash; Scope:
+			<select id="scope" onchange="refresh_data();">
+				<option value="day">Calendar Day</option>
+				<option value="12">12 hours</option>
+				<option value="24">24 hours</option>
+				<option value="36">36 hours</option>
+				<option value="48">48 hours</option>
+				<option value="72">72 hours</option>
+			</select>
+		</div>
+	</form>
 	<h2>State of Charge:</h2>
 	<div id="flexnet_soc" class="bottom-wide-chart"></div>
 	<h2>Input/Output:</h2>
@@ -29,8 +46,57 @@
 	<div id="array_current" class="bottom-wide-chart"></div>
 	<script>
 		function load_page() {
+		
+			var URLvars = get_URLvars();
+		
+			// put today in the datepicker
+			$('input.datepicker').val(get_formatted_date());
+			$('input.datepicker').Zebra_DatePicker({
+				direction: [false, '2013-01-01'],
+				first_day_of_week: 0,
+				show_clear_date: false,
+				onSelect: function() {
+					$('#scope').val("day");
+					refresh_data();
+				}
+			});
+			
+			if (URLvars.scope) {
+				scope = URLvars.scope;
+			} else {
+				// default to calendar day
+				scope = "day";
+			}
+			
+			refresh_data(scope);
 
-			get_dataStream(36); // get 36 hours of data
+			//setInterval("get_status()", 5000);		
+		}
+
+		// FIXME: not stopping you from going past today.
+		function change_day(delta) {
+			delta = parseInt(delta);
+
+			split_date = $('#datepicker').val().split(/[- :]/);
+			new_date = new Date(parseInt(split_date[0]), parseInt(split_date[1] - 1), parseInt(split_date[2]));
+			updated_date = new Date(new_date.getTime() + (delta * 86400000)); // one day in milliseconds
+			
+			if (updated_date < (new Date())) {
+			
+				dateString = get_formatted_date(updated_date);
+				$('#datepicker').val(dateString);
+				refresh_data();
+			} else {
+				alert("You can't predict the future...");
+			}
+		}
+		
+		function refresh_data() {
+
+			var date = $('#datepicker').val();
+			var scope = $('#scope').val();
+			
+			get_dataStream(scope, date);
 			
 			draw_chart('flexnet_soc','flexnet_soc');
 			draw_chart('flexnet_shunts','flexnet_shunts');
@@ -39,9 +105,8 @@
 			draw_chart('charge_current','charge_current');
 			draw_chart('array_volts','array_volts');
 			draw_chart('array_current','array_current');
-					
-			//setInterval("get_status()", 5000);		
-		}
+		}		
+
 	</script>
 </body>
 </html>

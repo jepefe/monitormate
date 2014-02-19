@@ -120,22 +120,23 @@ function set_labels() {
 	}
 }
 
-
-function get_dataStream(scope) {
+// FIXME: if it's scoped, it's ignoring the day.
+function get_dataStream(scope, date) {
 	var chart_data;
-
-
-// why would we ever pass the current date to the server?
-// The server is perfectly capable of doing that itself.
-
-//	if (!date) {
-//		date = get_formatted_date();
-//	}
+	
+	if (scope == "day") {
+		scope = null;
+	} else {
+		scope = parseInt(scope);
+	}
 
 	if (typeof scope == "number") {
 		urlArguments = '?q=day&scope=' + scope;
+	} else if (date) {
+		urlArguments = '?q=day&date=' + date;
 	} else {
-		urlArguments = '?q=day&date=' + get_formatted_date();
+		urlArguments = '?q=day&date=' + get_formatted_date(); // today
+//		urlArguments = '?q=day';
 	}
 
 	$.ajax({
@@ -154,7 +155,7 @@ function get_dataStream(scope) {
 
 function get_days_in_month(year, month) {
 	// makes a date object for *next* month...
-	// subtracks a single second (to make it the last second of the previous day)
+	// subtracks a single millisecond (to make it the last second of the previous day)
 	// gets the day of *that* month
 	// now return that, which is the number of days in that month!
 	return (new Date((new Date(year, month + 1, 1)) - 1)).getDate();
@@ -167,9 +168,18 @@ function get_formatted_date(date) {
 	} else {
 		d = new Date(date)
 	}
-	var day = d.getDate();
-	var month = d.getMonth() + 1;
 	var year = d.getFullYear();
+	var month = d.getMonth() + 1;
+	var day = d.getDate();
+
+	if (month < 10) {
+		month = "0" + month;	// Javascripts default date formatting is two-digit months.
+	}
+
+	if (day < 10) {
+		day = "0" + day;	// Javascripts default date formatting is two-digit days.
+	}
+
 	date = year + "-" + month + "-" + day;
 	return date;
 }
