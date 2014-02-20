@@ -45,6 +45,43 @@
 	<h2>PV Array Current:</h2>
 	<div id="array_current" class="bottom-wide-chart"></div>
 	<script>
+		
+		function refresh_data() {
+
+			var date = $('#datepicker').val();
+			var scope = $('#scope').val();
+			
+			get_dataStream(scope, date);
+			
+			draw_chart('flexnet_soc','flexnet_soc');
+			draw_chart('flexnet_shunts','flexnet_shunts');
+			draw_chart('battery_volts','battery_volts');
+			draw_chart('charge_power','charge_power');
+			draw_chart('charge_current','charge_current');
+			draw_chart('array_volts','array_volts');
+			draw_chart('array_current','array_current');
+		}		
+
+
+		function change_day(delta) {
+
+			var delta = parseInt(delta);
+
+			split_date = $('#datepicker').val().split(/[- :]/);
+			new_date = new Date(parseInt(split_date[0]), parseInt(split_date[1] - 1), parseInt(split_date[2]));
+			updated_date = new Date(new_date.getTime() + (delta * 86400000)); // one day in milliseconds
+			
+			if (updated_date < (new Date())) {	// make you're not sneaking into the future.
+				dateString = get_formatted_date(updated_date);
+				$('#datepicker').val(dateString);
+				refresh_data();
+			} else {
+				alert("You can't predict the future...");
+			}
+
+		}
+
+
 		function load_page() {
 		
 			var URLvars = get_URLvars();
@@ -72,40 +109,6 @@
 
 			//setInterval("get_status()", 5000);		
 		}
-
-		// FIXME: not stopping you from going past today.
-		function change_day(delta) {
-			delta = parseInt(delta);
-
-			split_date = $('#datepicker').val().split(/[- :]/);
-			new_date = new Date(parseInt(split_date[0]), parseInt(split_date[1] - 1), parseInt(split_date[2]));
-			updated_date = new Date(new_date.getTime() + (delta * 86400000)); // one day in milliseconds
-			
-			if (updated_date < (new Date())) {
-			
-				dateString = get_formatted_date(updated_date);
-				$('#datepicker').val(dateString);
-				refresh_data();
-			} else {
-				alert("You can't predict the future...");
-			}
-		}
-		
-		function refresh_data() {
-
-			var date = $('#datepicker').val();
-			var scope = $('#scope').val();
-			
-			get_dataStream(scope, date);
-			
-			draw_chart('flexnet_soc','flexnet_soc');
-			draw_chart('flexnet_shunts','flexnet_shunts');
-			draw_chart('battery_volts','battery_volts');
-			draw_chart('charge_power','charge_power');
-			draw_chart('charge_current','charge_current');
-			draw_chart('array_volts','array_volts');
-			draw_chart('array_current','array_current');
-		}		
 
 	</script>
 </body>
