@@ -21,8 +21,7 @@
 			<button onclick="change_day(-1)">Prev</button><button onclick="change_day(1)">Next</button>
 			&mdash; Scope:
 			<select id="scope" onchange="refresh_data();">
-				<option value="day">Calendar Day</option>
-				<option value="12">12 hours</option>
+				<option value="0">Calendar Day</option>
 				<option value="24">24 hours</option>
 				<option value="36">36 hours</option>
 				<option value="48">48 hours</option>
@@ -51,7 +50,7 @@
 			var date = $('#datepicker').val();
 			var scope = $('#scope').val();
 			
-			get_dataStream(scope, date);
+			get_dataStream(date, scope);
 			
 			draw_chart('flexnet_soc','flexnet_soc');
 			draw_chart('flexnet_shunts','flexnet_shunts');
@@ -93,19 +92,16 @@
 				first_day_of_week: 0,
 				show_clear_date: false,
 				onSelect: function() {
-					$('#scope').val("day");
+					$('#scope').val('0');
 					refresh_data();
 				}
 			});
 			
 			if (URLvars.scope) {
-				scope = URLvars.scope;
-			} else {
-				// default to calendar day
-				scope = "day";
+				// TODO: set the popup to match the URLvar
 			}
 			
-			refresh_data(scope);
+			refresh_data();
 
 			//setInterval("get_status()", 5000);		
 		}

@@ -158,19 +158,29 @@ function send_day($date, $scope){
 	// Used to generate all three of the "current" charts that shows daily activity.
 	//	
 	$connection = db_connection();
-	
-	if (!empty($date)) {
-		// if there's a date, use that to define the range.
-		$whereClause = "date(date) = date('".$date."')";
-	} else {
-		// if there's no date, then we just scope it from now.
-		if (empty($scope)) {
-			// defaulting to 12 hours if nothing was specified.
-			$scope = 12;
+
+	// not always a date, but if there is it's formatted YYYY-MM-DD
+	// not always a scope, but always an int if there is one.
+
+	if (isset($date)) {
+		if (isset($scope)) {
+			// date & scope
+			$whereClause = "date > DATE_SUB(DATE_ADD(date('".$date."'), INTERVAL 1 DAY), INTERVAL ".$scope." HOUR) AND
+							date < DATE_ADD(date('".$date."'), INTERVAL 1 DAY)";
+		} else {
+			// date only
+			$whereClause = "date(date) = date('".$date."')";
 		}
-		$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
+	} else {
+		if (isset($scope)) {
+			// scope only
+			$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
+		} else {
+			// no date & no scope: return today (calendar day)
+			$whereClause = "date(date) = date(NOW())";
+		}		
 	}
-		 
+
 	$query_summary =		"SELECT *
 							FROM monitormate3_summary
 							WHERE date(date) = date(NOW())

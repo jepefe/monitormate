@@ -59,7 +59,7 @@
 			// get_months(get_URLvars()["date"]);
 			// get_month_days(get_URLvars()["date"]);
 
-			get_dataStream(16); // get 16 hours of data
+			get_dataStream(false, 16); // no date (will use now) and show 16 hours of data.
 			
 			populate_status();
 			get_cookies();

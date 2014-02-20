@@ -120,23 +120,25 @@ function set_labels() {
 	}
 }
 
-// FIXME: if it's scoped, it's ignoring the day.
-function get_dataStream(scope, date) {
+function get_dataStream(date, scope) {
+	// FIXME: this otherwise assumes date is well formatted. Which is not necessarily true.	
+	
 	var chart_data;
 	
-	if (scope == "day") {
-		scope = null;
-	} else {
+	if (scope) {
+		// if scope is jibberish, it'll parse to NaN and be falsy (below).
 		scope = parseInt(scope);
 	}
 
-	if (typeof scope == "number") {
-		urlArguments = '?q=day&scope=' + scope;
+	// TODO: i should just set properties and then have a helper function build the query string.
+	if (date && scope) {
+		urlArguments = '?q=day&date=' + date + '&scope=' + scope;
 	} else if (date) {
 		urlArguments = '?q=day&date=' + date;
+	} else if (scope) {
+		urlArguments = '?q=day&scope=' + scope;
 	} else {
-		urlArguments = '?q=day&date=' + get_formatted_date(); // today
-//		urlArguments = '?q=day';
+		urlArguments = '?q=day';
 	}
 
 	$.ajax({
@@ -270,8 +272,8 @@ function set_status(div, value) {
 		address = value.split(/[:]/)[1];
 		device = json_status["device" + address];
 	} else {
-		device_id = "summary"
-		address = "summary"
+		device_id = "summary";
+		address = "summary";
 		device = full_day_data["summary"];
 	}
 
