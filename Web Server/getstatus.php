@@ -162,11 +162,16 @@ function send_day($date, $scope){
 	// not always a date, but if there is it's formatted YYYY-MM-DD
 	// not always a scope, but always an int if there is one.
 
+	if ($date == date("Y-m-d")) {
+		// if the date is today, clear it.
+		$date = NULL;
+	}
+
 	if (isset($date)) {
 		if (isset($scope)) {
 			// date & scope
 			$whereClause = "date > DATE_SUB(DATE_ADD(date('".$date."'), INTERVAL 1 DAY), INTERVAL ".$scope." HOUR) AND
-							date < DATE_ADD(date('".$date."'), INTERVAL 1 DAY)";
+							date < DATE_ADD(date('".$date."'), INTERVAL 1 DAY)";			
 		} else {
 			// date only
 			$whereClause = "date(date) = date('".$date."')";
