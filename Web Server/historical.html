@@ -21,23 +21,28 @@
 		<div id="months_chart" class="right-chart"></div>
 	</div>
 	<div id="month_days_chart" class="bottom-wide-chart"></div>
-	<hr />
-	<form action="javascript:void(0)" method="get">
-		<div style="text-align: center;">
-			Show graphs for: <input id="datepicker" class="datepicker" type="text" value="" onchange="alert('hi')">
-			<button onclick="change_day(-1)">Prev</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)">Next</button>
-			&mdash; Scope:
-			<select id="scope" onchange="refresh_data();">
-				<option value="0">Calendar Day</option>
-				<option value="24">24 hours</option>
-				<option value="36">36 hours</option>
-				<option value="48">48 hours</option>
-				<option value="72">72 hours</option>
-			</select>
-		</div>
-	</form>
-	<h2>State of Charge:</h2>
-	<div id="flexnet_soc" class="bottom-wide-chart"></div>
+	<p>
+		<form action="javascript:void(0)" method="get">
+			<div style="text-align: center;">
+				Show graphs for: <input id="datepicker" class="datepicker" type="text" value="" onchange="alert('hi')">
+				<button onclick="change_day(-1)">Prev</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)">Next</button>
+				&mdash; Scope:
+				<select id="scope" onchange="refresh_data();">
+					<option value="0">Calendar Day</option>
+					<option value="24">24 hours</option>
+					<option value="36">36 hours</option>
+					<option value="48">48 hours</option>
+					<option value="72">72 hours</option>
+				</select>
+			</div>
+		</form>
+	</p>
+	<div id="left-col" style="height: 240px;">
+		<div id="status" class="status_content"></div>
+	</div>
+	<div class="right-col">
+		<div id="flexnet_soc" class="multichart"></div>
+	</div>
 	<h2>Input/Output:</h2>
 	<div id="flexnet_shunts" class="bottom-wide-chart"></div>
 	<h2>Battery Voltage:</h2>
@@ -62,7 +67,9 @@
 			window.history.replaceState(null, "MonitorMate — Daily", queryString);
 			
 			get_dataStream(date, scope);
-			
+
+			set_status("status", "summary");
+
 			draw_chart('flexnet_soc','flexnet_soc');
 			draw_chart('flexnet_shunts','flexnet_shunts');
 			draw_chart('battery_volts','battery_volts');
@@ -107,7 +114,7 @@
 			chart_years();			
 			chart_months();
 			chart_days_of_month();
-			
+
 			if (URLvars.date) {
 				// put the date from the querystring into the text field
 				date = URLvars.date;

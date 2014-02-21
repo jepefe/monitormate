@@ -188,7 +188,7 @@ function send_day($date, $scope){
 
 	$query_summary =		"SELECT *
 							FROM monitormate3_summary
-							WHERE date(date) = date(NOW())
+							WHERE ".$whereClause."
 							ORDER BY date";
 
 	$query_fmmx = 			"SELECT *
