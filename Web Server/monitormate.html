@@ -63,6 +63,9 @@
 			get_cookies();
 			get_status();
 			
+			set_status("status_top", status_content["status_top"]);
+			set_status("status_bottom", status_content["status_bottom"]);
+			
 			populate_select("multichart1_select");
 			populate_select("multichart2_select");
 			populate_select("multichart3_select");

@@ -101,17 +101,17 @@ function set_labels() {
 	for (var channel in cfg_shuntLabel) {
 		if (cfg_shuntLabel[channel] === "") {
 			switch (channel) {
-				case 0:
+				case "1":
 					shuntLabel[channel] = "Shunt A";
 					break;
-				case 1:
+				case "2":
 					shuntLabel[channel] = "Shunt B";
 					break;
-				case 2:
+				case "3":
 					shuntLabel[channel] = "Shunt C";
 					break;
 				default: 
-					shuntLabel[channel] = "Shunt";
+					shuntLabel[channel] = "Unknown Shunt";
 					break;
 			}
 		} else {
@@ -379,8 +379,6 @@ function get_status() {
 			}
 		});
 	}
-	set_status("status_top", status_content["status_top"]);
-	set_status("status_bottom", status_content["status_bottom"]);
 }
 
 
