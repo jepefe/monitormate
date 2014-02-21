@@ -18,7 +18,7 @@
 	<form action="javascript:void(0)" method="get">
 		<div style="text-align: center;">
 			Show graphs for: <input id="datepicker" class="datepicker" type="text" value="" onchange="alert('hi')">
-			<button onclick="change_day(-1)">Prev</button><button onclick="change_day(1)">Next</button>
+			<button onclick="change_day(-1)">Prev</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)">Next</button>
 			&mdash; Scope:
 			<select id="scope" onchange="refresh_data();">
 				<option value="0">Calendar Day</option>
@@ -49,6 +49,9 @@
 
 			var date = $('#datepicker').val();
 			var scope = $('#scope').val();
+			var queryString = "?date=" + date + "&scope=" + scope;
+
+			window.history.replaceState(null, "MonitorMate — Daily", queryString);
 			
 			get_dataStream(date, scope);
 			
@@ -66,16 +69,22 @@
 
 			var delta = parseInt(delta);
 
-			split_date = $('#datepicker').val().split(/[- :]/);
-			new_date = new Date(parseInt(split_date[0]), parseInt(split_date[1] - 1), parseInt(split_date[2]));
-			updated_date = new Date(new_date.getTime() + (delta * 86400000)); // one day in milliseconds
-			
-			if (updated_date < (new Date())) {	// make you're not sneaking into the future.
-				dateString = get_formatted_date(updated_date);
+			if (delta == 0) {
+				dateString = get_formatted_date();
 				$('#datepicker').val(dateString);
 				refresh_data();
 			} else {
-				alert("You can't predict the future...");
+				split_date = $('#datepicker').val().split(/[- :]/);
+				new_date = new Date(parseInt(split_date[0]), parseInt(split_date[1] - 1), parseInt(split_date[2]));
+				updated_date = new Date(new_date.getTime() + (delta * 86400000)); // one day in milliseconds
+				
+				if (updated_date < (new Date())) {	// make you're not sneaking into the future.
+					dateString = get_formatted_date(updated_date);
+					$('#datepicker').val(dateString);
+					refresh_data();
+				} else {
+					alert("You can't predict the future...");
+				}			
 			}
 
 		}
@@ -84,9 +93,28 @@
 		function load_page() {
 		
 			var URLvars = get_URLvars();
-		
-			// put today in the datepicker
-			$('input.datepicker').val(get_formatted_date());
+			var date;
+			var scope;
+			
+			if (URLvars.date) {
+				// put the date from the querystring into the text field
+				date = URLvars.date;
+			} else {
+				// put today into the text field
+				date = get_formatted_date();
+			}
+			$('input.datepicker').val(date);
+			
+			if (URLvars.scope) {
+				// put the scope from the querystring into the popup
+				scope = URLvars.scope;
+			} else {
+				// put 0 (calendar day) into the popup
+				scope = 0;
+			}
+			$('#scope').val(scope);
+			
+			// attach the date picker!
 			$('input.datepicker').Zebra_DatePicker({
 				direction: [false, '2013-01-01'],
 				first_day_of_week: 0,
@@ -96,11 +124,7 @@
 					refresh_data();
 				}
 			});
-			
-			if (URLvars.scope) {
-				// TODO: set the popup to match the URLvar
-			}
-			
+						
 			refresh_data();
 
 			//setInterval("get_status()", 5000);		
