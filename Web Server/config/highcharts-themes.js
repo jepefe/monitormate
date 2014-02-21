@@ -160,7 +160,7 @@ Highcharts.theme2 = {
 		minorGridLineWidth: 0,
 		dateTimeLabelFormats: {
 			hour: '%l%P',
-			day: '%l%P'
+			day: '%m/%d'
 		}
 	},
 	yAxis: {
