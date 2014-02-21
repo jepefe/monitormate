@@ -5,8 +5,9 @@
 // system configuration is helpful to know for creating reasonable
 // defaults for the ranges and max limits on charts.
 
-// Nominal system voltage
+// Nominal system voltage and your normal absorb setting.
 var cfg_sysVoltage = 48;
+var cfg_sysAbsorbVoltage = 58.8;
 
 // Total wattage of your photo voltaic arrays
 var cfg_pvWattage = 1500;

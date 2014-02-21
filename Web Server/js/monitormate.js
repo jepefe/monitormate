@@ -1070,12 +1070,17 @@ function get_battery_volts() {
 	    },
     	yAxis: {
     		minRange: cfg_sysVoltage/6,
-		    plotBands: {
+			plotLines: [{
+				color: '#00bb00',
+				width: 1.5,
+				value: cfg_sysAbsorbVoltage
+			}],
+		    plotBands: [{
 		    	// red for below the system voltage plus a tad: 12.2, 24.4, or 48.8
                 color: '#ffedee',
                 from: 0,
-                to: cfg_sysVoltage * 1.0167
-			},
+				to: cfg_sysVoltage * 1.0167
+			}],
 		    labels: {
 		        format: '{value} V'
 		    }
