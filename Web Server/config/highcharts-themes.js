@@ -101,7 +101,8 @@ Highcharts.theme2 = {
 		useUTC: false,
 	},
 	chart: {
-	    type: 'line'
+	    type: 'line',
+	    marginRight: 60
 	},
 	title: {
 	    text: null
