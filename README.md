@@ -67,7 +67,7 @@ Visual representation of devices status and history. Works with getstatus.php fo
 
 config.php
 ===========
-Configuration file. Contains database connection parameters, record interval, security token and time zone.
+Configuration file. Contains database connection parameters, record interval, security token, time zone, and power system configuration.
 
 
 monitormate.sh
@@ -79,8 +79,8 @@ Installation and Execution
 ===========
 
 1. Download monitormate and extract it.
-2. Rename the config files to config.php and labels.js (remove .sample)
-2. Edit the config and labels files to your liking.
+2. Rename the config file to config.php (remove .sample)
+2. Edit the config file to your liking.
 3. Use database.sql to create tables in your MySQL database. (I suggest phpAdmin to import)
 4. Copy the “Web Server” directory content to your web server.
 5. copy the "Data Stream Host" directory content to your host computer (if it's not the one you're using)
