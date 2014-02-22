@@ -121,9 +121,14 @@ function set_labels() {
 }
 
 function get_dataStream(date, scope) {
-	// FIXME: this otherwise assumes date is well formatted. Which is not necessarily true.	
-	
+
 	var chart_data;
+	
+	// FIXME: this otherwise assumes date is well formatted. Which is not necessarily true.	
+	if (!date || date == "today") {
+		// if there's no date, set it to today
+		date = get_formatted_date();
+	}
 	
 	if (scope) {
 		// if scope is jibberish, it'll parse to NaN and be falsy (below).
@@ -135,8 +140,6 @@ function get_dataStream(date, scope) {
 		urlArguments = '?q=day&date=' + date + '&scope=' + scope;
 	} else if (date) {
 		urlArguments = '?q=day&date=' + date;
-	} else if (scope) {
-		urlArguments = '?q=day&scope=' + scope;
 	} else {
 		urlArguments = '?q=day';
 	}

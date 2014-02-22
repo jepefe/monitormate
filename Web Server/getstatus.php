@@ -159,37 +159,35 @@ function send_day($date, $scope){
 	//	
 	$connection = db_connection();
 
-	// not always a date, but if there is it's formatted YYYY-MM-DD
+	// should always a date, and should always be formatted YYYY-MM-DD
 	// not always a scope, but always an int if there is one.
 
 	if ($date == date("Y-m-d")) {
-		// if the date is today, clear it.
-		$date = NULL;
-	}
-
-	if (isset($date)) {
+		// if the date is today...
 		if (isset($scope)) {
-			// date & scope
+			// ...and it's scoped.
+			$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
+		} else {
+			// ...with no scope.
+			$whereClause = "date(date) = date(NOW())";
+		}		
+	} else {
+		// It's not today...
+		if (isset($scope)) {
+			// ...but it is scoped.
 			$whereClause = "date > DATE_SUB(DATE_ADD(date('".$date."'), INTERVAL 1 DAY), INTERVAL ".$scope." HOUR) AND
 							date < DATE_ADD(date('".$date."'), INTERVAL 1 DAY)";			
 		} else {
-			// date only
+			// ...with no scope.
 			$whereClause = "date(date) = date('".$date."')";
 		}
-	} else {
-		if (isset($scope)) {
-			// scope only
-			$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
-		} else {
-			// no date & no scope: return today (calendar day)
-			$whereClause = "date(date) = date(NOW())";
-		}		
 	}
 
 	$query_summary =		"SELECT *
 							FROM monitormate3_summary
-							WHERE ".$whereClause."
+							WHERE date(date) = date('".$date."')
 							ORDER BY date";
+							// WHERE ".$whereClause."
 
 	$query_fmmx = 			"SELECT *
 							FROM monitormate3_fmmx
