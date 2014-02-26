@@ -42,6 +42,118 @@ var status_content = {
 	status_bottom: "none",
 };
 
+// Common theme for all the charts.
+Highcharts.theme = {
+	colors: ['black'],
+	credits: {
+		enabled: false
+	},
+	global: {
+		// the datastream is stored in local timezone in the database,
+		// so turn off the UTC default for highcharts.
+		useUTC: false
+	},
+	legend: {
+		enabled: true,
+		layout: 'vertical',
+		backgroundColor: '#FFF',
+		borderColor: '#CCC',
+		borderWidth: 1,
+		borderRadius: 2, 
+		floating: true,
+		align: 'left',
+		verticalAlign: 'top',
+		x: 0,
+		y: 2,
+	},
+	plotOptions: {
+		column: {
+			borderWidth: 0,
+			pointPadding: 0,		
+			groupPadding: 0.25,	
+			shadow: false,
+			cursor: 'pointer',
+			stickyTracking: false,
+		},
+		line: {
+			cursor: 'pointer',
+			stickyTracking: true,
+			lineWidth: 1.5,
+			marker: {
+				enabled: false,
+				symbol: 'circle',
+				lineColor: null, // inherit from series color
+				fillColor: null, // inherit from series color
+				states: {
+					hover: {
+						enabled: true,
+						radius: 4,
+						lineWidth: 1,
+						lineColor: '#FFFFFF'
+					}
+				}
+			},
+			states: {
+				hover: {
+					lineWidth: 1.5
+				}
+			}
+		},
+		areaspline: {
+			fillOpacity: 0.25,
+			lineWidth: 0,
+			marker: {
+				enabled: false,
+				symbol: 'circle',
+				lineColor: null, // inherit from series color
+				fillColor: null, // inherit from series color
+				states: {
+					hover: {
+						enabled: true,
+						radius: 4,
+						lineWidth: 1,
+						lineColor: '#FFFFFF'
+					}
+				}
+			},
+			showInLegend: false,
+			zIndex: -1
+		}
+	},
+	title: {
+	   text: null
+	},
+	tooltip: {
+		shared: true,
+		borderColor: '#333333',
+		crosshairs: true,
+		style: {
+			color: '#333333',
+			fontSize: '10px',
+			padding: '6px'
+		}
+	},
+	xAxis: {
+		dateTimeLabelFormats: {
+			hour: '%l%P',
+			day: '%m/%d'
+		},
+		minorTickInterval: 1000 * 60 * 60,
+		minorTickWidth: 1,
+		minorGridLineWidth: 0,
+		title: {
+			text: null
+		},
+		type: 'datetime'
+	},
+	yAxis: {
+		opposite: true,
+		title: {
+			text: null
+		}
+	}
+};
+
 
 function get_URLvars() {
 	var vars = {};
@@ -425,23 +537,42 @@ function chart_years() {
 		years_net_kwh[i] = [year, (kwh_in - kwh_out)];
 	}
 
-	// Apply the column chart theme
-	Highcharts.setOptions(Highcharts.theme1);
-
 	$('#years_chart').highcharts({
+		chart: {
+			type: 'column',
+			marginTop: 20
+		},
+		legend: {
+			enabled: false
+		},
 		plotOptions: {
 			series: {
 				pointRange: 24 * 3600 * 1000 * 365	// 1 year
 			}
+//			point: {
+//				events: {
+//					click: function() {
+//						var myDate = new Date(this.x);
+//						alert (myDate.toUTCString() +' :: '+ this.y);
+//					}
+//				}
+//			}
 		},
-	    xAxis: {
-			maxRange: 157785000000, 				// 5 years in milliseconds
-			tickInterval: 24 * 3600 * 1000 * 365,	// 1 year
-			dateTimeLabelFormats: {
-				year: '%Y'
-			}
-	    },
+	    series: [{
+	    	name: 'Production',
+	    	color: cfg_colorProduction,
+	        data: years_data_kwhin
+		}, {
+		    name: 'Usage',
+	    	color: cfg_colorUsage,
+			data: years_data_kwhout
+//		}, {
+//		    name: 'Net',
+//		    type: 'areaspline',
+//			data: years_net_kwh
+	    }],
 	    tooltip: {
+    		crosshairs: false,
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%Y', this.x);
 				tipSeries = '';
@@ -452,17 +583,14 @@ function chart_years() {
 				return '<strong>' + tipTitle + '</strong>' + tipSeries;
 			}
 		},
-	    series: [{
-	    	name: 'Production',
-	        data: years_data_kwhin
-		}, {
-		    name: 'Usage',
-			data: years_data_kwhout
-//		}, {
-//		    name: 'Net',
-//		    type: 'areaspline',
-//			data: years_net_kwh
-	    }]
+	    xAxis: {
+			dateTimeLabelFormats: {
+				year: '%Y'
+			},
+			maxRange: 157785000000, 				// 5 years in milliseconds
+			minorTickWidth: 0,						// no minor ticks
+			tickInterval: 24 * 3600 * 1000 * 365	// 1 year
+	    },
 	});
 
 }
@@ -508,23 +636,34 @@ function chart_months(date) {
 
 	}
 
-	// Apply the column chart theme
-	Highcharts.setOptions(Highcharts.theme1);
-
 	$('#months_chart').highcharts({
+		chart: {
+			type: 'column',
+			marginTop: 20
+		},
+		legend: {
+			enabled: false
+		},
 		plotOptions: {
 			series: {
 				pointRange: 24 * 3600 * 1000 * 30	// one month
 			}
 		},
-	    xAxis: {
-			maxRange: 31600000000,					// 1 year in milliseconds
-			tickInterval: 24 * 3600 * 1000 * 30,	// 1 month
-			dateTimeLabelFormats: {
-				month: '%b'
-			}
-	    },
+	    series: [{
+	        name: 'Production',
+	        color: cfg_colorProduction,
+	        data: months_data_kwhin,
+		}, {
+	        name: 'Usage',
+	        color: cfg_colorUsage,
+	        data: months_data_kwhout,
+//	    }, {
+//	        name: 'Net',
+//	        type: 'areaspline',
+//	        data: months_net_kwh,
+	    }],
 	    tooltip: {
+    		crosshairs: false,
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%B', this.x);
 				tipSeries = '';
@@ -534,18 +673,15 @@ function chart_months(date) {
 				}
 				return '<strong>' + tipTitle + '</strong>' + tipSeries;
 			}
-		},	
-	    series: [{
-	        name: 'Production',
-	        data: months_data_kwhin,
-		}, {
-	        name: 'Usage',
-	        data: months_data_kwhout,
-//	    }, {
-//	        name: 'Net',
-//	        type: 'areaspline',
-//	        data: months_net_kwh,
-	    }]
+		},
+	    xAxis: {
+			dateTimeLabelFormats: {
+				month: '%b'
+			},
+			maxRange: 31600000000,					// 1 year in milliseconds
+			minorTickWidth: 0,						// no minor ticks
+			tickInterval: 24 * 3600 * 1000 * 30		// 1 month
+	    }
 	});
 
 }
@@ -588,17 +724,18 @@ function chart_days_of_month(date) {
 		
 		month_days_net_kwh[i] = [day, (parseFloat(available_month_days[i].kwh_in) - parseFloat(available_month_days[i].kwh_out))];
 		
-//		month_total_kwhin += parseFloat(available_month_days[i].kwh_in);
-//		month_total_kwhout -= parseFloat(available_month_days[i].kwh_out);
+		month_total_kwhin += parseFloat(available_month_days[i].kwh_in);
+		month_total_kwhout -= parseFloat(available_month_days[i].kwh_out);
 	}
 
-//	month_avg_kwhin = month_total_kwhin/available_month_days.length;
-//	month_avg_kwhout = month_total_kwhout/available_month_days.length;
+	month_avg_kwhin = month_total_kwhin/available_month_days.length;
+	month_avg_kwhout = month_total_kwhout/available_month_days.length;
 	
-	// Apply the column chart theme
-	Highcharts.setOptions(Highcharts.theme1);
-
 	$('#month_days_chart').highcharts({
+		chart: {
+			type: 'column',
+			marginTop: 20
+		},
 		plotOptions: {
 			series: {
 				pointRange: 24 * 3600 * 1000		// 1 day
@@ -608,61 +745,80 @@ function chart_days_of_month(date) {
 				pointWidth: 14,		// overcome that the grouppadding makes them too narrow
 			},
 			spline: {
+				lineWidth: 1.5,
+				color: '#333',
+				showInLegend: false,
+				marker: {
+					fillColor: '#555',
+					radius: 2,
+				},
 				states: {
 					hover: {
-						lineWidth: 1.5
+						lineWidth: 1.5	// don't want this to get thicker on rollover.
 					}
 				}
 			}
 		},
 	    xAxis: {
-	    	minRange: 2630000000,					// 1 month in milliseconds
-			tickInterval: 24 * 3600 * 1000,			// 1 day
 			dateTimeLabelFormats: {
 				day: '%e'
-			}
+			},
+	    	minRange: 2630000000,					// 1 month in milliseconds
+			minorTickWidth: 0,						// no minor ticks
+			tickInterval: 24 * 3600 * 1000,			// 1 day
 	    },
-//	    yAxis: {
-//			plotLines: [{
-//				color: 'rgba(241,183,44,0.25)',
-//				width: 2,
-//				zIndex: 1,
-//				value: month_avg_kwhin,
-//				label: {
-//					text: month_avg_kwhin.toFixed(1) + 'kWh',
-//					align: 'right',
-//					verticalAlign: 'top',
-//					x: -2
-//				}            
-//			},{
-//				color: 'rgba(24,150,165,0.25)',
-//				width: 2,
-//				zIndex: 1,
-//				value: month_avg_kwhout,
-//				label: {
-//					text: month_avg_kwhout.toFixed(1) + 'kWh',
-//					align: 'right',
-//					x: -2,
-//					y: 13
-//				}            
-//			}]
-//	    },
+	    yAxis: {
+			plotLines: [{
+				color: cfg_colorProduction,
+				width: 1,
+				zIndex: 5,
+				value: month_avg_kwhin,
+				label: {
+					align: 'left',
+					text: '<span class="plotlabel">' + month_avg_kwhin.toFixed(1) + 'kWh</span>',
+					useHTML: true,
+					verticalAlign: 'top',
+					x: -2
+				}            
+			},{
+				color: cfg_colorUsage,
+				width: 1,
+				zIndex: 5,
+				value: month_avg_kwhout,
+				label: {
+					align: 'left',
+					text: '<span class="plotlabel">' + month_avg_kwhout.toFixed(1) + 'kWh</span>',
+					useHTML: true,
+					x: -2,
+					y: 13
+				}            
+			}]
+	    },
 	    tooltip: {
+    		crosshairs: false,
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%A, %b %e', this.x);
 				tipSeries = '';
 				for (var i = 0; i < this.points.length; i++) {
-					string = this.points[i].y.toFixed(1) + ' kWh ' + this.points[i].series.name;
-					tipSeries = tipSeries + '<br/>' + string;
+					if (this.points[i].series.name == "Net") {
+						string = '<tr class="total"><td class="figure">' + this.points[i].y.toFixed(1) + '</td><td> kWh ' + this.points[i].series.name + '</td></tr>';
+					} else {
+						string = '<tr><td class="figure">' + this.points[i].y.toFixed(1) + '</td><td> kWh ' + this.points[i].series.name + '</td></tr>';
+					}
+					tipSeries = tipSeries + string;
 				}
-				return '<strong>' + tipTitle + '</strong>' + tipSeries;
-			}
+				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
+				return toolTip;
+			},
+			useHTML: true
 		},	    
 	    series: [{
 			name: 'Production',
+			color: cfg_colorProduction,
 			data: month_days_data_kwhin,
 		}, {
 	        name: 'Usage',
+			color: cfg_colorUsage,
 	        data: month_days_data_kwhout,
 	    }, {
 	        name: 'Net',
@@ -769,9 +925,10 @@ function get_cc_chargePower() {
 	// Set up each series.
 	for (var i in day_data_watts) {
 		device_data = {
+//			color: cfg_colorProduction,
+			data: day_data_watts[i],
 			name: deviceLabel[i],
 			type: 'line',
-			data: day_data_watts[i]
 		};
 		all_devices_data.push(device_data);
 	}
@@ -779,46 +936,43 @@ function get_cc_chargePower() {
 	// If there was a total, set up that series
 	if (total_day_data_watts.length > 0) {
 		total_data = {
+			color: cfg_colorProduction,
+			data: total_day_data_watts,
 			name: 'Total',
-			type: 'areaspline',
-			fillOpacity: 0.125,
-			lineWidth: 0,
-			zIndex: -1,
-			data: total_day_data_watts
+			type: 'areaspline'
 		};
 		all_devices_data.push(total_data);
 	}
 	
-	// Apply the line chart theme
-	Highcharts.setOptions(Highcharts.theme2);
-
 	chart_options = {
-    	yAxis: {
-    		min: 0,
-    		minRange: cfg_pvWattage/3,
-		    labels: {
-//		        format: '{value} W'
-				formatter: function () {
-					return (this.value/1000).toFixed(1) + ' kW'
-				}
-		    }
-		},
+		colors: cfg_colorsChargers,
+		series: all_devices_data,
 		tooltip: {
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
 				tipSeries = '';
 				for (var i = 0; i < this.points.length; i++) {
 					if (this.points[i].series.name == "Total") {
-						string =  this.points[i].y.toFixed(0) + ' Watts ' + this.points[i].series.name;
+						string = '<tr class="total"><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts ' + this.points[i].series.name + '</td></tr>';
 					} else {
-						string =  this.points[i].y.toFixed(0) + ' Watts: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')';
+						string = '<tr><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')</td></tr>';
 					}
-					tipSeries = tipSeries + '<br/>' + string;
-				}			
-				return '<strong>' + tipTitle + '</strong>' + tipSeries;
-			}
+					tipSeries = tipSeries + string;
+				}
+				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
+				return toolTip;
+			},
+			useHTML: true
 		},
-		series: all_devices_data,	
+    	yAxis: {
+    		min: 0,
+    		minRange: cfg_pvWattage/3,
+		    labels: {
+				formatter: function () {
+					return (this.value/1000).toFixed(1) + ' kW'
+				}
+		    }
+		}
 	};
 
 	return chart_options;
@@ -860,9 +1014,9 @@ function get_cc_chargeCurrent() {
 	// Set up each series
 	for (var i in day_data_amps) {
 		device_data = {
+			data: day_data_amps[i],
 			name: deviceLabel[i],
 			type: 'line',
-			data: day_data_amps[i]
 		};
 		all_devices_data_amps.push(device_data);
 	}
@@ -870,43 +1024,41 @@ function get_cc_chargeCurrent() {
 	// If there was a total, set up that series
 	if (total_day_data_amps.length > 0) {
 		total_data = {
+			color: cfg_colorProduction,
+			data: total_day_data_amps,
 			name: 'Total',
-			type: 'areaspline',
-			fillOpacity: 0.125,
-			lineWidth: 0,
-			zIndex: -1,
-			data: total_day_data_amps
+			type: 'areaspline'
 		};
 		all_devices_data_amps.push(total_data);
 	}
 
-	// Apply the line chart theme
-	Highcharts.setOptions(Highcharts.theme2);
-
 	chart_options = {
-    	yAxis: {
-    		min: 0,
-    		minRange: cfg_pvWattage/cfg_sysVoltage/3,
-		    labels: {
-		        format: '{value} A'
-		    }
-		},
+		colors: cfg_colorsChargers,
+	    series: all_devices_data_amps,
 		tooltip: {
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
 				tipSeries = '';
 				for (var i = 0; i < this.points.length; i++) {
 					if (this.points[i].series.name == "Total") {
-						string =  this.points[i].y.toFixed(0) + ' Amps ' + this.points[i].series.name;
+						string = '<tr class="total"><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Amps ' + this.points[i].series.name + '</td></tr>';
 					} else {
-						string =  this.points[i].y.toFixed(0) + ' Amps: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')';
+						string = '<tr><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Amps: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')</td></tr>';
 					}
-					tipSeries = tipSeries + '<br/>' + string;										
-				}			
-				return '<strong>' + tipTitle + '</strong>' + tipSeries;
-			}
+					tipSeries = tipSeries + string;
+				}
+				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
+				return toolTip;
+			},
+			useHTML: true
 		},
-	    series: all_devices_data_amps
+    	yAxis: {
+    		min: 0,
+    		minRange: cfg_pvWattage/cfg_sysVoltage/3,
+		    labels: {
+		        format: '{value} A'
+		    }
+		}
 	};
 
 	return chart_options;
@@ -940,23 +1092,16 @@ function get_cc_inputVolts() {
 	for (var i in day_data_array_volts) {
 
 		series = {
-			name: deviceLabel[i],
-			data: day_data_array_volts[i]
+			data: day_data_array_volts[i],
+			name: deviceLabel[i]
 		};
 		all_devices_data_array_volts.push(series);
 
 	}
 
-	// Apply the line chart theme
-	Highcharts.setOptions(Highcharts.theme2);
-
 	chart_options = {
-    	yAxis: {
-    		min: 0,
-		    labels: {
-		        format: '{value} V'
-			}
-		},
+		colors: cfg_colorsChargers,
+		series: all_devices_data_array_volts,
 		tooltip: {
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
@@ -968,7 +1113,12 @@ function get_cc_inputVolts() {
 				return '<strong>' + tipTitle + '</strong>' + tipSeries;
 			}
 		},
-	    series: all_devices_data_array_volts
+		yAxis: {
+		    labels: {
+		        format: '{value} V'
+			},
+    		min: 0
+		}
 	};
 
 	return chart_options;
@@ -1002,24 +1152,16 @@ function get_cc_inputCurrent() {
 	for (var i in day_data_array_amps) {
 
 		series = {
-			name: deviceLabel[i],
-			data: day_data_array_amps[i]
+			data: day_data_array_amps[i],
+			name: deviceLabel[i]
 		};
 
 		all_devices_data_array_amps.push(series);		
 	}
 
-	// Apply the line chart theme
-	Highcharts.setOptions(Highcharts.theme2);
-
 	chart_options = {
-    	yAxis: {
-    		min: 0,
-    		minRange: cfg_pvWattage/cfg_sysVoltage/3,
-		    labels: {
-		        format: '{value} A'
-		    }, 
-		},
+		colors: cfg_colorsChargers,
+	    series: all_devices_data_array_amps,
 		tooltip: {
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
@@ -1031,7 +1173,13 @@ function get_cc_inputCurrent() {
 				return '<strong>' + tipTitle + '</strong>' + tipSeries;
 			}
 		},
-	    series: all_devices_data_array_amps
+    	yAxis: {
+    		min: 0,
+    		minRange: cfg_pvWattage/cfg_sysVoltage/3,
+		    labels: {
+		        format: '{value} A'
+		    }, 
+		}
 	};
 
 	return chart_options;
@@ -1062,14 +1210,27 @@ function get_battery_volts() {
 		}
 	}
 
-	// Apply the line chart theme
-	Highcharts.setOptions(Highcharts.theme2);
-
 	chart_options = {
 	    legend: {
 	    	enabled: false  
 	    },
+	    series: [{
+			name: 'Volts',
+			color: cfg_colorUsage,
+			data: day_data_volts
+	    }],
+		tooltip: {
+			shared: false,
+			formatter: function() {
+				var string1 = Highcharts.dateFormat('%l:%M%P', this.x);
+				var string2 = this.y.toFixed(1) + ' Volts';
+				return '<strong>' + string1 + '</strong><br/>' + string2;
+			}
+		},
     	yAxis: {
+    		labels: {
+		        format: '{value} V'
+		    },
     		minRange: cfg_sysVoltage/6,
 			plotLines: [{
 				color: '#00bb00',
@@ -1081,23 +1242,8 @@ function get_battery_volts() {
                 color: '#ffedee',
                 from: 0,
 				to: cfg_sysVoltage * 1.0167
-			}],
-		    labels: {
-		        format: '{value} V'
-		    }
+			}]
 		},
-		tooltip: {
-			shared: false,
-			formatter: function() {
-				var string1 = Highcharts.dateFormat('%l:%M%P', this.x);
-				var string2 = this.y.toFixed(1) + ' Volts';
-				return '<strong>' + string1 + '</strong><br/>' + string2;
-			}
-		},
-	    series: [{
-			name: 'Volts',
-			data: day_data_volts
-	    }]	    
 	};
 
 	return chart_options;
@@ -1129,63 +1275,52 @@ function get_fndc_shunts() {
 		break; // Only one iteration. there should be only one FNDC.
 	}
 
-	// Apply the line chart theme
-	Highcharts.setOptions(Highcharts.theme2);
-
 	chart_options = {
 		chart: {
 		    type: 'line'
 		},
-//		plotOptions: {
-//			series: {
-//				lineWidth: 1.5,
-//				fillOpacity: 0.25
-//			}
-//		},
     	yAxis: {
 		    labels: {
-//		        format: '{value} W'
 				formatter: function () {
 					return (this.value/1000).toFixed(1) + ' kW'
 				}
 		    }
 		},
 		tooltip: {
-			shared: false,
 			formatter: function() {
 				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				// single non-shared tooltip
-				tipSeries = this.y.toFixed(0) + ' Watts: ' + this.series.name;
-				return '<strong>' + tipTitle + '</strong><br/>' + tipSeries;
-
-				// shared tooltip
-//				tipSeries = '';
-//				for (var i = 0; i < this.points.length; i++) {
-//					string = this.points[i].y.toFixed(0) + ' Watts ' + this.points[i].series.name;
-//					tipSeries = tipSeries + '<br/>' + string;
-//				}
-//				return '<strong>' + tipTitle + '</strong><p style="font-size:10px">' + tipSeries + '</p>';
-				
-			}
+				tipSeries = '';
+				for (var i = 0; i < this.points.length; i++) {
+					if (this.points[i].series.name == "Net") {
+						string = '<tr class="total"><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts ' + this.points[i].series.name + '</td></tr>';
+					} else {
+						string = '<tr><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts: ' + this.points[i].series.name + '</td></tr>';
+					}
+					tipSeries = tipSeries + string;
+				}
+				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
+				return toolTip;				
+			},
+			shared: true,
+			useHTML: true
 		},
 	    series: [{
 	    	name: shuntLabel[1],
+	    	color: cfg_colorShuntA,
 			data: day_data_shunt_a
 		}, {
 		    name: shuntLabel[2],
+	    	color: cfg_colorShuntB,
 			data: day_data_shunt_b
 		}, {
 		    name: shuntLabel[3],
+	    	color: cfg_colorShuntC,
 			data: day_data_shunt_c
 		}, {
 			name: "Net",
 			type: 'areaspline',
-			color: '#F2B807',
-			negativeColor: '#0396A6',
-			fillOpacity: 0.25,
-			lineWidth: 0,
-			zIndex: -1,
-			showInLegend: false,
+			color: cfg_colorProduction,
+			negativeColor: cfg_colorUsage,
 			data: day_data_net
 	    }]
 	};
@@ -1209,13 +1344,23 @@ function get_fndc_soc() {
 
 	}
 
-	// Apply the line chart theme
-	Highcharts.setOptions(Highcharts.theme2);
-
 	chart_options = {
 	    legend: {
 	    	enabled: false  
 	    },
+	    series: [{
+			name: 'Charge',
+			color: cfg_colorUsage,
+			data: day_data_soc
+	    }],
+		tooltip: {
+			shared: false,
+			formatter: function() {
+				var string1 = Highcharts.dateFormat('%l:%M%P', this.x);
+				var string2 = this.y + '%';
+				return '<strong>' + string1 + '</strong><br/>' + string2;
+			}
+		},
     	yAxis: {
     		tickInterval: 10, // I feel confident that we'd like to just see 10% intervals on the SOC chart
     		max: 100,
@@ -1240,18 +1385,6 @@ function get_fndc_soc() {
 				to: 100
             }]
 		},
-		tooltip: {
-			shared: false,
-			formatter: function() {
-				var string1 = Highcharts.dateFormat('%l:%M%P', this.x);
-				var string2 = this.y + '%';
-				return '<strong>' + string1 + '</strong><br/>' + string2;
-			}
-		},		
-	    series: [{
-			name: 'Charge',
-			data: day_data_soc
-	    }]
 	};
 
 	return chart_options;
@@ -1331,21 +1464,18 @@ function get_fndc_soc_gauge() {
 			}
 		},
     	yAxis: {
-    		lineColor: '#888',
-            tickInterval: 10,
-            tickColor: '#888',
-    		tickWidth: 1,
-            tickLength: 18,
-            minorTickColor: '#888',
-            minorTickWidth: 1,
-    		minorTickLength: 5,
-    		max: 100,
-    		min: 50, // I go back and forth on if the bottom yAxis should be dynamic or not.
 		    labels: {
 		        format: '{value}%',
 				rotation: 'auto',
 				distance: 6
 		    },
+    		lineColor: '#888',
+    		max: 100,
+    		min: 50, 
+            minorTickColor: '#888',
+            minorTickWidth: 1,
+    		minorTickLength: 5,
+		    opposite: false,
 		    plotBands: [{
 		    	// red from 0 to 59
                 color: '#f88',
@@ -1371,14 +1501,15 @@ function get_fndc_soc_gauge() {
                 to: max_soc,
                 outerRadius: '378',
                 thickness: '18'
-            }]
+            }],
+            tickInterval: 10,
+            tickColor: '#888',
+    		tickWidth: 1,
+            tickLength: 18
 		},
 		tooltip: {
 			enabled: false
 		},
-        credits: {
-		    enabled: false
-	    },
 	    series: [{
 			name: 'Charge',
 			data: [current_soc]
@@ -1390,8 +1521,14 @@ function get_fndc_soc_gauge() {
 }
 
 //
-// this is the crazy way to get shit started in jQuery. Seriously.
+// this is the way to get things started in jQuery. Seriously.
 //
-$( document ).ready(function() {
+$(document).ready(function() {
+
+	// Apply the common theme 
+	Highcharts.setOptions(Highcharts.theme);
+
+	// run the page load function (in the html)
 	load_page();
+	
 });

@@ -28,11 +28,10 @@ $token="";			//Token
 $timezone="America/Los_Angeles";	//See http://www.php.net/manual/en/timezones.php, example for Spain: Europe/Madrid
 
 // SYSTEM
-
-
 $system_voltage = 48;			// Nominal system voltage
 $system_absorbVoltage = 58.8;	// Absorb voltage for your chargers
 $pv_wattage = 1500;				// Total wattage of your photo voltaic arrays
+$ags_port = FALSE;				// Port used for AGS. Leave "FALSE" if you don't use AGS.
 
 // Labels to use for the devices on your HUB ports.
 // If you leave any of these blank, a name will be automatically
@@ -59,6 +58,14 @@ $shuntLabel = array(
 	3  => ""
 );
 
+// Colors
+$colorProduction	= "#F2B807";
+$colorUsage			= "#0396A6";
+$colorShuntA		= "#0396A6";
+$colorShuntB		= "#F2B807";
+$colorShuntC		= "#4c328a";
+$colorChargers		= array('black', 'blue');
+
 // DON'T MODIFY ANYTHING BELOW THIS LINE. THIS FILE IS ALSO LOADED
 // BY JAVASCRIPT AS A CONFIG FILE, BUT THE PHP WILL AUTOMATICALLY 
 // GENERATE THE NECESSARY INFORMATION IN THE JAVASCRIPT BELOW.
@@ -69,22 +76,26 @@ var cfg_sysVoltage = <?php echo $system_voltage; ?>;
 var cfg_sysAbsorbVoltage = <?php echo $system_absorbVoltage; ?>;
 var cfg_pvWattage = <?php echo $pv_wattage; ?>;
 
-// if you leave it blank a name will be automatically generated.
 var cfg_deviceLabel = new Array();
-cfg_deviceLabel[1] = "<?php echo $deviceLabel[1]; ?>";
-cfg_deviceLabel[2] = "<?php echo $deviceLabel[2]; ?>";
-cfg_deviceLabel[3] = "<?php echo $deviceLabel[3]; ?>";
-cfg_deviceLabel[4] = "<?php echo $deviceLabel[4]; ?>";
-cfg_deviceLabel[5] = "<?php echo $deviceLabel[5]; ?>";
-cfg_deviceLabel[6] = "<?php echo $deviceLabel[6]; ?>";
-cfg_deviceLabel[7] = "<?php echo $deviceLabel[7]; ?>";
-cfg_deviceLabel[8] = "<?php echo $deviceLabel[8]; ?>";
-cfg_deviceLabel[9] = "<?php echo $deviceLabel[9]; ?>";
-cfg_deviceLabel[10] = "<?php echo $deviceLabel[10]; ?>";
+	cfg_deviceLabel[1] = "<?php echo $deviceLabel[1]; ?>";
+	cfg_deviceLabel[2] = "<?php echo $deviceLabel[2]; ?>";
+	cfg_deviceLabel[3] = "<?php echo $deviceLabel[3]; ?>";
+	cfg_deviceLabel[4] = "<?php echo $deviceLabel[4]; ?>";
+	cfg_deviceLabel[5] = "<?php echo $deviceLabel[5]; ?>";
+	cfg_deviceLabel[6] = "<?php echo $deviceLabel[6]; ?>";
+	cfg_deviceLabel[7] = "<?php echo $deviceLabel[7]; ?>";
+	cfg_deviceLabel[8] = "<?php echo $deviceLabel[8]; ?>";
+	cfg_deviceLabel[9] = "<?php echo $deviceLabel[9]; ?>";
+	cfg_deviceLabel[10] = "<?php echo $deviceLabel[10]; ?>";
 
-// if you leave it blank a name will be automatically generated.
 var cfg_shuntLabel = new Array();
-cfg_shuntLabel[1] = "<?php echo $shuntLabel[1]; ?>";
-cfg_shuntLabel[2] = "<?php echo $shuntLabel[2]; ?>";
-cfg_shuntLabel[3] = "<?php echo $shuntLabel[3]; ?>";
+	cfg_shuntLabel[1] = "<?php echo $shuntLabel['A']; ?>";
+	cfg_shuntLabel[2] = "<?php echo $shuntLabel['B']; ?>";
+	cfg_shuntLabel[3] = "<?php echo $shuntLabel['C']; ?>";
 
+var cfg_colorProduction = "<?php echo $colorProduction; ?>";
+var cfg_colorUsage = "<?php echo $colorUsage; ?>";
+var cfg_colorShuntA = "<?php echo $colorShuntA; ?>";
+var cfg_colorShuntB = "<?php echo $colorShuntB; ?>";
+var cfg_colorShuntC = "<?php echo $colorShuntC; ?>";
+var cfg_colorsChargers = ['black', 'blue'];
