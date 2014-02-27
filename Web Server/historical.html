@@ -5,10 +5,10 @@
 	<meta name="viewport" content="width=800">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
-	<link rel="stylesheet" href="./css/zebra.css" type="text/css">
+	<!--<link rel="stylesheet" href="./css/zebra.css" type="text/css">-->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script src="http://code.highcharts.com/highcharts.js"></script>
-	<script type="text/javascript" src="./js/zebra_datepicker.js"></script>
+	<!--<script type="text/javascript" src="./js/zebra_datepicker.js"></script>-->
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<title>MonitorMate — Historical</title>
@@ -23,7 +23,7 @@
 	<p>
 		<form action="javascript:void(0)" method="get">
 			<div style="text-align: center;">
-				Show graphs for: <input id="datepicker" class="datepicker" type="text" value="" onchange="alert('hi')">
+				<input id="datepicker" class="datepicker" type="text" value="" readonly="true" hidden="true">
 				<button onclick="change_day(-1)">Prev</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)">Next</button>
 				&mdash; Scope:
 				<select id="scope" onchange="refresh_data();">
@@ -133,15 +133,15 @@
 			$('#scope').val(scope);
 			
 			// attach the date picker!
-			$('input.datepicker').Zebra_DatePicker({
-				direction: [false, '2013-01-01'],
-				first_day_of_week: 0,
-				show_clear_date: false,
-				onSelect: function() {
-					$('#scope').val('0');
-					refresh_data();
-				}
-			});
+//			$('input.datepicker').Zebra_DatePicker({
+//				direction: [false, '2013-01-01'],
+//				first_day_of_week: 0,
+//				show_clear_date: false,
+//				onSelect: function() {
+//					$('#scope').val('0');
+//					refresh_data();
+//				}
+//			});
 						
 			refresh_data();
 

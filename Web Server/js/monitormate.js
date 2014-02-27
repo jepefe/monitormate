@@ -162,6 +162,13 @@ function get_URLvars() {
 	return vars;
 }
 
+function update_URL(dateString) {
+	var queryString = "?date=" + dateString;
+	window.history.replaceState(null, "MonitorMate — Daily", queryString);
+//	hack that would only work on historical.html
+	$('#datepicker').val(dateString);
+	refresh_data();
+}
 
 function set_cookies(name, value) {
 	expire_date = (new Date(new Date().getFullYear() + 1, new Date().getMonth() + 1, new Date().getDate())).toGMTString();
@@ -723,7 +730,14 @@ function chart_days_of_month(date) {
 		},
 		plotOptions: {
 			series: {
-				//pointRange: 24 * 3600 * 1000		// 1 day
+				point: {
+					events: {
+						click: function() {
+							var dateString = get_formatted_date(this.x);
+							update_URL(dateString);
+						}
+					}
+				}
 			},
 			column: {
 				stacking: 'normal',
