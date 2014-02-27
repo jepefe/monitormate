@@ -76,7 +76,6 @@ Highcharts.theme = {
 			stickyTracking: false,
 		},
 		line: {
-			cursor: 'pointer',
 			stickyTracking: true,
 			lineWidth: 1.5,
 			marker: {
@@ -549,14 +548,6 @@ function chart_years() {
 			series: {
 				pointRange: 24 * 3600 * 1000 * 365	// 1 year
 			}
-//			point: {
-//				events: {
-//					click: function() {
-//						var myDate = new Date(this.x);
-//						alert (myDate.toUTCString() +' :: '+ this.y);
-//					}
-//				}
-//			}
 		},
 	    series: [{
 	    	name: 'Production',
@@ -566,10 +557,6 @@ function chart_years() {
 		    name: 'Usage',
 	    	color: cfg_colorUsage,
 			data: years_data_kwhout
-//		}, {
-//		    name: 'Net',
-//		    type: 'areaspline',
-//			data: years_net_kwh
 	    }],
 	    tooltip: {
     		crosshairs: false,
@@ -712,8 +699,6 @@ function chart_days_of_month(date) {
 		}
 	});
 
-
-
 	//Fill array with series
 	for (i = 0; i < available_month_days.length; i++) {
 			
@@ -738,62 +723,36 @@ function chart_days_of_month(date) {
 		},
 		plotOptions: {
 			series: {
-				pointRange: 24 * 3600 * 1000		// 1 day
+				//pointRange: 24 * 3600 * 1000		// 1 day
 			},
 			column: {
-				groupPadding: 0.5,	// exact overlap
-				pointWidth: 14,		// overcome that the grouppadding makes them too narrow
+				stacking: 'normal',
 			},
-			spline: {
-				lineWidth: 1.5,
-				color: '#333',
-				showInLegend: false,
+			line: {
+				cursor: 'pointer',
+				lineWidth: 0,
 				marker: {
-					fillColor: '#555',
-					radius: 2,
+					enabled: true,
+					fillColor: 'black',
+					lineColor: 'rgba(255,255,255,0.75)',
+					lineWidth: 1,
+					symbol: 'diamond',
 				},
-				states: {
-					hover: {
-						lineWidth: 1.5	// don't want this to get thicker on rollover.
-					}
-				}
-			}
-		},
-	    xAxis: {
-			dateTimeLabelFormats: {
-				day: '%e'
 			},
-	    	minRange: 2630000000,					// 1 month in milliseconds
-			minorTickWidth: 0,						// no minor ticks
-			tickInterval: 24 * 3600 * 1000,			// 1 day
-	    },
-	    yAxis: {
-			plotLines: [{
-				color: cfg_colorProduction,
-				width: 1,
-				zIndex: 5,
-				value: month_avg_kwhin,
-				label: {
-					align: 'left',
-					text: '<span class="plotlabel">' + month_avg_kwhin.toFixed(1) + 'kWh</span>',
-					useHTML: true,
-					verticalAlign: 'top',
-					x: -2
-				}            
-			},{
-				color: cfg_colorUsage,
-				width: 1,
-				zIndex: 5,
-				value: month_avg_kwhout,
-				label: {
-					align: 'left',
-					text: '<span class="plotlabel">' + month_avg_kwhout.toFixed(1) + 'kWh</span>',
-					useHTML: true,
-					x: -2,
-					y: 13
-				}            
-			}]
-	    },
+		},
+	    series: [{
+			name: 'Production',
+			color: cfg_colorProduction,
+			data: month_days_data_kwhin,
+		}, {
+	        name: 'Usage',
+			color: cfg_colorUsage,
+	        data: month_days_data_kwhout,
+	    }, {
+	        name: 'Net',
+	        type: 'line',
+	        data: month_days_net_kwh,
+	    }],
 	    tooltip: {
     		crosshairs: false,
 			formatter: function() {
@@ -811,20 +770,42 @@ function chart_days_of_month(date) {
 				return toolTip;
 			},
 			useHTML: true
-		},	    
-	    series: [{
-			name: 'Production',
-			color: cfg_colorProduction,
-			data: month_days_data_kwhin,
-		}, {
-	        name: 'Usage',
-			color: cfg_colorUsage,
-	        data: month_days_data_kwhout,
-	    }, {
-	        name: 'Net',
-	        type: 'spline',
-	        data: month_days_net_kwh,
-	    }],
+		},
+	    xAxis: {
+			dateTimeLabelFormats: {
+				day: '%e'
+			},
+	    	minRange: 2630000000,					// 1 month in milliseconds
+			minorTickWidth: 0,						// no minor ticks
+			tickInterval: 24 * 3600 * 1000,			// 1 day
+	    },
+	    yAxis: {
+			plotLines: [{
+				color: cfg_colorProduction,
+				label: {
+					align: 'left',
+					text: '<span class="plotlabel">' + month_avg_kwhin.toFixed(1) + 'kWh</span>',
+					useHTML: true,
+					verticalAlign: 'top',
+					x: -2
+				},
+				value: month_avg_kwhin,
+				width: 1,
+				zIndex: 3,
+			},{
+				color: cfg_colorUsage,
+				label: {
+					align: 'left',
+					text: '<span class="plotlabel">' + month_avg_kwhout.toFixed(1) + 'kWh</span>',
+					useHTML: true,
+					x: -2,
+					y: 13
+				},
+				value: month_avg_kwhout,
+				width: 1,
+				zIndex: 3,
+			}]
+	    },
 	});
 
 }
