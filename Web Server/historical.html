@@ -25,14 +25,6 @@
 			<div style="text-align: center;">
 				<input id="datepicker" class="datepicker" type="text" value="" readonly="true" hidden="true">
 				<button onclick="change_day(-1)">Prev</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)">Next</button>
-				&mdash; Scope:
-				<select id="scope" onchange="refresh_data();">
-					<option value="0">Calendar Day</option>
-					<option value="24">24 hours</option>
-					<option value="36">36 hours</option>
-					<option value="48">48 hours</option>
-					<option value="72">72 hours</option>
-				</select>
 			</div>
 		</form>
 	</p>
@@ -56,19 +48,14 @@
 	<div id="array_current" class="bottom-wide-chart"></div>
 
 	<script>
-
+		
+		var displayDate;
+		
 		function refresh_data() {
-
-			var date = $('#datepicker').val();
-			var scope = $('#scope').val();
-			var queryString = "?date=" + date + "&scope=" + scope;
-
-			window.history.replaceState(null, "MonitorMate — Daily", queryString);
 			
-			get_dataStream(date, scope);
+			get_dataStream(displayDate);
 
 			set_status("status", "summary");
-
 			draw_chart('flexnet_soc','flexnet_soc');
 			draw_chart('flexnet_shunts','flexnet_shunts');
 			draw_chart('battery_volts','battery_volts');
@@ -82,24 +69,26 @@
 		function change_day(delta) {
 
 			var delta = parseInt(delta);
+			var queryString;
 
 			if (delta == 0) {
-				dateString = get_formatted_date();
-				$('#datepicker').val(dateString);
+				displayDate = get_formatted_date();
+				window.history.replaceState(null, null, "historical.html");
 				refresh_data();
 			} else {
-				split_date = $('#datepicker').val().split(/[- :]/);
+				split_date = displayDate.split(/[- :]/);
 				new_date = new Date(parseInt(split_date[0]), parseInt(split_date[1] - 1), parseInt(split_date[2]));
 				updated_date = new Date(new_date.getTime() + (delta * 86400000)); // one day in milliseconds
 				
 				if (updated_date < (new Date())) {	// make you're not sneaking into the future.
-					dateString = get_formatted_date(updated_date);
-					$('#datepicker').val(dateString);
+					displayDate = get_formatted_date(updated_date);
+					window.history.replaceState(null, null, "historical.html?date=" + displayDate);
 					refresh_data();
 				} else {
 					alert("You can't predict the future...");
 				}			
 			}
+			
 
 		}
 
@@ -107,8 +96,6 @@
 		function load_page() {
 		
 			var URLvars = get_URLvars();
-			var date;
-			var scope;
 
 			chart_years();			
 			chart_months();
@@ -116,33 +103,13 @@
 
 			if (URLvars.date) {
 				// put the date from the querystring into the text field
-				date = URLvars.date;
+				displayDate = URLvars.date;
 			} else {
 				// put today into the text field
-				date = get_formatted_date();
+				displayDate = get_formatted_date();
 			}
-			$('input.datepicker').val(date);
-			
-			if (URLvars.scope) {
-				// put the scope from the querystring into the popup
-				scope = URLvars.scope;
-			} else {
-				// put 0 (calendar day) into the popup
-				scope = 0;
-			}
-			$('#scope').val(scope);
-			
-			// attach the date picker!
-//			$('input.datepicker').Zebra_DatePicker({
-//				direction: [false, '2013-01-01'],
-//				first_day_of_week: 0,
-//				show_clear_date: false,
-//				onSelect: function() {
-//					$('#scope').val('0');
-//					refresh_data();
-//				}
-//			});
-						
+			//$('input.datepicker').val(date);
+												
 			refresh_data();
 
 			//setInterval("get_status()", 5000);		
