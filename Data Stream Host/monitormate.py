@@ -14,6 +14,9 @@
 #for more details.
 
 
+
+
+
 import mate3
 import socket
 import urllib2
@@ -28,6 +31,8 @@ try:
     import json
 except ImportError:
     import simplejson as json
+
+
 
 
 def main():
@@ -78,7 +83,6 @@ def start(options):
     
     while continuous:
         try:
-           
             #Set continuous mode if selected
             continuous = options.continuous
             
@@ -149,7 +153,7 @@ def start(options):
             #Set interval
             if options.time_interval > 0:
                 for i in range(1,int(options.time_interval)):
-                    #Get datastream every second because flexnet needs around 14 datastreams to be completely filled
+                    #Get datastream every second because flexnet needs about 14 datastreams to be completely filled
                     time.sleep(1)
                     if options.ip_port:
                         s.sendto(received_data,0, (iadress[0], int(iadress[1])) )
