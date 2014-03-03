@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Filename: flexnetdc.py
+# Filename: fxinv.py
 
 #Copyright (C) 2012 Jesus Perez <jepefe@gmail.com>
 #This program is free software: you can redistribute it and/or modify
