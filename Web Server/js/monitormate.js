@@ -745,10 +745,11 @@ function chart_days_of_month(date) {
 								case "historical.html":
 									displayDate = dateString;
 									update_URL('historical.html', displayDate);
+									document.title = "MonitorMate — " + displayDate;
 									refresh_data();
 									break;
 								default:
-									location.assign('historical.html?date=' + dateString);
+									location.assign('historical.html?date=' + displayDate);
 									break;
 							}
 						}

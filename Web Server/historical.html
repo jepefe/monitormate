@@ -53,6 +53,14 @@
 		
 		function refresh_data() {
 
+			if (displayDate == get_formatted_date()) { // if it's today.
+				update_URL('historical.html');
+				document.title = "MonitorMate — Today";				
+			} else {
+				update_URL('historical.html', displayDate);
+				document.title = "MonitorMate — " + displayDate;				
+			}
+
 //			// FIXME: check if i need to redraw the charts, it's a waste of time otherwise.
 //			var chartDate = null;
 //
@@ -85,22 +93,20 @@
 
 			if (delta == 0) {
 				displayDate = get_formatted_date();
-				update_URL('historical.html');
-				refresh_data();
 			} else {
 				split_date = displayDate.split(/[- :]/);
 				new_date = new Date(parseInt(split_date[0]), parseInt(split_date[1] - 1), parseInt(split_date[2]));
 				updated_date = new Date(new_date.getTime() + (delta * 86400000)); // one day in milliseconds
 				
 				if (updated_date < (new Date())) {	// make you're not sneaking into the future.
-					displayDate = get_formatted_date(updated_date);
-					update_URL('historical.html', displayDate);
-					refresh_data();
+					displayDate = get_formatted_date(updated_date);					
 				} else {
 					alert("You can't predict the future...");
+					return;
 				}			
 			}
-			
+
+			refresh_data();
 
 		}
 
