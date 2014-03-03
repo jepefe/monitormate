@@ -263,8 +263,8 @@ function register_summary($summary) {
 		$summary['max_soc'] = $max_soc[0];
 	}
 	
-	$not_first_record = mysql_query("SELECT date FROM monitormate3_summary WHERE date(date) ='".$summary['date']."'",$connection);
-	$not_first_record = mysql_fetch_row($not_first_record);
+	$todaysRecord = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate3_summary WHERE date(date) ='".$summary['date']."'",$connection);
+	$todaysRecord = mysql_fetch_row($todaysRecord);
 
 	$query =	"INSERT INTO monitormate3_summary (
 					date,
@@ -305,10 +305,12 @@ function register_summary($summary) {
 	$file22 = "matelog22";
 	file_put_contents($file22, $update_query);
 		
-	if ($not_first_record) {
-		// TODO: check to make sure we're not inserting zero'd out data (mate thinks it's the next day)
-		mysql_query($update_query, $connection);
-	} else {
+	if ($todaysRecord) { // if we have a record for today
+		if ($todaysRecord['kwh_in'] <= $summary['kwh_in'] AND $todaysRecord['kwh_out'] <= $summary['kwh_out']) {
+			// go ahead and update, the numbers look safe.
+			mysql_query($update_query, $connection);
+		}
+	} else { // if this is the first record for the day
 		mysql_query($query, $connection);
 	}
 }
