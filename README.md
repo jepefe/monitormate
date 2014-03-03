@@ -7,11 +7,11 @@ Charts and graphs are creating using Highcharts JS for free under the Creative C
 
 This is a fork of jepefe/monitormate, created by Jesús Miguel Pérez and originally distributed on his website: http://www.jeperez.com/monitor-solar-outback/ 
 
-How software works?
+How does this software work?
 ===========
 The software is divided in three parts:
 
-- Python script for receive and manage Mate3 datastream.
+- Python script for receive and manage MATE3 datastream.
 - PHP scripts for database records and query’s.
 - HTML/JavaScript webpage for visual representation.
 
@@ -33,7 +33,7 @@ python monitormate.py –help
 		-f, --fxmodifier
 			Doubles voltage and divide current in 230V FX inverters
 		-s, --show-devices
-			Show connected devices to Mate3
+			Show connected devices to MATE3
 		-c, --continuous
 			Print data continuously
 		-d DEVICE_ADDRESS, --device-address=DEVICE_ADDRESS
@@ -49,7 +49,7 @@ python monitormate.py –help
 		-t TOKEN, --token=TOKEN
 			Include security token and send to url. Use with -u.
 		-r IP_PORT, --repeat-mate=IP_PORT
-			Re-send Mate3 datastream to specified ip and port in format IP:PORT
+			Re-send MATE3 datastream to specified ip and port in format IP:PORT
 
  
 regstatus.php
