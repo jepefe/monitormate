@@ -126,7 +126,7 @@ function send_month_days($date) {
 		// if there's a date, use that to define the range.
 		$whereClause = "year(date) = year('".$date."') AND month(date) = month('".$date."')"; 		
 	} else {
-		// if there's no date, then we just scope it from now.
+		// if there's no date, then we just scope it to 31 days.
 		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 31 DAY)";
 	}
 	

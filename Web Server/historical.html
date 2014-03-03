@@ -52,7 +52,19 @@
 		var displayDate;
 		
 		function refresh_data() {
-			
+
+//			// FIXME: check if i need to redraw the charts, it's a waste of time otherwise.
+//			var chartDate = null;
+//
+//			if (displayDate != get_formatted_date()) {	// if the date isn't today
+//				chartDate = displayDate;
+//			}
+//
+//			// FIXME: I should make the charting functions do a setData instead of replotting from scratch
+//			chart_years(chartDate, 'set');
+//			chart_months(chartDate, 'set');
+//			chart_days_of_month(chartDate, 'set');
+
 			get_dataStream(displayDate);
 
 			set_status("status", "summary");
@@ -73,7 +85,7 @@
 
 			if (delta == 0) {
 				displayDate = get_formatted_date();
-				window.history.replaceState(null, null, "historical.html");
+				update_URL('historical.html');
 				refresh_data();
 			} else {
 				split_date = displayDate.split(/[- :]/);
@@ -82,7 +94,7 @@
 				
 				if (updated_date < (new Date())) {	// make you're not sneaking into the future.
 					displayDate = get_formatted_date(updated_date);
-					window.history.replaceState(null, null, "historical.html?date=" + displayDate);
+					update_URL('historical.html', displayDate);
 					refresh_data();
 				} else {
 					alert("You can't predict the future...");
@@ -97,10 +109,6 @@
 		
 			var URLvars = get_URLvars();
 
-			chart_years();			
-			chart_months();
-			chart_days_of_month();
-
 			if (URLvars.date) {
 				// put the date from the querystring into the text field
 				displayDate = URLvars.date;
@@ -108,10 +116,13 @@
 				// put today into the text field
 				displayDate = get_formatted_date();
 			}
-			//$('input.datepicker').val(date);
+			
+			// these should move into refresh_data()
+			chart_years();
+			chart_months();
+			chart_days_of_month();
 												
 			refresh_data();
-
 			//setInterval("get_status()", 5000);		
 		}
 

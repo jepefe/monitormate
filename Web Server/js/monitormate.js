@@ -162,12 +162,13 @@ function get_URLvars() {
 	return vars;
 }
 
-function update_URL(dateString) {
-	var queryString = "?date=" + dateString;
-	window.history.replaceState(null, "MonitorMate — Daily", queryString);
-//	hack that would only work on historical.html
-	$('#datepicker').val(dateString);
-	refresh_data();
+function update_URL(page, dateString) {
+	if (!dateString) {
+		var queryString = page;
+	} else {
+		var queryString = page + "?date=" + dateString;
+	}
+	window.history.replaceState(null, null, queryString);
 }
 
 function set_cookies(name, value) {
@@ -691,16 +692,17 @@ function chart_days_of_month(date) {
 	var month_avg_kwhin = 0;
 	var month_avg_kwhout = 0;
 		
-	if (!date) {
-		date = get_formatted_date();
+	if (date) {
+		var statusURL = 'getstatus.php?q=month_days&date=' + date;
+	} else {
+		var statusURL = 'getstatus.php?q=month_days';
 	}
 
 	$.ajax({
 		async: false,
 		type: 'GET',
 		dataType: 'json',
-//		url: 'getstatus.php?q=month_days&date=' + date,
-		url: 'getstatus.php?q=month_days',
+		url: statusURL,
 		success: function (data) {
 			available_month_days = data;
 		}
@@ -734,7 +736,21 @@ function chart_days_of_month(date) {
 					events: {
 						click: function() {
 							var dateString = get_formatted_date(this.x);
-							update_URL(dateString);
+							// tricky way to get the document name from the path.
+							var page = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+							// remove the query string, if there is one.
+							page = page.split("?")[0];
+
+							switch (page) {
+								case "historical.html":
+									displayDate = dateString;
+									update_URL('historical.html', displayDate);
+									refresh_data();
+									break;
+								default:
+									location.assign('historical.html?date=' + dateString);
+									break;
+							}
 						}
 					}
 				}
