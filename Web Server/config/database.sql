@@ -91,6 +91,39 @@ CREATE TABLE IF NOT EXISTS `monitormate3_fxinv` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `monitormate3_radian`
+--
+
+CREATE TABLE IF NOT EXISTS `monitormate3_radian` (
+  `date` datetime NOT NULL,
+  `address` int(11) NOT NULL,
+  `device_id` int(11) NOT NULL,
+  `inverter_current_l1` int(11) NOT NULL,
+  `inverter_current_l2` int(11) NOT NULL,
+  `charge_current_l1` int(11) NOT NULL,
+  `charge_current_l2` int(11) NOT NULL,
+  `buy_current_l1` int(11) NOT NULL,
+  `buy_current_l2` int(11) NOT NULL,
+  `ac_input_voltage_l1` int(11) NOT NULL,
+  `ac_output_voltage_l1` int(11) NOT NULL,
+  `ac_input_voltage_l2` int(11) NOT NULL,
+  `ac_output_voltage_l2` int(11) NOT NULL,
+  `ac2_input_voltage_l1` int(11) NOT NULL,
+  `ac2_input_voltage_l2` int(11) NOT NULL,
+  `sell_current_l1` int(11) NOT NULL,
+  `sell_current_l2` int(11) NOT NULL,
+  `operational_mode` varchar(14) NOT NULL,
+  `error_modes` varchar(100) NOT NULL,
+  `ac_mode` varchar(8) NOT NULL,
+  `battery_volt` float NOT NULL,
+  `misc` text NOT NULL,
+  `warning_modes` varchar(100) NOT NULL,
+  PRIMARY KEY (`date`,`address`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `monitormate3_summary`
 --
 
