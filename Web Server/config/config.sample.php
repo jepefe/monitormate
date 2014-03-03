@@ -53,9 +53,9 @@ $deviceLabel = array(
 // If you leave any of these blank, a name will be automatically
 // set to "Shunt A", "Shunt B", and "Shunt C".
 $shuntLabel = array(
-	1  => "",
-	2  => "",
-	3  => ""
+	"A"  => "",
+	"B"  => "",
+	"C"  => ""
 );
 
 // Colors
@@ -64,7 +64,8 @@ $colorUsage			= "#0396A6";
 $colorShuntA		= "#0396A6";
 $colorShuntB		= "#F2B807";
 $colorShuntC		= "#4c328a";
-$colorChargers		= array('black', 'blue');
+// You can add as many array elements here as you need, one for each charge controller.
+$colorChargers = array('#fab800', '#f68a98');
 
 // DON'T MODIFY ANYTHING BELOW THIS LINE. THIS FILE IS ALSO LOADED
 // BY JAVASCRIPT AS A CONFIG FILE, BUT THE PHP WILL AUTOMATICALLY 
@@ -98,4 +99,9 @@ var cfg_colorUsage = "<?php echo $colorUsage; ?>";
 var cfg_colorShuntA = "<?php echo $colorShuntA; ?>";
 var cfg_colorShuntB = "<?php echo $colorShuntB; ?>";
 var cfg_colorShuntC = "<?php echo $colorShuntC; ?>";
-var cfg_colorsChargers = ['black', 'blue'];
+var cfg_colorsChargers = [];
+<?php
+	foreach($colorChargers as $color) {
+		echo "cfg_colorsChargers.push('$color');";
+	}	
+?>
