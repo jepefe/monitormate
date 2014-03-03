@@ -40,21 +40,12 @@
 	</div>
 		
 	<div id="month_days_chart" class="bottom-wide-chart"></div>
-<!--	<div class="bottom-double-charts">
-		<div id="months_chart" class="left-chart"></div>
-		<div id="years_chart" class="right-chart"></div>
-	</div>-->
 	<p style="text-align: center;">
 		<a href="historical.html">Browse Historical Charts and Graphs</a>
 	</p>
 
 	<script>
 		function load_page() {
-
-			// no reason to get url vars anymore...
-			// get_datastream(get_URLvars()["date"]);
-			// get_months(get_URLvars()["date"]);
-			// get_month_days(get_URLvars()["date"]);
 
 			get_dataStream(false, 16); // no date (will use now) and show 16 hours of data.
 			
