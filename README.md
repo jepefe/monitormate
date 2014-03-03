@@ -1,11 +1,11 @@
 MonitorMate
 ===========
 
-A monitoring system for the Outback Power Mate3. It processes the data stream, reformats it for logging, charting, and display on a web server.
+A monitoring system for the Outback Power MATE3. It processes the data stream, reformats it for logging, charting, and display on a web server.
 
 Charts and graphs are creating using Highcharts JS for free under the Creative Commons "Attribution-NonCommercial 3.0 License" regulations. http://www.highcharts.com
 
-Originally created by Jesús Miguel Pérez and distributed on his website: http://www.jeperez.com/monitor-solar-outback/
+This is a fork of jepefe/monitormate, created by Jesús Miguel Pérez and originally distributed on his website: http://www.jeperez.com/monitor-solar-outback/ 
 
 How software works?
 ===========
