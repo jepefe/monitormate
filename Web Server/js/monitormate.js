@@ -202,6 +202,9 @@ function set_labels() {
 						case FX_ID:
 							deviceLabel[port] = "FX Inverter (" + full_day_data[type][port][0].address + ")";
 							break;
+						case RAD_ID:
+							deviceLabel[port] = "Radian (" + full_day_data[type][port][0].address + ")";
+							break;
 						case CC_ID:
 							deviceLabel[port] = "FM/MX (" + full_day_data[type][port][0].address + ")";
 							break;
@@ -423,6 +426,30 @@ function set_status(div, value) {
 						<tr><td class="label">AC Input Voltage:</td><td>' + device.ac_input_voltage + ' V</td></tr>\
 						<tr><td class="label">Buy Current:</td><td>' + device.buy_current + ' A</td></tr>\
 						<tr><td class="label">Sell Current:</td><td>' + device.sell_current + ' A</td></tr>\
+						<tr><td class="label">AC Mode:</td><td>' + device.ac_mode + '</td></tr>\
+						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
+						<tr><td class="label">Error Modes:</td><td>' + device.error_modes + '</td></tr>\
+						<tr><td class="label">Warning Modes:</td><td>' + device.warning_modes + '</td></tr>\
+						<tr><td class="label">Misc:</td><td>' + device.misc + '</td></tr>\
+						</table>';
+			break;
+
+		case RAD_ID: // radian inverter
+			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
+						<tr><td class="label">AC Output Voltage L1:</td><td>' + device.ac_output_voltage_l1 + ' V</td></tr>\
+						<tr><td class="label">AC Output Voltage L2:</td><td>' + device.ac_output_voltage_l2 + ' V</td></tr>\
+						<tr><td class="label">Inverter Current L1:</td><td>' + device.inverter_current_l1 + ' A</td></tr>\
+						<tr><td class="label">Inverter Current L1:</td><td>' + device.inverter_current_l2 + ' A</td></tr>\
+						<tr><td class="label">Charge Current L1:</td><td>' + device.charge_current_l1 + ' A</td></tr>\
+						<tr><td class="label">Charge Current L2:</td><td>' + device.charge_current_l2 + ' A</td></tr>\
+						<tr><td class="label">AC Input Voltage L1:</td><td>' + device.ac_input_voltage_l1 + ' V</td></tr>\
+						<tr><td class="label">AC Input Voltage L2:</td><td>' + device.ac_input_voltage_l2 + ' V</td></tr>\
+						<tr><td class="label">AC 2 Input Voltage L1:</td><td>' + device.ac2_input_voltage_l1 + ' V</td></tr>\
+						<tr><td class="label">AC 2 Input Voltage L2:</td><td>' + device.ac2_input_voltage_l2 + ' V</td></tr>\
+						<tr><td class="label">Buy Current L1:</td><td>' + device.buy_current_l1 + ' A</td></tr>\
+						<tr><td class="label">Buy Current L2:</td><td>' + device.buy_current_l2 + ' A</td></tr>\
+						<tr><td class="label">Sell Current L1:</td><td>' + device.sell_current_l1 + ' A</td></tr>\
+						<tr><td class="label">Sell Current L2:</td><td>' + device.sell_current_l2 + ' A</td></tr>\
 						<tr><td class="label">AC Mode:</td><td>' + device.ac_mode + '</td></tr>\
 						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
 						<tr><td class="label">Error Modes:</td><td>' + device.error_modes + '</td></tr>\

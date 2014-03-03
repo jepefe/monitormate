@@ -209,13 +209,19 @@ function send_day($date, $scope){
 							FROM monitormate3_fxinv
 							WHERE ".$whereClause."
 							ORDER BY date";
+
+	$query_radian =			"SELECT *
+							FROM monitormate3_radian
+							WHERE ".$whereClause."
+							ORDER BY date";
 		
 	$result_summary = mysql_query($query_summary, $connection);
 	$result_fmmx = mysql_query($query_fmmx, $connection);
 	$result_flexnet = mysql_query($query_flexnet, $connection);
 	$result_fxinv = mysql_query($query_fxinv, $connection);
+	$result_radian = mysql_query($query_radian, $connection);
 	
-	$allday_querys = array("fmmx"=>$result_fmmx,"flexnet"=>$result_flexnet,"fxinv"=>$result_fxinv);
+	$allday_querys = array("fmmx"=>$result_fmmx,"flexnet"=>$result_flexnet,"fxinv"=>$result_fxinv,"radian"=>$result_radian);
 //	$allday_data["summary"] = mysql_fetch_assoc($result_summary);
 	
 	while ($row = mysql_fetch_assoc($result_summary)) {
