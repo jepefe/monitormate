@@ -45,7 +45,7 @@ var status_content = {
 // Common theme for all the charts.
 Highcharts.theme = {
 	chart: {
-		margin: [0, 65, 0, 0]
+		marginRight: 65
 	},
 	colors: ['black'],
 	credits: {
@@ -1460,7 +1460,10 @@ function get_fndc_soc_gauge() {
             plotBorderWidth: 0,
 	        height: 100,
             width: 300,
-            margin: [1, 1, 1, 1],
+            marginTop: 1, // bug in highcharts makes me specify these separately instead of in an array.
+            marginRight: 1,
+            marginBottom: 1,
+            marginLeft: 1,
             spacing: [0, 0, 0, 0]
 		},
 		title: {
