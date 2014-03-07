@@ -326,6 +326,7 @@ function populate_select(pselect) {
 		for (i in full_day_data[FNDC_ID]) {
 			select_items.push('<option value="flexnet_soc">State of Charge</option>');
 			select_items.push('<option value="flexnet_shunts">Input/Output</option>');
+			select_items.push('<option value="flexnet_amps_vs_volts">Charge Amps vs Volts</option>');
 		}
 	}
 
@@ -908,6 +909,9 @@ function draw_chart(chart_id, content) {
 		case "battery_volts":
 			chart_data = get_battery_volts();
 			break;
+		case "flexnet_amps_vs_volts":
+			chart_data = get_fndc_amps_vs_volts();
+			break;
 		case "flexnet_shunts":
 			chart_data = get_fndc_shunts();
 			break;
@@ -1292,6 +1296,83 @@ function get_battery_volts() {
 }
 
 
+function get_fndc_amps_vs_volts() {
+	var day_data_volts = [];
+	var day_data_amps = [];
+
+	
+	for (var port in full_day_data[FNDC_ID]) {
+		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+			shunt_a_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_a_amps);
+			shunt_b_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_b_amps);
+			shunt_c_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_c_amps);
+			net_amps     = shunt_a_amps + shunt_b_amps + shunt_c_amps;
+
+			day_data_amps[i]   = [full_day_data[FNDC_ID][port][i].timestamp, net_amps];
+			day_data_volts[i] = [full_day_data[FNDC_ID][port][i].timestamp, parseFloat(full_day_data[FNDC_ID][port][i].battery_volt)];
+		}
+	}
+	
+	
+	chart_options = {
+	    legend: {
+	    	enabled: false 
+	    },
+	    plotOptions: {
+	    	line: {
+	    		marker: {
+	    			symbol: 'diamond',
+		    		fillColor: 'black'
+	    		}
+	    	}
+	    },
+	    series: [{
+			name: 'Volts',
+			color: '#0b0',
+			data: day_data_volts,
+			negativeColor: cfg_colorUsage,
+			threshold: cfg_sysAbsorbVoltage,
+	    }, {
+			name: "Amps",
+			color: cfg_colorUsage,
+			data: day_data_amps,
+			negativeColor: '#0b0',
+			threshold: cfg_sysEndAmps + 0.05,
+			yAxis: 1
+	    }],
+		tooltip: {
+			formatter: function() {
+				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
+				tipSeries = '';
+				for (var i = 0; i < this.points.length; i++) {
+					string = '<tr><td class="figure">' + this.points[i].y.toFixed(1) + '</td><td> ' + this.points[i].series.name + '</td></tr>';
+					tipSeries = tipSeries + string;
+				}
+				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
+				return toolTip;				
+			},
+			shared: true,
+			useHTML: true
+		},
+    	yAxis: [{ // primary axis
+    		labels: {
+		        format: '{value} V'
+		    },
+    		minRange: cfg_sysVoltage/6,
+    		opposite: false
+		}, { // secondary axis
+			labels: {
+		        format: '{value} A'
+		    },
+		    opposite: true
+		}]
+	};
+
+	return chart_options;
+
+}
+
+
 function get_fndc_shunts() {
 
 	var day_data_shunt_a = [];
@@ -1300,18 +1381,18 @@ function get_fndc_shunts() {
 	var day_data_net = [];
 
 	for (var port in full_day_data[FNDC_ID]) {
-		for (y = 0; y < full_day_data[FNDC_ID][port].length; y++) {
-			// each "y" is an object with all data for a given timestamp
+		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+			// each "i" is an object with all data for a given timestamp
 
-			shunt_a_watts = full_day_data[FNDC_ID][port][y].shunt_a_amps * full_day_data[FNDC_ID][port][y].battery_volt;
-			shunt_b_watts = full_day_data[FNDC_ID][port][y].shunt_b_amps * full_day_data[FNDC_ID][port][y].battery_volt;
-			shunt_c_watts = full_day_data[FNDC_ID][port][y].shunt_c_amps * full_day_data[FNDC_ID][port][y].battery_volt;
+			shunt_a_watts = full_day_data[FNDC_ID][port][i].shunt_a_amps * full_day_data[FNDC_ID][port][i].battery_volt;
+			shunt_b_watts = full_day_data[FNDC_ID][port][i].shunt_b_amps * full_day_data[FNDC_ID][port][i].battery_volt;
+			shunt_c_watts = full_day_data[FNDC_ID][port][i].shunt_c_amps * full_day_data[FNDC_ID][port][i].battery_volt;
 			net_watts     = shunt_a_watts + shunt_b_watts + shunt_c_watts;
 			
-			day_data_shunt_a[y] = [full_day_data[FNDC_ID][port][y].timestamp, shunt_a_watts];
-			day_data_shunt_b[y] = [full_day_data[FNDC_ID][port][y].timestamp, shunt_b_watts];
-			day_data_shunt_c[y] = [full_day_data[FNDC_ID][port][y].timestamp, shunt_c_watts];
-			day_data_net[y]     = [full_day_data[FNDC_ID][port][y].timestamp, net_watts];
+			day_data_shunt_a[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_a_watts];
+			day_data_shunt_b[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_b_watts];
+			day_data_shunt_c[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_c_watts];
+			day_data_net[i]     = [full_day_data[FNDC_ID][port][i].timestamp, net_watts];
 		}
 		break; // Only one iteration. there should be only one FNDC.
 	}

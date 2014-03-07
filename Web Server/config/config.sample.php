@@ -30,6 +30,7 @@ $timezone="America/Los_Angeles";	//See http://www.php.net/manual/en/timezones.ph
 // SYSTEM
 $system_voltage = 48;			// Nominal system voltage
 $system_absorbVoltage = 58.8;	// Absorb voltage for your chargers
+$system_endAmps = 12.5;			// The FNDC configured return amps setting
 $pv_wattage = 1500;				// Total wattage of your photo voltaic arrays
 $ags_port = FALSE;				// Port used for AGS. Leave "FALSE" if you don't use AGS.
 
@@ -75,6 +76,7 @@ $colorChargers = array('#fab800', '#f68a98');
 
 var cfg_sysVoltage = <?php echo $system_voltage; ?>;
 var cfg_sysAbsorbVoltage = <?php echo $system_absorbVoltage; ?>;
+var cfg_sysEndAmps = <?php echo $system_endAmps; ?>;
 var cfg_pvWattage = <?php echo $pv_wattage; ?>;
 
 var cfg_deviceLabel = new Array();
