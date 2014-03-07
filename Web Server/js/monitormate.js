@@ -44,6 +44,9 @@ var status_content = {
 
 // Common theme for all the charts.
 Highcharts.theme = {
+	chart: {
+		margin: [0, 65, 0, 0]
+	},
 	colors: ['black'],
 	credits: {
 		enabled: false
@@ -1437,7 +1440,6 @@ function get_fndc_soc_gauge() {
 		var max_soc = full_day_data["summary"].max_soc;		
 	}
 
-
 	for (var port in full_day_data[FNDC_ID]) {
 		var device = json_status["device" + port];
 		var current_soc = device.soc;
@@ -1450,7 +1452,6 @@ function get_fndc_soc_gauge() {
 	}
 	
 	
-
 	chart_options = {
 		chart: {
 			type: 'gauge',
