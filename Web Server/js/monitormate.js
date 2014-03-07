@@ -28,6 +28,7 @@ var full_day_data;
 var available_years;
 var available_months = [];
 var available_month_days;
+var displayDate;
 
 // default charts for the monitormate.html page. 
 // this can/will get overwritten by the cookies.
@@ -765,7 +766,8 @@ function chart_days_of_month(date) {
 				point: {
 					events: {
 						click: function() {
-							var displayDate = get_formatted_date(this.x);
+							// FIXME: maybe i shouldn't be using a global variable?
+							displayDate = get_formatted_date(this.x);
 							// tricky way to get the document name from the path.
 							var page = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
 							// remove the query string, if there is one.
@@ -773,8 +775,6 @@ function chart_days_of_month(date) {
 
 							switch (page) {
 								case "historical.html":
-									update_URL('historical.html', displayDate);
-									document.title = "MonitorMate — " + displayDate;
 									refresh_data();
 									break;
 								default:
