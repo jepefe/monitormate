@@ -21,7 +21,8 @@ $dbpass="";			//Database password
 $dbname="";			//Database name
 
 //UPDATES
-$reg_interval=10;	//Time between each record in minutes
+$reg_interval=10;	//Time between each database record in minutes.
+					//NOTE: You should set this to half your "charge params met" time.
 $token="";			//Token
 
 // GENERAL
