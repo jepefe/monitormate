@@ -483,8 +483,8 @@ function set_status(div, value) {
 			var today_net_kwh = parseFloat(device.today_net_input_kwh) - parseFloat(device.today_net_output_kwh);
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">State of Charge:</td><td>' + device.soc + '%</td></tr>\
-						<tr><td class="label">Charge Parameters Met:</td><td>' + device.charge_params_met + '</td></tr>\
-						<tr><td class="label">Days Since Full:</td><td>' + (Math.round(device.days_since_full * 100) / 100) + ' Days</td></tr>\
+						<tr><td class="label">Days Since Charged:</td><td>' + (Math.round(device.days_since_full * 100) / 100) + ' Days</td></tr>\
+						<tr><td class="label">Within Charge Params:</td><td>' + device.charge_params_met + '</td></tr>\
 						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
 						<tr><td class="label">Battery Temperature:</td><td>' + device.battery_temp + ' &deg;C (' + ((device.battery_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
 						<tr><td class="label">Charge Corrected Net:</td><td>' + device.charge_factor_corrected_net_batt_ah + ' Ah, ' + device.charge_factor_corrected_net_batt_kwh + ' kWh</td></tr>\
