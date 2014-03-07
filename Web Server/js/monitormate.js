@@ -1336,8 +1336,6 @@ function get_fndc_amps_vs_volts() {
 			name: "Amps",
 			color: cfg_colorUsage,
 			data: day_data_amps,
-			negativeColor: '#0b0',
-			threshold: cfg_sysEndAmps + 0.05,
 			yAxis: 1
 	    }],
 		tooltip: {
