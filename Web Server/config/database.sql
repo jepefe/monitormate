@@ -5,10 +5,10 @@
 -- --------------------------------------------------------
 
 --
--- Table structure for table `monitormate3_flexnet`
+-- Table structure for table `monitormate_fndc`
 --
 
-CREATE TABLE IF NOT EXISTS `monitormate3_flexnet` (
+CREATE TABLE IF NOT EXISTS `monitormate_fndc` (
   `date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `address` int(11) NOT NULL DEFAULT '0',
   `device_id` int(11) DEFAULT NULL,
@@ -44,10 +44,10 @@ CREATE TABLE IF NOT EXISTS `monitormate3_flexnet` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `monitormate3_fmmx`
+-- Table structure for table `monitormate_cc`
 --
 
-CREATE TABLE IF NOT EXISTS `monitormate3_fmmx` (
+CREATE TABLE IF NOT EXISTS `monitormate_cc` (
   `date` datetime NOT NULL,
   `address` int(11) NOT NULL,
   `device_id` int(11) NOT NULL,
@@ -66,10 +66,10 @@ CREATE TABLE IF NOT EXISTS `monitormate3_fmmx` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `monitormate3_fxinv`
+-- Table structure for table `monitormate_fx`
 --
 
-CREATE TABLE IF NOT EXISTS `monitormate3_fxinv` (
+CREATE TABLE IF NOT EXISTS `monitormate_fx` (
   `date` datetime NOT NULL,
   `address` int(11) NOT NULL,
   `device_id` int(11) NOT NULL,
@@ -91,10 +91,10 @@ CREATE TABLE IF NOT EXISTS `monitormate3_fxinv` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `monitormate3_radian`
+-- Table structure for table `monitormate_radian`
 --
 
-CREATE TABLE IF NOT EXISTS `monitormate3_radian` (
+CREATE TABLE IF NOT EXISTS `monitormate_radian` (
   `date` datetime NOT NULL,
   `address` int(11) NOT NULL,
   `device_id` int(11) NOT NULL,
@@ -124,10 +124,10 @@ CREATE TABLE IF NOT EXISTS `monitormate3_radian` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `monitormate3_summary`
+-- Table structure for table `monitormate_summary`
 --
 
-CREATE TABLE IF NOT EXISTS `monitormate3_summary` (
+CREATE TABLE IF NOT EXISTS `monitormate_summary` (
   `date` date NOT NULL,
   `kwh_in` float NOT NULL,
   `kwh_out` float NOT NULL,

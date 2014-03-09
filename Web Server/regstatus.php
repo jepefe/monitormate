@@ -102,7 +102,7 @@ if(isset($_POST)){
 
 function register_flexnet($device_array,$date_time) {
 
-	 $query = "INSERT INTO monitormate3_flexnet (
+	 $query = "INSERT INTO monitormate_fndc (
 	 	date,
 	 	address,
 	 	device_id,
@@ -170,7 +170,7 @@ function register_flexnet($device_array,$date_time) {
 
 
 function register_fmmx($device_array,$date_time){
-	$query = "INSERT INTO monitormate3_fmmx (
+	$query = "INSERT INTO monitormate_cc (
 		date,
 		address,
 		device_id,
@@ -204,7 +204,7 @@ function register_fmmx($device_array,$date_time){
 
 
 function register_fxinv($device_array,$date_time){
-	$query = "INSERT INTO monitormate3_fxinv (
+	$query = "INSERT INTO monitormate_fx (
 		date,
 		address,device_id,
 		inverter_current,
@@ -243,7 +243,7 @@ function register_fxinv($device_array,$date_time){
 
 function register_radian($device_array,$date_time){
 
-	$query = "INSERT INTO monitormate3_radian (
+	$query = "INSERT INTO monitormate_radian (
 		date,
 		address,
 		device_id,
@@ -302,34 +302,34 @@ function register_summary($summary) {
 	
 	$connection = db_connection();
 	
-	$max_tempq = mysql_query("select max(battery_temp) from monitormate3_flexnet where date(date) ='".$summary['date']."'",$connection);
+	$max_tempq = mysql_query("select max(battery_temp) from monitormate_fndc where date(date) ='".$summary['date']."'",$connection);
 	$max_temp = mysql_fetch_row($max_tempq);
 	if ($max_temp != NULL) {
 		$summary['max_temp'] = $max_temp[0];
 	}
 
-	$min_tempq = mysql_query("select min(battery_temp) from monitormate3_flexnet where date(date) ='".$summary['date']."'",$connection);
+	$min_tempq = mysql_query("select min(battery_temp) from monitormate_fndc where date(date) ='".$summary['date']."'",$connection);
 	$min_temp = mysql_fetch_row($min_tempq);
 	if($min_temp != NULL){
 		$summary['min_temp'] = $min_temp[0];
 	}
 	
-	$max_pv_voltageq = mysql_query("select max(pv_voltage) from monitormate3_fmmx where date(date) ='".$summary['date']."'",$connection);
+	$max_pv_voltageq = mysql_query("select max(pv_voltage) from monitormate_cc where date(date) ='".$summary['date']."'",$connection);
 	$max_pv_voltage = mysql_fetch_row($max_pv_voltageq);
 	if($max_pv_voltage != NULL){
 		$summary['max_pv_voltage'] = $max_pv_voltage[0];
 	}
 	
-	$max_socq = mysql_query("select max(soc) from monitormate3_flexnet where date(date) ='".$summary['date']."'",$connection);
+	$max_socq = mysql_query("select max(soc) from monitormate_fndc where date(date) ='".$summary['date']."'",$connection);
 	$max_soc = mysql_fetch_row($max_socq);
 	if($max_soc != NULL){
 		$summary['max_soc'] = $max_soc[0];
 	}
 	
-	$todaysRecord = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate3_summary WHERE date(date) ='".$summary['date']."'",$connection);
+	$todaysRecord = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date(date) ='".$summary['date']."'",$connection);
 	$todaysRecord = mysql_fetch_row($todaysRecord);
 
-	$query = "INSERT INTO monitormate3_summary (
+	$query = "INSERT INTO monitormate_summary (
 		date,
 		kwh_in,
 		kwh_out,
@@ -353,7 +353,7 @@ function register_summary($summary) {
 		'".$summary['max_pv_voltage']."'
 	)"; 
 	
-	$update_query =	"UPDATE monitormate3_summary SET
+	$update_query =	"UPDATE monitormate_summary SET
 		kwh_in=".$summary['kwh_in'].",
 		kwh_out=".$summary['kwh_out'].",
 		ah_in=".$summary['ah_in'].",

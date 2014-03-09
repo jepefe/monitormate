@@ -64,7 +64,7 @@ function send_year($date) {
 					date,
 					sum(kwh_in) AS kwh_in,
 					sum(kwh_out) AS kwh_out
-				FROM monitormate3_summary
+				FROM monitormate_summary
 				WHERE ".$whereClause."				
 				GROUP BY year(date)";
 
@@ -99,7 +99,7 @@ function send_month_totals($date) {
 					date,
 					sum(kwh_in) AS kwh_in,
 					sum(kwh_out) AS kwh_out
-				FROM monitormate3_summary
+				FROM monitormate_summary
 				WHERE ".$whereClause."
 				GROUP BY month(date)
 				ORDER BY date";
@@ -137,7 +137,7 @@ function send_month_days($date) {
 					date,
 					kwh_in,
 					kwh_out
-				FROM monitormate3_summary
+				FROM monitormate_summary
 				WHERE ".$whereClause;
 				
 	$query_result = mysql_query($query, $connection);
@@ -184,34 +184,34 @@ function send_day($date, $scope){
 	}
 
 	$query_summary =		"SELECT *
-							FROM monitormate3_summary
+							FROM monitormate_summary
 							WHERE date(date) = date('".$date."')
 							ORDER BY date";
 							// WHERE ".$whereClause."
 
 	$query_fmmx = 			"SELECT *
-							FROM monitormate3_fmmx
+							FROM monitormate_cc
 							WHERE ".$whereClause."
 							ORDER BY date";
 	
 	// if there's more than one charge controller (fmmx) we should get the cc totals.
 	$query_fmmx_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts 
-							FROM `monitormate3_fmmx`
+							FROM `monitormate_cc`
 							WHERE ".$whereClause."
 							GROUP BY date";
 	 
 	$query_flexnet =		"SELECT *
-							FROM monitormate3_flexnet
+							FROM monitormate_fndc
 							WHERE ".$whereClause."
 							ORDER by date";
 
 	$query_fxinv =			"SELECT *
-							FROM monitormate3_fxinv
+							FROM monitormate_fx
 							WHERE ".$whereClause."
 							ORDER BY date";
 
 	$query_radian =			"SELECT *
-							FROM monitormate3_radian
+							FROM monitormate_radian
 							WHERE ".$whereClause."
 							ORDER BY date";
 		
