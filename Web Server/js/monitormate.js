@@ -439,7 +439,7 @@ function set_status(div, value) {
 						</table>';
 			break;
 
-		case RAD_ID: // radian inverter
+		case RAD_ID:
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">AC Output Voltage L1:</td><td>' + device.ac_output_voltage_l1 + ' V</td></tr>\
 						<tr><td class="label">AC Output Voltage L2:</td><td>' + device.ac_output_voltage_l2 + ' V</td></tr>\
