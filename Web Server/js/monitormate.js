@@ -50,7 +50,8 @@ Highcharts.theme = {
 			duration: 500
         },	
 		marginRight: 65,
-		zoomType: 'x'
+		// FIXME: only set this if we're not on mobile/touch device.
+//		zoomType: 'x'
 	},
 	colors: ['black'],
 	credits: {
@@ -1405,7 +1406,8 @@ function get_fndc_shunts() {
 
 	chart_options = {
 		chart: {
-		    type: 'line'
+		    type: 'line',
+			pinchType: 'none',
 		},
     	yAxis: {
 		    labels: {

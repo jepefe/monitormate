@@ -108,6 +108,12 @@ input.datepicker {
 	min-width: 380px; /* should be double-wide width minus left margin (below) - */	
 }
 
+.chart {
+	height: 250px;
+	min-width: 380px; /* should be double-wide width minus left margin (below) - */	
+}
+
+
 .bottom-wide-chart {
 	clear: both;
 	width: 100%;
@@ -116,25 +122,23 @@ input.datepicker {
 	margin-top: 20px;	
 }
 
-.bottom-double-charts {
-	position: relative;
-	height: 250px;
-	margin: 20px 0px;
-	min-width: 720px;
-}
-
 .left-chart {
-	position: absolute;
-	left: 0px;
-	width: 48%;
+	background-color: white;
+	border-radius: 6px;
+	float: left;
 	height: 250px;
-	margin-right: 20px;
+	margin-bottom: 10px;
+	padding: 10px 0px 0px 10px;
+	width: 380px;
 }
 
 .right-chart {
-	position: absolute;
-	right: 0px;
-	width: 48%;
+	background-color: white;
+	border-radius: 6px;
 	height: 250px;
-	margin-left: 20px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	margin-left: 400px; 
+	padding: 10px 0px 0px 10px;
+	width: 380px;
 }
