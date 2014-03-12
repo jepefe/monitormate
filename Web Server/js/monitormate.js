@@ -46,12 +46,7 @@ var status_content = {
 // Common theme for all the charts.
 Highcharts.theme = {
 	chart: {
-		animation: {
-			duration: 500
-        },	
-		marginRight: 65,
-		// FIXME: only set this if we're not on mobile/touch device.
-//		zoomType: 'x'
+		marginRight: 65
 	},
 	colors: ['black'],
 	credits: {
@@ -143,7 +138,6 @@ Highcharts.theme = {
 	},
 	xAxis: {
 		dateTimeLabelFormats: {
-			minute: '%l:%M%P',
 			hour: '%l%P',
 			day: '%m/%d'
 		},
@@ -330,9 +324,9 @@ function populate_select(pselect) {
 
 	if (full_day_data[FNDC_ID]) { /* FlexNet available */
 		for (i in full_day_data[FNDC_ID]) {
-			select_items.push('<option value="fndc_soc">State of Charge</option>');
-			select_items.push('<option value="fndc_shunts">Input/Output</option>');
-			select_items.push('<option value="fndc_amps_vs_volts">Charge Amps vs Volts</option>');
+			select_items.push('<option value="flexnet_soc">State of Charge</option>');
+			select_items.push('<option value="flexnet_shunts">Input/Output</option>');
+			select_items.push('<option value="flexnet_amps_vs_volts">Charge Amps vs Volts</option>');
 		}
 	}
 
@@ -585,8 +579,7 @@ function chart_years() {
 	$('#years_chart').highcharts({
 		chart: {
 			type: 'column',
-			marginTop: 20,
-			zoomType: 'none'
+			marginTop: 20
 		},
 		legend: {
 			enabled: false
@@ -673,8 +666,7 @@ function chart_months(date) {
 	$('#months_chart').highcharts({
 		chart: {
 			type: 'column',
-			marginTop: 20,
-			zoomType: 'none'
+			marginTop: 20
 		},
 		legend: {
 			enabled: false
@@ -768,8 +760,7 @@ function chart_days_of_month(date) {
 	$('#month_days_chart').highcharts({
 		chart: {
 			type: 'column',
-			marginTop: 20,
-			zoomType: 'none'
+			marginTop: 20
 		},
 		plotOptions: {
 			series: {
@@ -918,16 +909,16 @@ function draw_chart(chart_id, content) {
 		case "battery_volts":
 			chart_data = get_battery_volts();
 			break;
-		case "fndc_amps_vs_volts":
+		case "flexnet_amps_vs_volts":
 			chart_data = get_fndc_amps_vs_volts();
 			break;
-		case "fndc_shunts":
+		case "flexnet_shunts":
 			chart_data = get_fndc_shunts();
 			break;
-		case "fndc_soc":
+		case "flexnet_soc":
 			chart_data = get_fndc_soc();
 			break;
-		case "fndc_soc_gauge":
+		case "flexnet_soc_gauge":
 			chart_data = get_fndc_soc_gauge();
 			break;
 		default:
@@ -1406,8 +1397,7 @@ function get_fndc_shunts() {
 
 	chart_options = {
 		chart: {
-		    type: 'line',
-			pinchType: 'none',
+		    type: 'line'
 		},
     	yAxis: {
 		    labels: {
