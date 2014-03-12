@@ -46,7 +46,12 @@ var status_content = {
 // Common theme for all the charts.
 Highcharts.theme = {
 	chart: {
-		marginRight: 65
+		animation: {
+			duration: 500
+        },	
+		marginRight: 65,
+		// FIXME: only set the zoomType if we're not mobile.
+//		zoomType: 'x'
 	},
 	colors: ['black'],
 	credits: {
@@ -138,6 +143,7 @@ Highcharts.theme = {
 	},
 	xAxis: {
 		dateTimeLabelFormats: {
+			minute: '%l:%M%P',
 			hour: '%l%P',
 			day: '%m/%d'
 		},
@@ -579,7 +585,8 @@ function chart_years() {
 	$('#years_chart').highcharts({
 		chart: {
 			type: 'column',
-			marginTop: 20
+			marginTop: 20,
+			zoomType: 'none'
 		},
 		legend: {
 			enabled: false
@@ -666,7 +673,8 @@ function chart_months(date) {
 	$('#months_chart').highcharts({
 		chart: {
 			type: 'column',
-			marginTop: 20
+			marginTop: 20,
+			zoomType: 'none'
 		},
 		legend: {
 			enabled: false
@@ -760,7 +768,8 @@ function chart_days_of_month(date) {
 	$('#month_days_chart').highcharts({
 		chart: {
 			type: 'column',
-			marginTop: 20
+			marginTop: 20,
+			zoomType: 'none'
 		},
 		plotOptions: {
 			series: {
@@ -1397,7 +1406,7 @@ function get_fndc_shunts() {
 
 	chart_options = {
 		chart: {
-		    type: 'line'
+			type: 'line'
 		},
     	yAxis: {
 		    labels: {
