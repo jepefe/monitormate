@@ -39,37 +39,53 @@
 		<div id="multichart3" class="multichart"></div>
 	</div>
 		
-	<div id="month_days_chart" class="bottom-wide-chart"></div>
+	<div id="days_chart" class="bottom-wide-chart"></div>
 	<p style="text-align: center;">
 		<a href="historical.html">Browse Historical Charts and Graphs</a>
 	</p>
 
 	<script>
-		function load_page() {
-
-			get_dataStream(false, 16); // no date (will use now) and show 16 hours of data.
+		//
+		// this is the way to get things started in jQuery. Seriously.
+		//
+		$(document).ready(function() {
+		
+			/*global chart_content, status_content */
 			
-			populate_status();
+			// get the datastream with no date (will use now) for 16 hours of data.
+			get_dataStream(false, 16); 
+
+			// get the cookie data and status
 			get_cookies();
 			get_status();
-			
+
+			// populate the select elements (popup menus)
+			populate_status_select();
+			populate_chart_select("multichart1_select");
+			populate_chart_select("multichart2_select");
+			populate_chart_select("multichart3_select");
+
+			// Apply the common theme 
+			Highcharts.setOptions(Highcharts.theme);
+
+			// set and draw everything in the status column on the left
+			draw_chart("soc_gauge", "flexnet_soc_gauge");			
 			set_status("status_top", status_content["status_top"]);
 			set_status("status_bottom", status_content["status_bottom"]);
-			
-			populate_select("multichart1_select");
-			populate_select("multichart2_select");
-			populate_select("multichart3_select");
-			
-			draw_chart("soc_gauge", "flexnet_soc_gauge");
+
+			// set and draw all the charts on the right
 			set_chart("multichart1", chart_content["multichart1"]);
 			set_chart("multichart2", chart_content["multichart2"]);
 			set_chart("multichart3", chart_content["multichart3"]);
 
-			chart_days_of_month();
+			// put in the day chart along the bottom
+			chart_days();
 		
+			// update the status regularly
 			setInterval("get_status()", 5000);
 
-		}
+		});
+		
 	</script>
 </body>
 </html>

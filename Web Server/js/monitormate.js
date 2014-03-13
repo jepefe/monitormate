@@ -21,14 +21,15 @@ var RAD_ID	= "6";	// 6 is a Radian-series inverter
 // some arrays for the labels for the devices and shunts.
 // these will get set up in set_labels() after get_datastream().
 var deviceLabel = [];
-var shuntLabel = [];
+var shuntLabel  = [];
 
-var json_status = null;
-var full_day_data;
-var available_years;
-var available_months = [];
-var available_month_days;
-var displayDate;
+// the date, status, and arrays with all the data.
+var display_date  = null;
+var json_status   = null;
+var full_day_data = [];
+var years_data    = [];
+var months_data   = [];
+var days_data     = [];
 
 // default charts for the monitormate.html page. 
 // this can/will get overwritten by the cookies.
@@ -172,6 +173,7 @@ function get_URLvars() {
 	return vars;
 }
 
+
 function update_URL(page, dateString) {
 	if (!dateString) {
 		var queryString = page;
@@ -181,6 +183,7 @@ function update_URL(page, dateString) {
 	window.history.replaceState(null, null, queryString);
 }
 
+
 function set_cookies(name, value) {
 	expire_date = (new Date(new Date().getFullYear() + 1, new Date().getMonth() + 1, new Date().getDate())).toGMTString();
 	document.cookie = name + "=" + value + "; expires=" + expire_date;
@@ -188,6 +191,7 @@ function set_cookies(name, value) {
 
 
 function get_cookies() {
+	/*global chart_content, status_content */
 	if (document.cookie.match('(^|;) ?' + "multichart1" + '=([^;]*)(;|$)')) chart_content["multichart1"] = unescape(document.cookie.match('(^|;) ?' + "multichart1" + '=([^;]*)(;|$)')[2]);
 	if (document.cookie.match('(^|;) ?' + "multichart2" + '=([^;]*)(;|$)')) chart_content["multichart2"] = unescape(document.cookie.match('(^|;) ?' + "multichart2" + '=([^;]*)(;|$)')[2]);
 	if (document.cookie.match('(^|;) ?' + "multichart3" + '=([^;]*)(;|$)')) chart_content["multichart3"] = unescape(document.cookie.match('(^|;) ?' + "multichart3" + '=([^;]*)(;|$)')[2]);
@@ -198,10 +202,11 @@ function get_cookies() {
 
 function set_labels() {
 	// convert all the cfg_ labels to regular ones...
-	
-	// look through the data and apply names to all the devices we found
+
+	/*global deviceLabel, shuntLabel, full_day_data */
+
 	for (var type in full_day_data) {
-				
+		// look through the data and apply names to all the devices we found				
 		if (type !== "summary") {
 			// not the summary data, only the numberical entries
 			for (var port in full_day_data[type]) {
@@ -254,6 +259,7 @@ function set_labels() {
 
 function get_dataStream(date, scope) {
 
+	/*global full_day_data */
 	var chart_data;
 	
 	// FIXME: this otherwise assumes date is well formatted. Which is not necessarily true.	
@@ -269,11 +275,11 @@ function get_dataStream(date, scope) {
 
 	// TODO: i should just set properties and then have a helper function build the query string.
 	if (date && scope) {
-		urlArguments = '?q=day&date=' + date + '&scope=' + scope;
+		urlArguments = '?q=full_day&date=' + date + '&scope=' + scope;
 	} else if (date) {
-		urlArguments = '?q=day&date=' + date;
+		urlArguments = '?q=full_day&date=' + date;
 	} else {
-		urlArguments = '?q=day';
+		urlArguments = '?q=full_day';
 	}
 
 	$.ajax({
@@ -325,7 +331,9 @@ function get_formatted_date(date) {
 /*
 	Put the items in the pop-up selection menu for the charts 
 */
-function populate_select(pselect) {
+function populate_chart_select(pselect) {
+	
+	/*global full_day_data */
 	var select_items = [];
 
 	if (full_day_data[FNDC_ID]) { /* FlexNet available */
@@ -351,7 +359,9 @@ function populate_select(pselect) {
 /*
 	Put the items in the pop-up selection menu for the status sidebar 
 */
-function populate_status() {
+function populate_status_select() {
+
+	/*global deviceLabel, full_day_data */
 	var tabs = [];
 
 	// i is the ID
@@ -381,17 +391,17 @@ function populate_status() {
 }
 
 
-function set_status(div, value) {
+function set_status(HTML_id, value) {
+	// TODO: I don't like the use of "value", don't all variables have a value??
+
+	/*global deviceLabel, full_day_data, json_status, shuntLabel, status_content */
+	var HTML_id = HTML_id;
+	var value = value;
 	var data = '';
 	var device_id;
 	var address;
 	var device;
-	var value = value;
-	var div = div;
-	// Why declare a variable that's an argument??
-	
-	// TODO: I don't like the use of "value", don't all variables have a value??
-	
+		
 	if (value == "none") {
 		for (var i in json_status) {
 			switch (json_status[i].device_id) {
@@ -515,14 +525,16 @@ function set_status(div, value) {
 
 	}
 
-	status_content[div] = value;
-	$('#' + div).html(content);
-	$('#' + div + '_select').val(value);
-	set_cookies(div, value);
+	status_content[HTML_id] = value;
+	$('#' + HTML_id).html(content);
+	$('#' + HTML_id + '_select').val(value);
+	set_cookies(HTML_id, value);
 }
 
 
 function get_status() {
+
+	/*global json_status */
 
 	if (json_status) {
 		$.getJSON("./matelog", function (data) {
@@ -544,6 +556,7 @@ function get_status() {
 
 function chart_years() {
 
+	/*global years_data */
 	var years_data_kwhin = [];
 	var years_data_kwhout = [];
 	var years_net_kwh = [];
@@ -557,7 +570,7 @@ function chart_years() {
 //		url: 'getstatus.php?q=years&date=' + date,
 		url: 'getstatus.php?q=years',
 		success: function (data) {
-			available_years = data;
+			years_data = data;
 		}
 	})
 
@@ -565,16 +578,16 @@ function chart_years() {
 	// 			currently the plot function has a 5 year max range, but don't know what that does, last five? first five?
 
 	//Fill array with series
-	for (i = 0; i < available_years.length; i++) {
+	for (i = 0; i < years_data.length; i++) {
 
 		// TODO: can't i get the clean year data directly from the database with the right sql query?
 
-		split_date = available_years[i].date.split(/[- :]/);	// split the YYYY-MM-DD into an array
+		split_date = years_data[i].date.split(/[- :]/);	// split the YYYY-MM-DD into an array
 		comp_date = new Date(split_date[0], 0, 1);				// use the year to make a date object for jan 1st of that year
 		year = comp_date.getTime();								// turn it into millisecond timestamp
 
-		kwh_in = Math.round(available_years[i].kwh_in);
-		kwh_out = Math.round(available_years[i].kwh_out);
+		kwh_in = Math.round(years_data[i].kwh_in);
+		kwh_out = Math.round(years_data[i].kwh_out);
 
 		years_data_kwhin[i] = [year, kwh_in];
 		years_data_kwhout[i] = [year, kwh_out];
@@ -632,6 +645,7 @@ function chart_years() {
 
 function chart_months(date) {
 
+	/*global months_data */
 	var months_data_kwhin = [];
 	var months_data_kwhout = [];
 	var months_net_kwh = [];
@@ -647,21 +661,21 @@ function chart_months(date) {
 //		url: 'getstatus.php?q=months&date=' + date,
 		url: 'getstatus.php?q=months',
 		success: function (data) {
-			available_months = data;
+			months_data = data;
 
 		}
 	});
 
 
 	//Fill array with series
-	for (i = 0; i < available_months.length; i++) {
+	for (i = 0; i < months_data.length; i++) {
 
-		split_date = available_months[i].date.split(/[- :]/);		// split the YYYY-MM-DD into an array
+		split_date = months_data[i].date.split(/[- :]/);		// split the YYYY-MM-DD into an array
 		month_date = new Date(split_date[0], split_date[1] - 1, 1);	// use the month to make a date object for the 1st of the month
 		month = month_date.getTime();								// turn it into millisecond timestamp
 
-		kwh_in  = Math.round(available_months[i].kwh_in);
-		kwh_out = Math.round(available_months[i].kwh_out);
+		kwh_in  = Math.round(months_data[i].kwh_in);
+		kwh_out = Math.round(months_data[i].kwh_out);
 		
 		months_data_kwhin[i]  = [month, kwh_in];
 		months_data_kwhout[i] = [month, kwh_out];
@@ -722,20 +736,21 @@ function chart_months(date) {
 }
 
 
-function chart_days_of_month(date) {
+function chart_days(date) {
 
-	var month_days_data_kwhin = [];
-	var month_days_data_kwhout = [];
-	var month_days_net_kwh = [];
-	var month_total_kwhin = 0;
-	var month_total_kwhout = 0;
-	var month_avg_kwhin = 0;
-	var month_avg_kwhout = 0;
+	/*global days_data, display_date */
+	var days_data_kwhin = [];
+	var days_data_kwhout = [];
+	var days_net_kwh = [];
+	var days_total_kwhin = 0;
+	var days_total_kwhout = 0;
+	var days_avg_kwhin = 0;
+	var days_avg_kwhout = 0;
 		
 	if (date) {
-		var statusURL = 'getstatus.php?q=month_days&date=' + date;
+		var statusURL = 'getstatus.php?q=days&date=' + date;
 	} else {
-		var statusURL = 'getstatus.php?q=month_days';
+		var statusURL = 'getstatus.php?q=days';
 	}
 
 	$.ajax({
@@ -744,28 +759,28 @@ function chart_days_of_month(date) {
 		dataType: 'json',
 		url: statusURL,
 		success: function (data) {
-			available_month_days = data;
+			days_data = data;
 		}
 	});
 
 	//Fill array with series
-	for (i = 0; i < available_month_days.length; i++) {
+	for (i = 0; i < days_data.length; i++) {
 			
-		day = available_month_days[i].timestamp;	
+		day = days_data[i].timestamp;	
 			
-		month_days_data_kwhin[i]  = [day, parseFloat(available_month_days[i].kwh_in)];
-		month_days_data_kwhout[i] = [day, -parseFloat(available_month_days[i].kwh_out)];
+		days_data_kwhin[i]  = [day, parseFloat(days_data[i].kwh_in)];
+		days_data_kwhout[i] = [day, -parseFloat(days_data[i].kwh_out)];
 		
-		month_days_net_kwh[i] = [day, (parseFloat(available_month_days[i].kwh_in) - parseFloat(available_month_days[i].kwh_out))];
+		days_net_kwh[i] = [day, (parseFloat(days_data[i].kwh_in) - parseFloat(days_data[i].kwh_out))];
 		
-		month_total_kwhin += parseFloat(available_month_days[i].kwh_in);
-		month_total_kwhout -= parseFloat(available_month_days[i].kwh_out);
+		days_total_kwhin += parseFloat(days_data[i].kwh_in);
+		days_total_kwhout -= parseFloat(days_data[i].kwh_out);
 	}
 
-	month_avg_kwhin = month_total_kwhin/available_month_days.length;
-	month_avg_kwhout = month_total_kwhout/available_month_days.length;
+	days_avg_kwhin = days_total_kwhin/days_data.length;
+	days_avg_kwhout = days_total_kwhout/days_data.length;
 	
-	$('#month_days_chart').highcharts({
+	$('#days_chart').highcharts({
 		chart: {
 			type: 'column',
 			marginTop: 20,
@@ -777,7 +792,7 @@ function chart_days_of_month(date) {
 					events: {
 						click: function() {
 							// FIXME: maybe i shouldn't be using a global variable?
-							displayDate = get_formatted_date(this.x);
+							display_date = get_formatted_date(this.x);
 							// tricky way to get the document name from the path.
 							var page = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
 							// remove the query string, if there is one.
@@ -788,7 +803,7 @@ function chart_days_of_month(date) {
 									refresh_data();
 									break;
 								default:
-									location.assign('historical.html?date=' + displayDate);
+									location.assign('historical.html?date=' + display_date);
 									break;
 							}
 						}
@@ -813,15 +828,15 @@ function chart_days_of_month(date) {
 	    series: [{
 			name: 'Production',
 			color: cfg_colorProduction,
-			data: month_days_data_kwhin,
+			data: days_data_kwhin,
 		}, {
 	        name: 'Usage',
 			color: cfg_colorUsage,
-	        data: month_days_data_kwhout,
+	        data: days_data_kwhout,
 	    }, {
 	        name: 'Net',
 	        type: 'line',
-	        data: month_days_net_kwh,
+	        data: days_net_kwh,
 	    }],
 	    tooltip: {
     		crosshairs: false,
@@ -854,24 +869,24 @@ function chart_days_of_month(date) {
 				color: cfg_colorProduction,
 				label: {
 					align: 'left',
-					text: '<span class="plotlabel">' + month_avg_kwhin.toFixed(1) + 'kWh</span>',
+					text: '<span class="plotlabel">' + days_avg_kwhin.toFixed(1) + 'kWh</span>',
 					useHTML: true,
 					verticalAlign: 'top',
 					x: -2
 				},
-				value: month_avg_kwhin,
+				value: days_avg_kwhin,
 				width: 1,
 				zIndex: 3,
 			},{
 				color: cfg_colorUsage,
 				label: {
 					align: 'left',
-					text: '<span class="plotlabel">' + month_avg_kwhout.toFixed(1) + 'kWh</span>',
+					text: '<span class="plotlabel">' + days_avg_kwhout.toFixed(1) + 'kWh</span>',
 					useHTML: true,
 					x: -2,
 					y: 13
 				},
-				value: month_avg_kwhout,
+				value: days_avg_kwhout,
 				width: 1,
 				zIndex: 3,
 			}]
@@ -943,6 +958,7 @@ function draw_chart(chart_id, content) {
 
 function get_cc_chargePower() {
 
+	/*global deviceLabel, full_day_data */
 	var total_day_data_watts = [];
 	var day_data_watts = [];
 	var all_devices_data = [];
@@ -1035,6 +1051,8 @@ function get_cc_chargePower() {
 
 
 function get_cc_chargeCurrent() {
+
+	/*global deviceLabel, full_day_data */
 	var total_day_data_amps = [];
 	var day_data_amps = [];
 	var all_devices_data_amps = [];
@@ -1121,6 +1139,8 @@ function get_cc_chargeCurrent() {
 
 
 function get_cc_inputVolts() {
+
+	/*global deviceLabel, full_day_data */
 	var total_day_data__array_volts = [];
 	var day_data_array_volts = [];
 	var all_devices_data_array_volts = [];
@@ -1181,6 +1201,8 @@ function get_cc_inputVolts() {
 
 
 function get_cc_inputCurrent() {
+
+	/*global deviceLabel, full_day_data */
 	var total_day_data__array_amps = [];
 	var day_data_array_amps = [];
 	var all_devices_data_array_amps = []
@@ -1242,7 +1264,9 @@ function get_cc_inputCurrent() {
 
 
 function get_battery_volts() {
-	day_data_volts = [];
+
+	/*global full_day_data */
+	var day_data_volts = [];
 
 	if (full_day_data[FNDC_ID]) {
 		// if you have a fndc, get the data from there
@@ -1306,6 +1330,8 @@ function get_battery_volts() {
 
 
 function get_fndc_amps_vs_volts() {
+
+	/*global full_day_data */
 	var day_data_volts = [];
 	var day_data_amps = [];
 
@@ -1382,6 +1408,7 @@ function get_fndc_amps_vs_volts() {
 
 function get_fndc_shunts() {
 
+	/*global full_day_data, shuntLabel */
 	var day_data_shunt_a = [];
 	var day_data_shunt_b = [];
 	var day_data_shunt_c = [];
@@ -1459,6 +1486,8 @@ function get_fndc_shunts() {
 
 
 function get_fndc_soc() {
+
+	/*global full_day_data */
 	day_data_soc = [];
 
 	if (full_day_data[FNDC_ID]) {
@@ -1522,6 +1551,8 @@ function get_fndc_soc() {
 
 
 function get_fndc_soc_gauge() {
+
+	/*global full_day_data, json_status */
 
 	if (full_day_data["summary"]) {
 		var min_soc = full_day_data["summary"].min_soc;
@@ -1649,16 +1680,3 @@ function get_fndc_soc_gauge() {
 	return chart_options;
 
 }
-
-//
-// this is the way to get things started in jQuery. Seriously.
-//
-$(document).ready(function() {
-
-	// Apply the common theme 
-	Highcharts.setOptions(Highcharts.theme);
-
-	// run the page load function (in the html)
-	load_page();
-	
-});

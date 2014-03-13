@@ -19,7 +19,7 @@
 		<div id="years_chart" class="left-chart"></div>
 		<div id="months_chart" class="right-chart"></div>
 	</div>
-	<div id="month_days_chart" class="bottom-wide-chart"></div>
+	<div id="days_chart" class="bottom-wide-chart"></div>
 	<p>
 		<form action="javascript:void(0)" method="get">
 			<div style="text-align: center;">
@@ -51,27 +51,28 @@
 		
 		function refresh_data() {
 
-			if (displayDate == get_formatted_date()) { // if it's today.
+			/*global display_date */
+			if (display_date == get_formatted_date()) { // if it's today.
 				update_URL('historical.html');
 				document.title = "MonitorMate — Today";				
 			} else {
-				update_URL('historical.html', displayDate);
-				document.title = "MonitorMate — " + displayDate;				
+				update_URL('historical.html', display_date);
+				document.title = "MonitorMate — " + display_date;				
 			}
 
 //			// FIXME: check if i need to redraw the charts, it's a waste of time otherwise.
 //			var chartDate = null;
 //
-//			if (displayDate != get_formatted_date()) {	// if the date isn't today
-//				chartDate = displayDate;
+//			if (display_date != get_formatted_date()) {	// if the date isn't today
+//				chartDate = display_date;
 //			}
 //
 //			// FIXME: I should make the charting functions do a setData instead of replotting from scratch
 //			chart_years(chartDate, 'set');
 //			chart_months(chartDate, 'set');
-//			chart_days_of_month(chartDate, 'set');
+//			chart_days(chartDate, 'set');
 
-			get_dataStream(displayDate);
+			get_dataStream(display_date);
 
 			set_status("status", "summary");
 			draw_chart('flexnet_soc','flexnet_soc');
@@ -86,18 +87,19 @@
 
 		function change_day(delta) {
 
+			/*global display_date */
 			var delta = parseInt(delta);
 			var queryString;
 
 			if (delta == 0) {
-				displayDate = get_formatted_date();
+				display_date = get_formatted_date();
 			} else {
-				split_date = displayDate.split(/[- :]/);
+				split_date = display_date.split(/[- :]/);
 				new_date = new Date(parseInt(split_date[0]), parseInt(split_date[1] - 1), parseInt(split_date[2]));
 				updated_date = new Date(new_date.getTime() + (delta * 86400000)); // one day in milliseconds
 				
 				if (updated_date < (new Date())) {	// make you're not sneaking into the future.
-					displayDate = get_formatted_date(updated_date);					
+					display_date = get_formatted_date(updated_date);					
 				} else {
 					alert("You can't predict the future...");
 					return;
@@ -109,26 +111,30 @@
 		}
 
 
-		function load_page() {
-		
+		$(document).ready(function() {			
+
+			/*global display_date */
 			var URLvars = get_URLvars();
 
 			if (URLvars.date) {
 				// put the date from the querystring into the text field
-				displayDate = URLvars.date;
+				display_date = URLvars.date;
 			} else {
 				// put today into the text field
-				displayDate = get_formatted_date();
+				display_date = get_formatted_date();
 			}
+
+			// Apply the common theme 
+			Highcharts.setOptions(Highcharts.theme);
 			
 			// these should move into refresh_data()
 			chart_years();
 			chart_months();
-			chart_days_of_month();
+			chart_days();
 												
 			refresh_data();
 			//setInterval("get_status()", 5000);		
-		}
+		});
 
 	</script>
 </body>

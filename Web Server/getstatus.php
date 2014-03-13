@@ -26,16 +26,16 @@ if (isset($_GET) && isset($_GET["q"])) {
 	
 	switch ($_GET["q"]) {
 		case 'years':
-			send_year($date);
+			query_years($date);
 			break;
 		case 'months':
-			send_month_totals($date);
+			query_months($date);
 			break;
-		case 'month_days':
-			send_month_days($date);
+		case 'days':
+			query_days($date);
 			break;
-		case 'day':
-			send_day($date, $scope);
+		case 'full_day':
+			query_full_day($date, $scope);
 			break;
 		default:
 			echo("ERROR: unknown parameters set.");
@@ -46,7 +46,7 @@ if (isset($_GET) && isset($_GET["q"])) {
 }
 
 
-function send_year($date) {
+function query_years($date) {
 	//
 	// Used to generate the yearly kWh bar chart
 	//
@@ -81,7 +81,7 @@ function send_year($date) {
 }
 
 
-function send_month_totals($date) {
+function query_months($date) {
 	//
 	// Used to generate the monthly kWh bar chart
 	//
@@ -116,7 +116,7 @@ function send_month_totals($date) {
 }
 
 
-function send_month_days($date) {
+function query_days($date) {
 	//
 	// Used to generate the daily (month) kWh bar chart
 	//
@@ -153,7 +153,7 @@ function send_month_days($date) {
 	echo $json_month_days;
 }
 
-function send_day($date, $scope){
+function query_full_day($date, $scope){
 	//
 	// Used to generate all three of the "current" charts that shows daily activity.
 	//	
