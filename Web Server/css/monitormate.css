@@ -88,7 +88,7 @@ input.datepicker {
 	float: left;
 	width: 300px; /* if you change this, change right-col left margin. */
 	height: 840px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	background-color: white;
 	border-radius: 6px;
 	padding: 10px;
