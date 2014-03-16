@@ -13,10 +13,6 @@
 #GNU General Public License at <http://www.gnu.org/licenses/>
 #for more details.
 
-
-
-
-
 import mate3
 import socket
 import urllib2
@@ -31,8 +27,6 @@ try:
     import json
 except ImportError:
     import simplejson as json
-
-
 
 
 def main():
@@ -54,21 +48,19 @@ def main():
     parser.add_option('-r','--repeat-mate',help='Re-send Mate3 data to specified ip and port in format IP:PORT',dest='ip_port')
     (options, args) = parser.parse_args()
     start(options)
-   
+
 
 def start(options):
-    
+
     mate = mate3.mate3()
-    
-    
+
     if options.port:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.bind(('', int(options.port)))
     else:
         print "Port is mandatory"
         return
-    
-    
+
     #Prepare connection if send json to url is enabled
     headers = {}
     if options.url:
@@ -105,18 +97,15 @@ def start(options):
                     	if options.date_time:
                         		devices_status = devices_status+"&datetime="+str(datetime.now())
                     	conn.request("POST", urllist[2], devices_status , headers)
-                
-                                  
-            
+
             #Clear screen
             os.system('cls' if os.name == 'nt' else 'clear')
-            
-            
+
             #Re-send mate3 data to specified ip
             if options.ip_port:
                 iadress = options.ip_port.split(':')
                 s.sendto(received_data,0, (iadress[0], int(iadress[1])) )
-     
+
             #Get available devices info
             if options.info:
                 devices_info = mate.get_devies_info()
@@ -125,21 +114,15 @@ def start(options):
                     print "Name:\n", i[1]
                     print "Available status info:\n", i[2]
                 return 
-            
-            
-                
+
             #Print all devices status
             if options.get_status:
                 print mate.get_status()
-            
-            
+
             #Print status of in json format
             if options.json:
                 print  json.dumps(mate.get_status_dict(int(options.device_address)))
-                
-            
-            
-            
+
             #Print only device status in especified adress
             if options.device_address and not options.json:
                 if mate.get_device_status(options.device_address):
@@ -162,8 +145,7 @@ def start(options):
 
         except:
                 print "Error, retrying..."
-        
-        
+
 
 if __name__ == '__main__':
     main()
