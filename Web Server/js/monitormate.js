@@ -34,8 +34,8 @@ var days_data     = [];
 // default charts for the monitormate.html page. 
 // this can/will get overwritten by the cookies.
 var chart_content = {
-	multichart1: "charge_power",
-	multichart2: "charge_current",
+	multichart1: "flexnet_shunts",
+	multichart2: "charge_power",
 	multichart3: "battery_volts",
 };
 
@@ -340,16 +340,16 @@ function populate_chart_select(pselect) {
 		for (i in full_day_data[FNDC_ID]) {
 			select_items.push('<option value="flexnet_soc">State of Charge</option>');
 			select_items.push('<option value="flexnet_shunts">Input/Output</option>');
-			select_items.push('<option value="flexnet_amps_vs_volts">Charge Amps vs Volts</option>');
+			select_items.push('<option value="flexnet_amps_vs_volts">Battery Amps vs Volts</option>');
 		}
 	}
 
 	if (full_day_data[CC_ID]) { /* FM/MX charge controller available */
+		select_items.push('<option value="battery_volts">Battery Voltage</option>');		
 		select_items.push('<option value="charge_power">PV Charging Power</option>');
 		select_items.push('<option value="charge_current">PV Charging Current</option>');
 		select_items.push('<option value="array_volts">PV Input Voltage</option>');
 		select_items.push('<option value="array_current">PV Input Current</option>');
-		select_items.push('<option value="battery_volts">Battery Voltage</option>');		
 	}
 
 	$('#' + pselect).html(select_items.join(''));
