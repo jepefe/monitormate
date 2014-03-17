@@ -107,7 +107,7 @@ class flexnetdc():
 
 		if extra_data_id > 63:
 			ed_sign = -1
-			extra_data = extra_data - 64
+			extra_data_id = extra_data_id - 64
 		else:
 			ed_sign = 1
 
