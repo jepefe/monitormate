@@ -525,7 +525,7 @@ function set_status(HTML_id, value) {
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">State of Charge:</td><td>' + device.soc + '%</td></tr>\
 						<tr><td class="label">Days Since Charged:</td><td>' + (Math.round(device.days_since_full * 100) / 100) + ' Days</td></tr>\
-						<tr><td class="label">Charge Required:</td><td>' + device.charge_factor_corrected_net_batt_ah + ' Ah, ' + device.charge_factor_corrected_net_batt_kwh + ' kWh</td></tr>\
+						<tr><td class="label">Charge Required:</td><td>' + (device.charge_factor_corrected_net_batt_ah * -1) + ' Ah, ' + (device.charge_factor_corrected_net_batt_kwh * -1) + ' kWh</td></tr>\
 						<tr><td class="label">Within Charge Params:</td><td>' + device.charge_params_met + '</td></tr>\
 						<th class="subhead">Battery</th>\
 						<tr><td class="label">Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
