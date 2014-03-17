@@ -530,9 +530,6 @@ function set_status(HTML_id, value) {
 						<th class="subhead">Battery</th>\
 						<tr><td class="label">Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
 						<tr><td class="label">Temperature:</td><td>' + device.battery_temp + ' &deg;C (' + ((device.battery_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
-						<th class="subhead">Auxiliary Relay</th>\
-						<tr><td class="label">Mode:</td><td>' + device.relay_mode + '</td></tr>\
-						<tr><td class="label">Status:</td><td>' + device.relay_status + '</td></tr>\
 						<th class="subhead">Shunts</th>\
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.shunt_a_amps + ' A, ' + Math.round(device.shunt_a_amps * device.battery_volt) + ' W</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.shunt_b_amps + ' A, ' + Math.round(device.shunt_b_amps * device.battery_volt) + ' W</td></tr>\
@@ -547,6 +544,9 @@ function set_status(HTML_id, value) {
 						<tr><td class="label">Input:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Output:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Net:</td><td>' + today_net_ah + ' Ah, ' + today_net_kwh.toFixed(2) + ' kWh</td></tr>\
+						<th class="subhead">Auxiliary Relay</th>\
+						<tr><td class="label">Mode:</td><td>' + device.relay_mode + '</td></tr>\
+						<tr><td class="label">Status:</td><td>' + device.relay_status + '</td></tr>\
 						</table>';
 			break;
 
