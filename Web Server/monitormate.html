@@ -57,7 +57,7 @@
 
 			// get the cookie data and status
 			get_cookies();
-			get_status();
+			get_current_status();
 
 			// populate the select elements (popup menus)
 			populate_status_select();
@@ -69,7 +69,7 @@
 			Highcharts.setOptions(Highcharts.theme);
 
 			// set and draw everything in the status column on the left
-			draw_chart("soc_gauge", "flexnet_soc_gauge");			
+			draw_chart("soc_gauge", "fndc_soc_gauge");			
 			set_status("status_top", status_content["status_top"]);
 			set_status("status_bottom", status_content["status_bottom"]);
 
@@ -82,7 +82,7 @@
 			chart_days();
 		
 			// update the status regularly
-			setInterval("get_status()", 5000);
+			setInterval("get_current_status()", 5000);
 
 		});
 		

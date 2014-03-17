@@ -34,7 +34,7 @@ var days_data     = [];
 // default charts for the monitormate.html page. 
 // this can/will get overwritten by the cookies.
 var chart_content = {
-	multichart1: "flexnet_shunts",
+	multichart1: "fndc_shunts",
 	multichart2: "charge_power",
 	multichart3: "battery_volts",
 };
@@ -338,9 +338,9 @@ function populate_chart_select(pselect) {
 
 	if (full_day_data[FNDC_ID]) { /* FlexNet available */
 		for (i in full_day_data[FNDC_ID]) {
-			select_items.push('<option value="flexnet_soc">State of Charge</option>');
-			select_items.push('<option value="flexnet_shunts">Input/Output</option>');
-			select_items.push('<option value="flexnet_amps_vs_volts">Battery Amps vs Volts</option>');
+			select_items.push('<option value="fndc_soc">State of Charge</option>');
+			select_items.push('<option value="fndc_shunts">Input/Output</option>');
+			select_items.push('<option value="fndc_amps_vs_volts">Battery Amps vs Volts</option>');
 		}
 	}
 
@@ -388,6 +388,28 @@ function populate_status_select() {
 	
 	$("#status_top_select").html(tabs.join(''));
 	$("#status_bottom_select").html(tabs.join(''));
+}
+
+
+function get_current_status() {
+
+	/*global json_status */
+
+	if (json_status) {
+		$.getJSON("./matelog", function (data) {
+			json_status = data;
+		});
+	} else {
+		$.ajax({
+			async: false,
+			type: 'GET',
+			dataType: 'json',
+			url: 'matelog',
+			success: function (data) {
+				json_status = data;
+			}
+		});
+	}
 }
 
 
@@ -441,14 +463,15 @@ function set_status(HTML_id, value) {
 
 		case FX_ID:
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
+						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
+						<tr><td class="label">AC Mode:</td><td>' + device.ac_mode + '</td></tr>\
 						<tr><td class="label">AC Output Voltage:</td><td>' + device.ac_output_voltage + ' V</td></tr>\
 						<tr><td class="label">Inverter Current:</td><td>' + device.inverter_current + ' A</td></tr>\
-						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
 						<tr><td class="label">AC Input Voltage:</td><td>' + device.ac_input_voltage + ' V</td></tr>\
+						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
 						<tr><td class="label">Buy Current:</td><td>' + device.buy_current + ' A</td></tr>\
 						<tr><td class="label">Sell Current:</td><td>' + device.sell_current + ' A</td></tr>\
-						<tr><td class="label">AC Mode:</td><td>' + device.ac_mode + '</td></tr>\
-						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
+						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
 						<tr><td class="label">Error Modes:</td><td>' + device.error_modes + '</td></tr>\
 						<tr><td class="label">Warning Modes:</td><td>' + device.warning_modes + '</td></tr>\
 						<tr><td class="label">Misc:</td><td>' + device.misc + '</td></tr>\
@@ -457,6 +480,8 @@ function set_status(HTML_id, value) {
 
 		case RAD_ID:
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
+						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
+						<tr><td class="label">AC Mode:</td><td>' + device.ac_mode + '</td></tr>\
 						<tr><td class="label">AC Output Voltage L1:</td><td>' + device.ac_output_voltage_l1 + ' V</td></tr>\
 						<tr><td class="label">AC Output Voltage L2:</td><td>' + device.ac_output_voltage_l2 + ' V</td></tr>\
 						<tr><td class="label">Inverter Current L1:</td><td>' + device.inverter_current_l1 + ' A</td></tr>\
@@ -471,8 +496,6 @@ function set_status(HTML_id, value) {
 						<tr><td class="label">Buy Current L2:</td><td>' + device.buy_current_l2 + ' A</td></tr>\
 						<tr><td class="label">Sell Current L1:</td><td>' + device.sell_current_l1 + ' A</td></tr>\
 						<tr><td class="label">Sell Current L2:</td><td>' + device.sell_current_l2 + ' A</td></tr>\
-						<tr><td class="label">AC Mode:</td><td>' + device.ac_mode + '</td></tr>\
-						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
 						<tr><td class="label">Error Modes:</td><td>' + device.error_modes + '</td></tr>\
 						<tr><td class="label">Warning Modes:</td><td>' + device.warning_modes + '</td></tr>\
 						<tr><td class="label">Misc:</td><td>' + device.misc + '</td></tr>\
@@ -495,7 +518,9 @@ function set_status(HTML_id, value) {
 
 		case FNDC_ID:
 			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
-			var today_net_ah = parseInt(device.today_net_input_ah) - parseInt(device.today_net_output_ah);
+			var net_accumulated_ah  = parseFloat(device.accumulated_ah_shunt_a) + parseFloat(device.accumulated_ah_shunt_b) + parseFloat(device.accumulated_ah_shunt_c);
+			var net_accumulated_kwh = parseFloat(device.accumulated_kwh_shunt_a) + parseFloat(device.accumulated_kwh_shunt_b) + parseFloat(device.accumulated_kwh_shunt_c);
+			var today_net_ah  = parseInt(device.today_net_input_ah) - parseInt(device.today_net_output_ah);
 			var today_net_kwh = parseFloat(device.today_net_input_kwh) - parseFloat(device.today_net_output_kwh);
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">State of Charge:</td><td>' + device.soc + '%</td></tr>\
@@ -511,11 +536,12 @@ function set_status(HTML_id, value) {
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.shunt_a_amps + ' A, ' + Math.round(device.shunt_a_amps * device.battery_volt) + ' W</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.shunt_b_amps + ' A, ' + Math.round(device.shunt_b_amps * device.battery_volt) + ' W</td></tr>\
 						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.shunt_c_amps + ' A, ' + Math.round(device.shunt_c_amps * device.battery_volt) + ' W</td></tr>\
-						<tr><td class="label">Net (Batt):</td><td>' + total_shunt_amps.toFixed(1) + ' A, ' + Math.round(total_shunt_amps * device.battery_volt) + ' W</td></tr>\
+						<tr><td class="label">Battery (Net):</td><td>' + total_shunt_amps.toFixed(1) + ' A, ' + Math.round(total_shunt_amps * device.battery_volt) + ' W</td></tr>\
 						<th class="subhead">Accumulated</th>\
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.accumulated_ah_shunt_a + ' Ah, ' + device.accumulated_kwh_shunt_a + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.accumulated_ah_shunt_b + ' Ah, ' + device.accumulated_kwh_shunt_b + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.accumulated_ah_shunt_c + ' Ah, ' + device.accumulated_kwh_shunt_c + ' kWh</td></tr>\
+						<tr><td class="label">Battery (Net):</td><td>' + net_accumulated_ah + ' Ah, ' + net_accumulated_kwh.toFixed(2) + ' kWh</td></tr>\
 						<th class="subhead">Today\'s Totals</th>\
 						<tr><td class="label">Input:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Output:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\
@@ -529,28 +555,6 @@ function set_status(HTML_id, value) {
 	$('#' + HTML_id).html(content);
 	$('#' + HTML_id + '_select').val(value);
 	set_cookies(HTML_id, value);
-}
-
-
-function get_status() {
-
-	/*global json_status */
-
-	if (json_status) {
-		$.getJSON("./matelog", function (data) {
-			json_status = data;
-		});
-	} else {
-		$.ajax({
-			async: false,
-			type: 'GET',
-			dataType: 'json',
-			url: 'matelog',
-			success: function (data) {
-				json_status = data;
-			}
-		});
-	}
 }
 
 
@@ -933,16 +937,16 @@ function draw_chart(chart_id, content) {
 		case "battery_volts":
 			chart_data = get_battery_volts();
 			break;
-		case "flexnet_amps_vs_volts":
+		case "fndc_amps_vs_volts":
 			chart_data = get_fndc_amps_vs_volts();
 			break;
-		case "flexnet_shunts":
+		case "fndc_shunts":
 			chart_data = get_fndc_shunts();
 			break;
-		case "flexnet_soc":
+		case "fndc_soc":
 			chart_data = get_fndc_soc();
 			break;
-		case "flexnet_soc_gauge":
+		case "fndc_soc_gauge":
 			chart_data = get_fndc_soc_gauge();
 			break;
 		default:

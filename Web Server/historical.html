@@ -32,12 +32,12 @@
 		<div id="status" class="status_content"></div>
 	</div>
 	<div class="right-col">
-		<div id="flexnet_soc" class="multichart"></div>
+		<div id="fndc_soc" class="multichart"></div>
 	</div>
 	<h2>Input/Output:</h2>
-	<div id="flexnet_shunts" class="bottom-wide-chart"></div>
+	<div id="fndc_shunts" class="bottom-wide-chart"></div>
 	<h2>Charge Amps vs Volts:</h2>
-	<div id="flexnet_amps_vs_volts" class="bottom-wide-chart"></div>
+	<div id="fndc_amps_vs_volts" class="bottom-wide-chart"></div>
 	<h2>Battery Voltage:</h2>
 	<div id="battery_volts" class="bottom-wide-chart"></div>
 	<h2>PV Charge Power:</h2>
@@ -77,9 +77,9 @@
 			get_dataStream(display_date);
 
 			set_status("status", "summary");
-			draw_chart('flexnet_soc','flexnet_soc');
-			draw_chart('flexnet_shunts','flexnet_shunts');
-			draw_chart('flexnet_amps_vs_volts','flexnet_amps_vs_volts');
+			draw_chart('fndc_soc','fndc_soc');
+			draw_chart('fndc_shunts','fndc_shunts');
+			draw_chart('fndc_amps_vs_volts','fndc_amps_vs_volts');
 			draw_chart('battery_volts','battery_volts');
 			draw_chart('charge_power','charge_power');
 			draw_chart('charge_current','charge_current');
@@ -136,7 +136,7 @@
 			chart_days();
 												
 			refresh_data();
-			//setInterval("get_status()", 5000);		
+			//setInterval("get_current_status()", 5000);		
 		});
 
 	</script>
