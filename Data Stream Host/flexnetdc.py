@@ -52,9 +52,9 @@ class flexnetdc():
         
         self.status_raw = datastream
 
-		# address
+		# Port address
         self.status_formatted[0] = datastream[0]
-		# device_id
+		# Device ID
         self.status_formatted[1] = datastream[1]
 
 		##
@@ -63,21 +63,21 @@ class flexnetdc():
 		
         status_flags = int(datastream[10])
 
-        #Sing for shunts
-        singA=1
-        singB=1
-        singC=1
+        # Sign for shunts
+        signA=1
+        signB=1
+        signC=1
 
         if status_flags & 8:
-            singA = -1
+            signA = -1
         if status_flags & 16:
-            singB = -1
+            signB = -1
         if status_flags & 32:
-            singC = -1
+            signC = -1
 
-        self.status_formatted[2] = str(float(datastream[2])*0.1*singA)
-        self.status_formatted[3] = str(float(datastream[3])*0.1*singB)
-        self.status_formatted[4] = str(float(datastream[4])*0.1*singC)  
+        self.status_formatted[2] = str(float(datastream[2])*0.1*signA)
+        self.status_formatted[3] = str(float(datastream[3])*0.1*signB)
+        self.status_formatted[4] = str(float(datastream[4])*0.1*signC)  
 
         #Charge params met
         if status_flags & 1:
@@ -103,29 +103,29 @@ class flexnetdc():
         ## Extra data 
         ##
 
-        #Get extra data sing and if positive remove bit 7 (subtract 64)
+        #Get extra data sign and if negative (>64) remove bit 7 (subtract 64)
 
         if extra_data_id > 63:
-            ed_sing = -1
+            ed_sign = -1
             extra_data = extra_data - 64
         else:
-            ed_sing = 1
+            ed_sign = 1
 
         #Put extra data values in formated status list
         
         #One decimal value (days since full charge)
         if extra_data_id == 6:
-            self.status_formatted[5+6] = extra_data * 0.1 * ed_sing
+            self.status_formatted[5+6] = extra_data * 0.1 * ed_sign
             
         #Values without decimals (Ah values and min SOC.)  
         nodecimal = [0,2,4,7,8,9,12]
         if extra_data_id in nodecimal:
-            self.status_formatted[5+extra_data_id] = str(extra_data*ed_sing)
+            self.status_formatted[5+extra_data_id] = str(extra_data * ed_sign)
             
         #Two decimals values (kWh values.)
         twodecimals = [1,3,5,10,11,13]
         if extra_data_id in twodecimals:
-            self.status_formatted[5+extra_data_id] = str(extra_data * 0.01 * ed_sing)
+            self.status_formatted[5+extra_data_id] = str(extra_data * 0.01 * ed_sign)
 
 		##
 		## End of extra data 
