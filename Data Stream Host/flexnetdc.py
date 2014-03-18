@@ -14,10 +14,10 @@
 # GNU General Public License at <http://www.gnu.org/licenses/>
 # for more details.
 
-#------------------#
-# FLEXnet DC class #
-#------------------#
 
+#-----------------------#
+# FLEXnet DC class		#
+#-----------------------#
 class flexnetdc():
 	
 	# Names of all data values in raw_string
@@ -209,7 +209,7 @@ class flexnetdc():
 		self.status_formatted[22] = str(int(datastream[7]) * 0.1)
 
 		# SoC
-		self.status_formatted[23] = str(int(datastream[8]))
+		self.status_formatted[23] = int(datastream[8])
 
 	#-----------------------------------#
 	# Get all device values with labels #
