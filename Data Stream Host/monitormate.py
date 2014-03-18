@@ -91,12 +91,12 @@ def start(options):
 					return
 				else:
 					conn = httplib.HTTPConnection(urllist[1])
-							devices_status = "devices="+json.dumps(mate.get_status_dict(int(options.device_address)))
-							if options.token:
-									devices_status = devices_status+"&token="+ options.token
-							if options.date_time:
-									devices_status = devices_status+"&datetime="+str(datetime.now())
-							conn.request("POST", urllist[2], devices_status , headers)
+					devices_status = "devices="+json.dumps(mate.get_status_dict(int(options.device_address)))
+					if options.token:
+						devices_status = devices_status+"&token="+ options.token
+					if options.date_time:
+						devices_status = devices_status+"&datetime="+str(datetime.now())
+					conn.request("POST", urllist[2], devices_status , headers)
 
 			# Clear screen
 			os.system('cls' if os.name == 'nt' else 'clear')
