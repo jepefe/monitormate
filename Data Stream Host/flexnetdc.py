@@ -1,53 +1,90 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 # Filename: flexnetdc.py
 
-
-#Copyright (C) 2012 Jesus Perez <jepefe@gmail.com>
-#This program is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 2 of the License, or
-#(at your option) any later version.
+# Copyright (C) 2012-2014 Jesus Perez, Timothy Martin
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 # 
-#This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License at <http://www.gnu.org/licenses/>
-#for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License at <http://www.gnu.org/licenses/>
+# for more details.
 
-
-
+#------------------#
+# FLEXnet DC class #
+#------------------#
 
 class flexnetdc():
 	
-	#Names of all data values in raw_string
-	valuenames = ['address','device_id', 'shunt_a_amps', 'shunt_b_amps','shunt_c_amps','extra_data_id', 'extra_data', 'battery_volts', \
-				  'soc','shunt_enable','status_flags', 'battery_temp']
+	# Names of all data values in raw_string
+	valuenames = [
+		'address',			#  [0] Port Address
+		'device_id',		#  [1] Device Type
+		'shunt_a_amps',		#  [2] Shunt A Amps  		
+		'shunt_b_amps',		#  [3] Shunt B Amps  		
+		'shunt_c_amps',		#  [4] Shunt C Amps  		
+		'extra_data_id',	#  [5] Extra Data Identifier
+		'extra_data',		#  [6] Extra Data			
+		'battery_volts',	#  [7] Battery Voltage		
+		'soc',				#  [8] State of Charge		
+		'shunt_enable',		#  [9] Shunt Enable		
+		'status_flags',		# [10] Status Flags
+		'battery_temp'		# [11] Battery Temperature
+	]
 	
-	#Names of all formatted data values
-	valuenames_formatted = ['address','device_id', 'shunt_a_amps', 'shunt_b_amps','shunt_c_amps','accumulated_ah_shunt_a','accumulated_kwh_shunt_a',\
-							'accumulated_ah_shunt_b','accumulated_kwh_shunt_b', 'accumulated_ah_shunt_c', 'accumulated_kwh_shunt_c', \
-							 'days_since_full','today_min_soc','today_net_input_ah','today_net_output_ah','today_net_input_kwh',\
-							 'today_net_output_kwh','charge_factor_corrected_net_batt_ah','charge_factor_corrected_net_batt_kwh',\
-							 'charge_params_met','relay_mode','relay_status', 'battery_volt', 'soc','shunt_enabled_a','shunt_enabled_b',\
-							 'shunt_enabled_c','battery_temp']
-	
-	
+	# Names of all formatted data values
+	valuenames_formatted = [
+		'address',								#  [0] Port Address
+		'device_id',							#  [1] Device Type
+		'shunt_a_amps',							#  [2] Shunt A Amps
+		'shunt_b_amps',							#  [3] Shunt B Amps
+		'shunt_c_amps',							#  [4] Shunt C Amps
+		'accumulated_ah_shunt_a',				#  [5] Accumulated Ah Shunt A
+		'accumulated_kwh_shunt_a',				#  [6] Accumulated kWh Shunt A
+		'accumulated_ah_shunt_b',				#  [7] Accumulated Ah Shunt B
+		'accumulated_kwh_shunt_b',				#  [8] Accumulated kWh Shunt B
+		'accumulated_ah_shunt_c',				#  [9] Accumulated Ah Shunt C
+		'accumulated_kwh_shunt_c',				# [10] Accumulated kWh Shunt C
+		'days_since_full',						# [11] Days Since Full
+		'today_min_soc',						# [12] Today's Minimum State of Charge
+		'today_net_input_ah',					# [13] Today's Net Input Ah
+		'today_net_output_ah',					# [14] Today's Net Output Ah
+		'today_net_input_kwh',					# [15] Today's Net Input kWh
+		'today_net_output_kwh',					# [16] Today's Net Output kWh
+		'charge_factor_corrected_net_batt_ah',	# [17] Charge Factor Corrected Net Battery Ah
+		'charge_factor_corrected_net_batt_kwh',	# [18] Charge Factor Corrected Net Battery kWh
+		'charge_params_met',					# [19] Charge Parameters Met
+		'relay_mode',							# [20] Relay Mode
+		'relay_status',							# [21] Relay Status
+		'battery_volt',							# [22] Battery Voltage
+		'soc',									# [23] State of Charge
+		'shunt_enabled_a',						# [24] Shunt A Enabled
+		'shunt_enabled_b',						# [25] Shunt B Enabled
+		'shunt_enabled_c',						# [26] Shunt C Enabled
+		'battery_temp'							# [27] Battery Temperature
+	]
+
 	def __init__(self):
 	
 		self.dev_address = None
-	#Raw datastream
+
+		# Raw datastream
 		self.status_raw = [0]*self.valuenames.__len__()
-	
-	#Formatted datastream
+
+		# Formatted datastream
 		self.status_formatted = [0]*self.valuenames_formatted.__len__()
-	#Device name
+
+		# Device name
 		self.name = "FLEXnet DC"
 
-	
 
-#------------------------------#
-# Get and format datastream	   #
-#------------------------------#
+	#------------------------------#
+	# Get and format datastream	   #
+	#------------------------------#
 	def set_status(self,datastream):
 		
 		self.status_raw = datastream
@@ -79,50 +116,72 @@ class flexnetdc():
 		self.status_formatted[3] = str(float(datastream[3])*0.1*signB)
 		self.status_formatted[4] = str(float(datastream[4])*0.1*signC)	
 
-		#Charge params met
+		# Charge params met
 		if status_flags & 1:
 			self.status_formatted[19] = 'Yes'
 		else:
 			self.status_formatted[19] = 'No'
 		
-		#Relay mode and state 
+		# Relay Mode
 		if status_flags & 4:
 			self.status_formatted[20] = 'Manual'
 		else:
 			self.status_formatted[20] = 'Automatic'
-			
+		
+		# Relay State	
 		if status_flags & 2:
 			self.status_formatted[21] = 'Closed'
 		else:
 			self.status_formatted[21] = 'Open'
 
+		#-----------------------------------------------#
+		# Extra Data Identifier							#
+		#-----------------------------------------------#
+		# Bits 1-6	 									#
+		#	 0: Accumulated Ah Shunt A					#
+		#	 1: Accumulated kWh Shunt A					#
+		#	 2: Accumulated Ah Shunt B					#
+		#	 3: Accumulated kWh Shunt B					#
+		#	 4: Accumulated Ah Shunt C					#
+		#	 5: Accumulated kWh Shunt C					#
+		#	 6: Days Since Full							#
+		#	 7: Today's Minimum State of Charge			#
+		#	 8: Today's Net Input Ah					#
+		#	 9: Today's Net Output Ah					#
+		#	10: Today's Net Input kWh					#
+		#	11: Today's Net Output kWh					#
+		#	12: Charge Factor Corrected Net Battery Ah	#
+		#	13: Charge Factor Corrected Net Battery kWh	#
+		#-----------------------------------------------#
+		# Bit 7 - Extra Data Numeric Sign				#
+		#		0: positive value						#
+		#		1: negative value						#
+		#-----------------------------------------------#
+		# Bit 8 - unused								#
+		#-----------------------------------------------#
 		extra_data_id = int(datastream[5])
 		extra_data = int(datastream[6])
-
-		##
-		## Extra data 
-		##
-
-		#Get extra data sign and if negative (64 or higher) remove bit 7 (subtract 64)
-
+		
+		# Since bit 8 is unused, the only way for the decimal number to be 64 or greater is
+		# if the value of bit 7 is 1. If negative (64 or higher) remove bit 7 (subtract 64).
 		if extra_data_id > 63:
 			ed_sign = -1
 			extra_data_id = extra_data_id - 64
 		else:
 			ed_sign = 1
 
-		#Put extra data values in formated status list
+		# Put extra data values in formated status list
 
-		#One decimal value (days since full charge)
+		# One decimal value (days since full charge)
 		if extra_data_id == 6:
 			self.status_formatted[5 + extra_data_id] = str(extra_data * 0.1 * ed_sign)
 			
-		#Values without decimals (Ah values and min SOC.)  
+		# Values without decimals (Ah values and min SOC.)  
 		nodecimal = [0,2,4,7,8,9,12]
 		if extra_data_id in nodecimal:
 			self.status_formatted[5 + extra_data_id] = str(extra_data * ed_sign)
 			
-		#Two decimals values (kWh values.)
+		# Two decimals values (kWh values.)
 		twodecimals = [1,3,5,10,11,13]
 		if extra_data_id in twodecimals:
 			self.status_formatted[5 + extra_data_id] = str(extra_data * 0.01 * ed_sign)
@@ -131,7 +190,7 @@ class flexnetdc():
 		## End of extra data 
 		##
 
-		#Shunt status
+		# Shunt status
 		self.status_formatted[24] = 'On'
 		self.status_formatted[25] = 'On'
 		self.status_formatted[26] = 'On'
@@ -143,26 +202,22 @@ class flexnetdc():
 		if datastream[9][2] == 1:
 			self.status_formatted[26] = 'Off'
 
-		#Battery temp
+		# Battery temp
 		self.status_formatted[27] = str(int(datastream[11]) - 10)
 
-		#Battery volts
+		# Battery volts
 		self.status_formatted[22] = str(int(datastream[7]) * 0.1)
 
-		#Soc
-		self.status_formatted[23] = int(datastream[8])
+		# SoC
+		self.status_formatted[23] = str(int(datastream[8]))
 
-#-----------------------------------#
-# Get all device values with labels #
-#-----------------------------------#
+	#-----------------------------------#
+	# Get all device values with labels #
+	#-----------------------------------#
 	def get_values_with_names(self):
 	 
 		values = {}
 		for idx, i in enumerate(self.valuenames_formatted):		  
 			values.update({i:self.status_formatted[idx]})
-		#print values
+		# Print values
 		return values
-
-	
-
-

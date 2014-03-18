@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 # Filename: monitormate.py
 
 #Copyright (C) 2012 Jesus Perez <jepefe@gmail.com>
