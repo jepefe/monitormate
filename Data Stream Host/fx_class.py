@@ -59,7 +59,7 @@ class fx():
 		misc_byte = int(datastream[12])
 		misc_modifiers_volts = 1
 		misc_modifiers_amps = 1
-		misc_info = 'Aux Output OFF'
+		misc_info = 'Aux Output Off'
 
 		if misc_byte & 1:
 			if self.modifiers == 1:
@@ -67,7 +67,7 @@ class fx():
 				misc_modifiers_volts = 2
 
 		if misc_byte & 128:
-			misc_info = 'Aux Output ON'
+			misc_info = 'Aux Output On'
 
 		self.status_formatted[12] = misc_info
 
@@ -86,7 +86,7 @@ class fx():
 
 		# Errors
 		raw_error = int(datastream[9])
-		error_list = ['No errors']
+		error_list = ['None']
 		if raw_error > 0:
 			if raw_error & 1:
 				error_list.append ('Low VAC Output')
@@ -129,7 +129,7 @@ class fx():
 		
 		# Warning modes
 		warning_mode = int(datastream[13])
-		warning_messages = ['No warnings']
+		warning_messages = ['None']
 		
 		if warning_mode > 0:
 			if warning_mode & 1:

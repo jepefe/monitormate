@@ -64,7 +64,7 @@ class cc:
 			if raw_error & 32:
 				error_list.append('Shorted Battery Sensor')
 		else:
-			error_list.append('No error')
+			error_list.append('None')
 
 		# Charge modes
 		charge_mode = {'00':'Silent','01':'Float','02':'Bulk','03':'Absorption','04':'EQ'}

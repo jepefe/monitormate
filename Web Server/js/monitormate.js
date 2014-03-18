@@ -457,7 +457,6 @@ function set_status(HTML_id, value) {
 						<tr><td class="label">Min SOC:</td><td>' + device.min_soc + '%</td></tr>\
 						<tr><td class="label">Max Temp:</td><td>' + device.max_temp + ' &deg;C (' + ((device.max_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
 						<tr><td class="label">Min Temp:</td><td>' + device.min_temp + ' &deg;C (' + ((device.min_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
-						<tr><td class="label">Max PV Voltage:</td><td>' + device.max_pv_voltage + ' V</td></tr>\
 						</table>';
 			break;
 
@@ -472,9 +471,9 @@ function set_status(HTML_id, value) {
 						<tr><td class="label">Buy Current:</td><td>' + device.buy_current + ' A</td></tr>\
 						<tr><td class="label">Sell Current:</td><td>' + device.sell_current + ' A</td></tr>\
 						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
-						<tr><td class="label">Error Modes:</td><td>' + device.error_modes + '</td></tr>\
-						<tr><td class="label">Warning Modes:</td><td>' + device.warning_modes + '</td></tr>\
 						<tr><td class="label">Misc:</td><td>' + device.misc + '</td></tr>\
+						<tr><td class="label">Warnings:</td><td>' + device.warning_modes + '</td></tr>\
+						<tr><td class="label">Errors:</td><td>' + device.error_modes + '</td></tr>\
 						</table>';
 			break;
 
@@ -496,23 +495,23 @@ function set_status(HTML_id, value) {
 						<tr><td class="label">Buy Current L2:</td><td>' + device.buy_current_l2 + ' A</td></tr>\
 						<tr><td class="label">Sell Current L1:</td><td>' + device.sell_current_l1 + ' A</td></tr>\
 						<tr><td class="label">Sell Current L2:</td><td>' + device.sell_current_l2 + ' A</td></tr>\
-						<tr><td class="label">Error Modes:</td><td>' + device.error_modes + '</td></tr>\
-						<tr><td class="label">Warning Modes:</td><td>' + device.warning_modes + '</td></tr>\
 						<tr><td class="label">Misc:</td><td>' + device.misc + '</td></tr>\
+						<tr><td class="label">Warnings:</td><td>' + device.warning_modes + '</td></tr>\
+						<tr><td class="label">Errors:</td><td>' + device.error_modes + '</td></tr>\
 						</table>';
 			break;
 
 		case CC_ID:
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
-						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
 						<tr><td class="label">Charge Mode:</td><td>' + device.charge_mode + '</td></tr>\
+						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
+						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volts + ' V</td></tr>\
 						<tr><td class="label">PV Current:</td><td>' + device.pv_current + ' A</td></tr>\
 						<tr><td class="label">PV Voltage:</td><td>' + device.pv_voltage + ' V</td></tr>\
-						<tr><td class="label">Daily kWh:</td><td>' + device.daily_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Daily Ah:</td><td>' + device.daily_ah + ' Ah</td></tr>\
-						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volts + ' V</td></tr>\
-						<tr><td class="label">Error Modes:</td><td>' + device.error_modes + '</td></tr>\
+						<tr><td class="label">Daily kWh:</td><td>' + device.daily_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Aux Mode:</td><td>' + device.aux_mode + '</td></tr>\
+						<tr><td class="label">Errors:</td><td>' + device.error_modes + '</td></tr>\
 						</table>';
 			break;
 
@@ -535,15 +534,15 @@ function set_status(HTML_id, value) {
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.shunt_b_amps + ' A, ' + Math.round(device.shunt_b_amps * device.battery_volt) + ' W</td></tr>\
 						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.shunt_c_amps + ' A, ' + Math.round(device.shunt_c_amps * device.battery_volt) + ' W</td></tr>\
 						<tr><td class="label">Battery (Net):</td><td>' + total_shunt_amps.toFixed(1) + ' A, ' + Math.round(total_shunt_amps * device.battery_volt) + ' W</td></tr>\
-						<th class="subhead">Accumulated</th>\
-						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.accumulated_ah_shunt_a + ' Ah, ' + device.accumulated_kwh_shunt_a + ' kWh</td></tr>\
-						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.accumulated_ah_shunt_b + ' Ah, ' + device.accumulated_kwh_shunt_b + ' kWh</td></tr>\
-						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.accumulated_ah_shunt_c + ' Ah, ' + device.accumulated_kwh_shunt_c + ' kWh</td></tr>\
-						<tr><td class="label">Battery (Net):</td><td>' + net_accumulated_ah + ' Ah, ' + net_accumulated_kwh.toFixed(2) + ' kWh</td></tr>\
 						<th class="subhead">Today\'s Totals</th>\
 						<tr><td class="label">Input:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Output:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Net:</td><td>' + today_net_ah + ' Ah, ' + today_net_kwh.toFixed(2) + ' kWh</td></tr>\
+						<th class="subhead">Since Charged</th>\
+						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.accumulated_ah_shunt_a + ' Ah, ' + device.accumulated_kwh_shunt_a + ' kWh</td></tr>\
+						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.accumulated_ah_shunt_b + ' Ah, ' + device.accumulated_kwh_shunt_b + ' kWh</td></tr>\
+						<tr><td class="label">' + shuntLabel[3] + ':</td><td>' + device.accumulated_ah_shunt_c + ' Ah, ' + device.accumulated_kwh_shunt_c + ' kWh</td></tr>\
+						<tr><td class="label">Battery (Net):</td><td>' + net_accumulated_ah + ' Ah, ' + net_accumulated_kwh.toFixed(2) + ' kWh</td></tr>\
 						<th class="subhead">Auxiliary Relay</th>\
 						<tr><td class="label">Mode:</td><td>' + device.relay_mode + '</td></tr>\
 						<tr><td class="label">Status:</td><td>' + device.relay_status + '</td></tr>\

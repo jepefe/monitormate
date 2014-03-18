@@ -125,8 +125,8 @@ class radian():
                      '08':'Support',\
                      '09':'Sell Enabled',\
                      '10':'Pass Thru',\
-                     '11':'Slave Inverter ON',\
-                     '12':'Slave Inverter OFF',\
+                     '11':'Slave Inverter On',\
+                     '12':'Slave Inverter Off',\
                      '14':'Offseting',\
                      '90':'FX Error',\
                      '91':'AGS Error',\
@@ -135,7 +135,7 @@ class radian():
 
 #Errors
        raw_error = int(datastream[17])
-       error_list = ['No errors']
+       error_list = ['None']
        if raw_error > 0:
             if raw_error & 1:
                 error_list.append ('Low VAC Output')
@@ -191,14 +191,14 @@ class radian():
                 misc_info.append ('60Hz output')
        
        if misc_byte & 16: 
-                misc_info.append ('AUX Output ON')
+                misc_info.append ('AUX Output On')
        else:
-                misc_info.append ('AUX Output OFF')
+                misc_info.append ('AUX Output Off')
        
        if misc_byte & 32:
-                misc_info.append ('Relay Output ON')
+                misc_info.append ('Relay Output On')
        else:
-                misc_info.append ('Relay Output OFF')
+                misc_info.append ('Relay Output Off')
        
        if misc_byte & 64:
                 misc_info.append ('AC1 Selected')
@@ -214,7 +214,7 @@ class radian():
 
 #Warning modes
        warning_mode = int(datastream[21])
-       warning_messages = ['No warnings']
+       warning_messages = ['None']
         
        if warning_mode > 0:
             if warning_mode & 1:
