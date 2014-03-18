@@ -502,12 +502,14 @@ function set_status(HTML_id, value) {
 			break;
 
 		case CC_ID:
+			var charge_watts = parseFloat(device.battery_volts) * parseFloat(device.charge_current);
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Charge Mode:</td><td>' + device.charge_mode + '</td></tr>\
-						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
 						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volts + ' V</td></tr>\
-						<tr><td class="label">PV Current:</td><td>' + device.pv_current + ' A</td></tr>\
+						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
+						<tr><td class="label">Charge Power:</td><td>' + charge_watts.toFixed(0) + ' W</td></tr>\
 						<tr><td class="label">PV Voltage:</td><td>' + device.pv_voltage + ' V</td></tr>\
+						<tr><td class="label">PV Current:</td><td>' + device.pv_current + ' A</td></tr>\
 						<tr><td class="label">Daily Ah:</td><td>' + device.daily_ah + ' Ah</td></tr>\
 						<tr><td class="label">Daily kWh:</td><td>' + device.daily_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Aux Mode:</td><td>' + device.aux_mode + '</td></tr>\
