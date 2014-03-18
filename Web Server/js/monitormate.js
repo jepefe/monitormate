@@ -35,7 +35,7 @@ var days_data     = [];
 // this can/will get overwritten by the cookies.
 var chart_content = {
 	multichart1: "fndc_shunts",
-	multichart2: "charge_power",
+	multichart2: "charge_current",
 	multichart3: "battery_volts",
 };
 
@@ -346,8 +346,8 @@ function populate_chart_select(pselect) {
 
 	if (full_day_data[CC_ID]) { /* FM/MX charge controller available */
 		select_items.push('<option value="battery_volts">Battery Voltage</option>');		
-		select_items.push('<option value="charge_power">PV Charging Power</option>');
 		select_items.push('<option value="charge_current">PV Charging Current</option>');
+		select_items.push('<option value="charge_power">PV Charging Power</option>');
 		select_items.push('<option value="array_volts">PV Input Voltage</option>');
 		select_items.push('<option value="array_current">PV Input Current</option>');
 	}
@@ -463,14 +463,14 @@ function set_status(HTML_id, value) {
 		case FX_ID:
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
-						<tr><td class="label">AC Mode:</td><td>' + device.ac_mode + '</td></tr>\
+						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
 						<tr><td class="label">AC Output Voltage:</td><td>' + device.ac_output_voltage + ' V</td></tr>\
 						<tr><td class="label">Inverter Current:</td><td>' + device.inverter_current + ' A</td></tr>\
+						<tr><td class="label">AC Input Mode:</td><td>' + device.ac_mode + '</td></tr>\
 						<tr><td class="label">AC Input Voltage:</td><td>' + device.ac_input_voltage + ' V</td></tr>\
 						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
 						<tr><td class="label">Buy Current:</td><td>' + device.buy_current + ' A</td></tr>\
 						<tr><td class="label">Sell Current:</td><td>' + device.sell_current + ' A</td></tr>\
-						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
 						<tr><td class="label">Misc:</td><td>' + device.misc + '</td></tr>\
 						<tr><td class="label">Warnings:</td><td>' + device.warning_modes + '</td></tr>\
 						<tr><td class="label">Errors:</td><td>' + device.error_modes + '</td></tr>\
@@ -480,7 +480,7 @@ function set_status(HTML_id, value) {
 		case RAD_ID:
 			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
-						<tr><td class="label">AC Mode:</td><td>' + device.ac_mode + '</td></tr>\
+						<tr><td class="label">AC Input Mode:</td><td>' + device.ac_mode + '</td></tr>\
 						<tr><td class="label">AC Output Voltage L1:</td><td>' + device.ac_output_voltage_l1 + ' V</td></tr>\
 						<tr><td class="label">AC Output Voltage L2:</td><td>' + device.ac_output_voltage_l2 + ' V</td></tr>\
 						<tr><td class="label">Inverter Current L1:</td><td>' + device.inverter_current_l1 + ' A</td></tr>\
