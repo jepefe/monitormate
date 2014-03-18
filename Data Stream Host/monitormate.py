@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Filename: monitormate.py
 
-# Copyright (C) 2012 Jesus Perez <jepefe@gmail.com>
+# Copyright (C) 2012-2014 Jesus Perez, Timothy Martin
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
@@ -14,7 +14,7 @@
 # GNU General Public License at <http://www.gnu.org/licenses/>
 # for more details.
 
-import mate3
+import mate3_class
 import socket
 import urllib2
 import urllib
@@ -53,7 +53,7 @@ def main():
 
 def start(options):
 
-	mate = mate3.mate3()
+	mate = mate3_class.mate3()
 
 	if options.port:
 		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -70,7 +70,7 @@ def start(options):
 	# Set continuous to true for first iteration 
 	continuous = True
 	
-	# Enable Fx inverter 220V modifiers to true 
+	# Enable Fx inverter 230V modifiers to true 
 	if options.fxmod:
 		mate.enable_fx_modifiers()
 	
@@ -136,7 +136,7 @@ def start(options):
 			# Set interval
 			if options.time_interval > 0:
 				for i in range(1,int(options.time_interval)):
-					# Get datastream every second because flexnet needs about 14 datastreams to be completely filled
+					# Get datastream every second because fndc needs about 14 datastreams to be completely filled
 					time.sleep(1)
 					if options.ip_port:
 						s.sendto(received_data,0, (iadress[0], int(iadress[1])) )

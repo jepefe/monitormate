@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Filename: flexnetdc.py
+# Filename: fndc_class.py
 
 # Copyright (C) 2012-2014 Jesus Perez, Timothy Martin
 # This program is free software: you can redistribute it and/or modify
@@ -15,10 +15,10 @@
 # for more details.
 
 
-#-----------------------#
-# FLEXnet DC class		#
-#-----------------------#
-class flexnetdc():
+#-----------------------------------#
+# FLEXnet DC class					#
+#-----------------------------------#
+class fndc():
 	
 	# Names of all data values in raw_string
 	valuenames = [
