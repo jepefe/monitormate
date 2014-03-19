@@ -183,45 +183,45 @@ function query_full_day($date, $scope){
 		}
 	}
 
-	$query_summary =		"SELECT *
-							FROM monitormate_summary
-							WHERE date(date) = date('".$date."')
-							ORDER BY date";
-							// WHERE ".$whereClause."
+	$query_summary =	"SELECT *
+						FROM monitormate_summary
+						WHERE date(date) = date('".$date."')
+						ORDER BY date";
+						// WHERE ".$whereClause."
 
-	$query_fmmx = 			"SELECT *
-							FROM monitormate_cc
-							WHERE ".$whereClause."
-							ORDER BY date";
+	$query_cc = 		"SELECT *
+						FROM monitormate_cc
+						WHERE ".$whereClause."
+						ORDER BY date";
 	
-	// if there's more than one charge controller (fmmx) we should get the cc totals.
-	$query_fmmx_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts 
-							FROM `monitormate_cc`
-							WHERE ".$whereClause."
-							GROUP BY date";
+	// if there's more than one charge controller (fm/mx) we should get the cc totals.
+	$query_cc_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts 
+						FROM `monitormate_cc`
+						WHERE ".$whereClause."
+						GROUP BY date";
 	 
-	$query_flexnet =		"SELECT *
-							FROM monitormate_fndc
-							WHERE ".$whereClause."
-							ORDER by date";
+	$query_fndc =		"SELECT *
+						FROM monitormate_fndc
+						WHERE ".$whereClause."
+						ORDER by date";
 
-	$query_fxinv =			"SELECT *
-							FROM monitormate_fx
-							WHERE ".$whereClause."
-							ORDER BY date";
+	$query_fx =			"SELECT *
+						FROM monitormate_fx
+						WHERE ".$whereClause."
+						ORDER BY date";
 
-	$query_radian =			"SELECT *
-							FROM monitormate_radian
-							WHERE ".$whereClause."
-							ORDER BY date";
+	$query_radian =		"SELECT *
+						FROM monitormate_radian
+						WHERE ".$whereClause."
+						ORDER BY date";
 		
-	$result_summary = mysql_query($query_summary, $connection);
-	$result_fmmx = mysql_query($query_fmmx, $connection);
-	$result_flexnet = mysql_query($query_flexnet, $connection);
-	$result_fxinv = mysql_query($query_fxinv, $connection);
+	$result_summary	= mysql_query($query_summary, $connection);
+	$result_cc = mysql_query($query_cc, $connection);
+	$result_fndc = mysql_query($query_fndc, $connection);
+	$result_fx = mysql_query($query_fx, $connection);
 	$result_radian = mysql_query($query_radian, $connection);
 	
-	$allday_querys = array("fmmx"=>$result_fmmx,"flexnet"=>$result_flexnet,"fxinv"=>$result_fxinv,"radian"=>$result_radian);
+	$allday_querys = array("cc"=>$result_cc,"fndc"=>$result_fndc,"fx"=>$result_fx,"radian"=>$result_radian);
 //	$allday_data["summary"] = mysql_fetch_assoc($result_summary);
 	
 	while ($row = mysql_fetch_assoc($result_summary)) {
@@ -240,18 +240,18 @@ function query_full_day($date, $scope){
 
 	if (count($allday_data[3]) > 1) {
 		// there's more than one charge controller, query the totals
-		$result_fmmx_totals = mysql_query($query_fmmx_totals, $connection);
-		while ($row = mysql_fetch_assoc($result_fmmx_totals)) {
+		$result_cc_totals = mysql_query($query_cc_totals, $connection);
+		while ($row = mysql_fetch_assoc($result_cc_totals)) {
 			$timestamp = strtotime($row['date'])*1000;				// get timestamp in seconds, convert to milliseconds
 			$stampedRow = array("timestamp"=>$timestamp) + $row;	// put it in an assoc array and merge them
 			$allday_data[3]["totals"][] = $stampedRow;
 		}
 	}
 
-	//$allday = array("summary"=>$result_summary,"fmmx"=>$result_fmmx,"flexnet"=>$result_flexnet,"fxinv"=>$result_fxinv);
+	//$allday = array("summary"=>$result_summary,"cc"=>$result_cc,"fndc"=>$result_fndc,"fx"=>$result_fx);
 	
 	if (isset($_GET["debug"])) {
-		echo $query_fmmx.'<br/>';
+		echo $query_cc.'<br/>';
 		echo '<pre>';
 		print_r($allday_data);
 		echo '</pre>';

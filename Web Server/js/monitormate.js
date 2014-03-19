@@ -539,7 +539,7 @@ function set_status(HTML_id, value) {
 						<th class="subhead">Today\'s Totals</th>\
 						<tr><td class="label">Input:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Output:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\
-						<tr><td class="label">Net:</td><td>' + today_net_ah + ' Ah, ' + today_net_kwh.toFixed(2) + ' kWh</td></tr>\
+						<tr><td class="label">Battery (Net):</td><td>' + today_net_ah + ' Ah, ' + today_net_kwh.toFixed(2) + ' kWh</td></tr>\
 						<th class="subhead">Since Charged</th>\
 						<tr><td class="label">' + shuntLabel[1] + ':</td><td>' + device.accumulated_ah_shunt_a + ' Ah, ' + device.accumulated_kwh_shunt_a + ' kWh</td></tr>\
 						<tr><td class="label">' + shuntLabel[2] + ':</td><td>' + device.accumulated_ah_shunt_b + ' Ah, ' + device.accumulated_kwh_shunt_b + ' kWh</td></tr>\
@@ -875,26 +875,35 @@ function chart_days(date) {
 				color: cfg_colorProduction,
 				label: {
 					align: 'left',
-					text: '<span class="plotlabel">' + days_avg_kwhin.toFixed(1) + 'kWh</span>',
+					style: {
+						backgroundColor: 'rgba(255,255,255,0.75)',
+						fontSize: '10px'
+					},
+					text: days_avg_kwhin.toFixed(1) + 'kWh',
 					useHTML: true,
 					verticalAlign: 'top',
-					x: -2
+					x: -1,
+					y: -2
 				},
 				value: days_avg_kwhin,
 				width: 1,
-				zIndex: 3,
+				zIndex: 4,
 			},{
 				color: cfg_colorUsage,
 				label: {
 					align: 'left',
-					text: '<span class="plotlabel">' + days_avg_kwhout.toFixed(1) + 'kWh</span>',
+					style: {
+						backgroundColor: 'rgba(255,255,255,0.75)',
+						fontSize: '10px'
+					},
+					text: days_avg_kwhout.toFixed(1) + 'kWh',
 					useHTML: true,
-					x: -2,
-					y: 13
+					x: -1,
+					y: 11
 				},
 				value: days_avg_kwhout,
 				width: 1,
-				zIndex: 3,
+				zIndex: 4,
 			}]
 	    },
 	});
