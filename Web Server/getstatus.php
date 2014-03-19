@@ -221,43 +221,42 @@ function query_full_day($date, $scope){
 	$result_fx = mysql_query($query_fx, $connection);
 	$result_radian = mysql_query($query_radian, $connection);
 	
-	$allday_querys = array("cc"=>$result_cc,"fndc"=>$result_fndc,"fx"=>$result_fx,"radian"=>$result_radian);
-//	$allday_data["summary"] = mysql_fetch_assoc($result_summary);
-	
+	$full_day_querys = array("cc"=>$result_cc,"fndc"=>$result_fndc,"fx"=>$result_fx,"radian"=>$result_radian);
+
+	// Summary only needs to net values to be computed, then add to full_day_data
 	while ($row = mysql_fetch_assoc($result_summary)) {
 		$row['kwh_net'] = $row['kwh_in'] - $row['kwh_out'];
 		$row['ah_net'] = $row['ah_in'] - $row['ah_out'];
-		$allday_data["summary"] = $row;
+		$full_day_data["summary"] = $row;
 	}
 	
-	foreach ($allday_querys as $i) {
+	// All other queries need a proper timestamp added.
+	foreach ($full_day_querys as $i) {
 		while ($row = mysql_fetch_assoc($i)) {
 			$timestamp = strtotime($row['date'])*1000;				// get timestamp in seconds, convert to milliseconds
 			$stampedRow = array("timestamp"=>$timestamp) + $row;	// put it in an assoc array and merge them
-			$allday_data[$row["device_id"]][$row["address"]][] = $stampedRow;
+			$full_day_data[$row["device_id"]][$row["address"]][] = $stampedRow;
 		}
 	}
 
-	if (count($allday_data[3]) > 1) {
-		// there's more than one charge controller, query the totals
+	// there's more than one charge controller, query the totals, timestamp them and add them.
+	if (count($full_day_data[3]) > 1) {
 		$result_cc_totals = mysql_query($query_cc_totals, $connection);
 		while ($row = mysql_fetch_assoc($result_cc_totals)) {
 			$timestamp = strtotime($row['date'])*1000;				// get timestamp in seconds, convert to milliseconds
 			$stampedRow = array("timestamp"=>$timestamp) + $row;	// put it in an assoc array and merge them
-			$allday_data[3]["totals"][] = $stampedRow;
+			$full_day_data[3]["totals"][] = $stampedRow;
 		}
 	}
-
-	//$allday = array("summary"=>$result_summary,"cc"=>$result_cc,"fndc"=>$result_fndc,"fx"=>$result_fx);
 	
 	if (isset($_GET["debug"])) {
 		echo $query_cc.'<br/>';
 		echo '<pre>';
-		print_r($allday_data);
+		print_r($full_day_data);
 		echo '</pre>';
 	} else {
-		$json_summary = json_encode($allday_data);
-		echo $json_summary;
+		$json_full_day = json_encode($full_day_data);
+		echo $json_full_day;
 	}
 }
 
