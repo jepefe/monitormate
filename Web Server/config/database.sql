@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `monitormate_fx` (
   `error_modes` varchar(100) NOT NULL,
   `ac_mode` varchar(8) NOT NULL,
   `battery_volt` float NOT NULL,
-  `misc` varchar(13) NOT NULL,
+  `misc` varchar(24) NOT NULL,
   `warning_modes` varchar(100) NOT NULL,
   PRIMARY KEY (`date`,`address`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `monitormate_radian` (
   `error_modes` varchar(100) NOT NULL,
   `ac_mode` varchar(8) NOT NULL,
   `battery_volt` float NOT NULL,
-  `misc` text NOT NULL,
+  `misc` varchar(24) NOT NULL,
   `warning_modes` varchar(100) NOT NULL,
   PRIMARY KEY (`date`,`address`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
