@@ -90,9 +90,9 @@ class fndc():
 		self.status_raw = datastream
 
 		# Port address
-		self.status_formatted[0] = datastream[0]
+		self.status_formatted[0] = int(datastream[0])
 		# Device ID
-		self.status_formatted[1] = datastream[1]
+		self.status_formatted[1] = int(datastream[1])
 
 		##
 		## Get status flags
@@ -112,9 +112,9 @@ class fndc():
 		if status_flags & 32:
 			signC = -1
 
-		self.status_formatted[2] = str(float(datastream[2])*0.1*signA)
-		self.status_formatted[3] = str(float(datastream[3])*0.1*signB)
-		self.status_formatted[4] = str(float(datastream[4])*0.1*signC)	
+		self.status_formatted[2] = int(datastream[2]) * 0.1 * signA
+		self.status_formatted[3] = int(datastream[3]) * 0.1 * signB
+		self.status_formatted[4] = int(datastream[4]) * 0.1 * signC
 
 		# Charge params met
 		if status_flags & 1:
@@ -174,17 +174,17 @@ class fndc():
 
 		# One decimal value (days since full charge)
 		if extra_data_id == 6:
-			self.status_formatted[5 + extra_data_id] = str(extra_data * 0.1 * ed_sign)
+			self.status_formatted[5 + extra_data_id] = int(extra_data) * 0.1 * ed_sign
 			
 		# Values without decimals (Ah values and min SOC.)  
 		nodecimal = [0,2,4,7,8,9,12]
 		if extra_data_id in nodecimal:
-			self.status_formatted[5 + extra_data_id] = str(extra_data * ed_sign)
+			self.status_formatted[5 + extra_data_id] = int(extra_data) * ed_sign
 			
 		# Two decimals values (kWh values.)
 		twodecimals = [1,3,5,10,11,13]
 		if extra_data_id in twodecimals:
-			self.status_formatted[5 + extra_data_id] = str(extra_data * 0.01 * ed_sign)
+			self.status_formatted[5 + extra_data_id] = int(extra_data) * 0.01 * ed_sign
 
 		##
 		## End of extra data 
@@ -203,10 +203,10 @@ class fndc():
 			self.status_formatted[26] = 'Off'
 
 		# Battery temp
-		self.status_formatted[27] = str(int(datastream[11]) - 10)
+		self.status_formatted[27] = int(datastream[11]) - 10
 
 		# Battery volts
-		self.status_formatted[22] = str(int(datastream[7]) * 0.1)
+		self.status_formatted[22] = int(datastream[7]) * 0.1
 
 		# SoC
 		self.status_formatted[23] = int(datastream[8])
