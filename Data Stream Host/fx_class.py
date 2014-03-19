@@ -21,12 +21,40 @@
 class fx():
 
 	# Names of all data values in raw_string
-	valuenames = ['address','device_id', 'inverter_current', 'charge_current','buy_current','ac_input_voltage', 'ac_output_voltage',\
-				  'sell_current', 'operational_mode', 'error_modes','ac_mode','battery_volt', 'misc', 'warning_modes']
+	valuenames = [
+		'address',				#  [0] Port Address
+		'device_id',			#  [1] Device Type
+		'inverter_current',		#  [2] Inverter Current
+		'charge_current',		#  [3] Charger Current
+		'buy_current',			#  [4] Buy Current
+		'ac_input_voltage',		#  [5] AC Input Voltage
+		'ac_output_voltage',	#  [6] AC Output Voltage
+		'sell_current',			#  [7] Sell Current
+		'operational_mode',		#  [8] Inverter Operating Mode
+		'error_modes',			#  [9] Error Codes
+		'ac_mode',				# [10] AC Mode
+		'battery_volt',			# [11] Battery Voltage
+		'misc',					# [12] Misc
+		'warning_modes'			# [13] Warning Codes
+	]
 
 	# Names of all formatted data values
-	valuenames_formatted = ['address','device_id', 'inverter_current', 'charge_current','buy_current','ac_input_voltage','ac_output_voltage',\
-							'sell_current', 'operational_mode', 'error_modes','ac_mode','battery_volt', 'misc', 'warning_modes']
+	valuenames_formatted = [
+		'address',				#  [0] Port Address
+		'device_id',			#  [1] Device Type
+		'inverter_current',		#  [2] Inverter Current
+		'charge_current',		#  [3] Charger Current
+		'buy_current',			#  [4] Buy Current
+		'ac_input_voltage',		#  [5] AC Input Voltage
+		'ac_output_voltage',	#  [6] AC Output Voltage
+		'sell_current',			#  [7] Sell Current
+		'operational_mode',		#  [8] Inverter Operating Mode
+		'error_modes',			#  [9] Error Codes
+		'ac_mode',				# [10] AC Mode
+		'battery_volt',			# [11] Battery Voltage
+		'misc',					# [12] Misc
+		'warning_modes'			# [13] Warning Codes
+	]
 
 	def __init__(self):
 		self.dev_address = None
@@ -39,7 +67,7 @@ class fx():
 		#Modifiers for 230V devices
 		self.modifiers = 0
 		#Device name	 
-		self.name = "FX Series Inverter/Charger"
+		self.name = "FX-series Inverter/Charger"
 
 
 	# Enables modifiers to 230V devices
@@ -47,12 +75,78 @@ class fx():
 
 		self.modifiers = 1
 
-#------------------------------#
-# Get and format datastream	   #
-#------------------------------#
+	#------------------------------#
+	# Get and format datastream	   #
+	#------------------------------#
 	def set_status(self,datastream):
 
-		# Misc byte
+		self.dev_address = datastream[0]
+		self.status_raw = datastream
+		
+		# Port Address
+		self.status_formatted[0] = int(datastream[0])
+
+		# Device Type
+		self.status_formatted[1] = int(datastream[1])
+
+		# Inverter Current
+		self.status_formatted[2] = int(datastream[2]) * misc_modifiers_amps
+
+		# Charger Current
+		self.status_formatted[3] = int(datastream[3]) * misc_modifiers_amps
+
+		# Buy Current
+		self.status_formatted[4] = int(datastream[4]) * misc_modifiers_amps
+
+		# AC Input Voltage
+		self.status_formatted[5] = int(datastream[5]) * misc_modifiers_volts
+
+		# AC Output Voltage
+		self.status_formatted[6] = int(datastream[6]) * misc_modifiers_volts
+
+		# Sell Current
+		self.status_formatted[7] = int(datastream[7]) * misc_modifiers_amps
+
+		# Inverter Operating Mode
+		oper_modes = {'00':'Inverter Off', '01':'Search', '02':'Inverter On', 
+				'03':'Charge', '04':'Silent', '05':'Float', '06':'EQ',
+				'07':'Charger Off', '08':'Support', '09':'Sell Enabled',
+				'10':'Pass Thru', '90':'FX Error', '91':'AGS Error',
+				'92':'Com Error'}
+		self.status_formatted[8] = oper_modes[datastream[8]]
+
+		# Error Codes
+		raw_error = int(datastream[9])
+		error_list = ['None']
+
+		if raw_error > 0:
+			if raw_error & 1:
+				error_list.append ('Low VAC Output')
+			if raw_error & 2:
+				error_list.append ('Stacking Error')
+			if raw_error & 4:
+				error_list.append ('Over Temp')
+			if raw_error & 8:
+				error_list.append ('Low Battery')
+			if raw_error & 16:
+				error_list.append ('Phase Loss')
+			if raw_error & 32:
+				error_list.append ('High Battery')
+			if raw_error & 64:
+				error_list.append ('Shorted Output')
+			if raw_error & 128:
+				error_list.append ('Back feed')
+
+		self.status_formatted[9] = error_list
+
+		# AC modes
+		ac_mode = {'00':'No AC', '01':'AC Drop', '02':'AC Use'}
+		self.status_formatted[10] =	 ac_mode[datastream[10]]
+
+		# Battery Voltage
+		self.status_formatted[11] = float(datastream[11]) / 10
+
+		# Misc
 		# Outback mate1 documentation says the bit 1 indicates a 230V unit and the voltage read have to be doubled
 		# and the current divided by 2. But doing that with the devices I have borrowed for testings returns a bad readings
 		# Set 230V modifiers disabled by default 
@@ -65,69 +159,12 @@ class fx():
 			if self.modifiers == 1:
 				misc_modifiers_amps = 0.5
 				misc_modifiers_volts = 2
-
 		if misc_byte & 128:
 			misc_info = 'Aux Output On'
 
 		self.status_formatted[12] = misc_info
 
-		self.dev_address = datastream[0]
-		self.status_raw = datastream
-		self.status_formatted[0] = int(datastream[0])
-		self.status_formatted[1] = int(datastream[1])
-		self.status_formatted[2] = int(datastream[2]) * misc_modifiers_amps
-		self.status_formatted[3] = int(datastream[3]) * misc_modifiers_amps
-		self.status_formatted[4] = int(datastream[4]) * misc_modifiers_amps
-		self.status_formatted[5] = int(datastream[5]) * misc_modifiers_volts
-		self.status_formatted[6] = int(datastream[6]) * misc_modifiers_volts
-		self.status_formatted[7] = int(datastream[7]) * misc_modifiers_amps
-		self.status_formatted[11] = float(datastream[11]) / 10
-
-
-		# Errors
-		raw_error = int(datastream[9])
-		error_list = ['None']
-		if raw_error > 0:
-			if raw_error & 1:
-				error_list.append ('Low VAC Output')
-			
-			if raw_error & 2:
-				error_list.append ('Stacking Error')
-			
-			if raw_error & 4:
-				error_list.append ('Over Temp')
-			
-			if raw_error & 8:
-				error_list.append ('Low Battery')
-			
-			if raw_error & 16:
-				error_list.append ('Phase Loss')
-			
-			if raw_error & 32:
-				error_list.append ('High Battery')
-			
-			if raw_error & 64:
-				error_list.append ('Shorted Output')
-
-			if raw_error & 128:
-				error_list.append ('Back feed')
-
-		self.status_formatted[9] = error_list
-		
-		# Operational modes
-		oper_modes = {'00':'Inverter Off', '01':'Search', '02':'Inverter On', 
-				'03':'Charge', '04':'Silent', '05':'Float', '06':'EQ',
-				'07':'Charger Off', '08':'Support', '09':'Sell Enabled',
-				'10':'Pass Thru', '90':'FX Error', '91':'AGS Error',
-				'92':'Com Error'}
-		self.status_formatted[8] = oper_modes[datastream[8]]
-		
-		# AC modes
-		ac_mode = {'00':'No AC', '01':'AC Drop', '02':'AC Use'}
-		
-		self.status_formatted[10] =	 ac_mode[datastream[10]]
-		
-		# Warning modes
+		# Warning Codes
 		warning_mode = int(datastream[13])
 		warning_messages = ['None']
 		
