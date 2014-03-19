@@ -112,9 +112,9 @@ class fndc():
 		if status_flags & 32:
 			signC = -1
 
-		self.status_formatted[2] = int(datastream[2]) * 0.1 * signA
-		self.status_formatted[3] = int(datastream[3]) * 0.1 * signB
-		self.status_formatted[4] = int(datastream[4]) * 0.1 * signC
+		self.status_formatted[2] = float(datastream[2]) / 10 * signA
+		self.status_formatted[3] = float(datastream[3]) / 10 * signB
+		self.status_formatted[4] = float(datastream[4]) / 10 * signC
 
 		# Charge params met
 		if status_flags & 1:
@@ -174,7 +174,7 @@ class fndc():
 
 		# One decimal value (days since full charge)
 		if extra_data_id == 6:
-			self.status_formatted[5 + extra_data_id] = int(extra_data) * 0.1 * ed_sign
+			self.status_formatted[5 + extra_data_id] = float(extra_data) / 10 * ed_sign
 			
 		# Values without decimals (Ah values and min SOC.)  
 		nodecimal = [0,2,4,7,8,9,12]
@@ -184,7 +184,7 @@ class fndc():
 		# Two decimals values (kWh values.)
 		twodecimals = [1,3,5,10,11,13]
 		if extra_data_id in twodecimals:
-			self.status_formatted[5 + extra_data_id] = int(extra_data) * 0.01 * ed_sign
+			self.status_formatted[5 + extra_data_id] = float(extra_data) / 100 * ed_sign
 
 		##
 		## End of extra data 
@@ -206,7 +206,7 @@ class fndc():
 		self.status_formatted[27] = int(datastream[11]) - 10
 
 		# Battery volts
-		self.status_formatted[22] = int(datastream[7]) * 0.1
+		self.status_formatted[22] = float(datastream[7]) / 10
 
 		# SoC
 		self.status_formatted[23] = int(datastream[8])

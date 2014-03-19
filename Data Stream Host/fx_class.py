@@ -73,15 +73,15 @@ class fx():
 
 		self.dev_address = datastream[0]
 		self.status_raw = datastream
-		self.status_formatted[0] = datastream[0]
-		self.status_formatted[1] = datastream[1]
-		self.status_formatted[2] = str(int(datastream[2])*misc_modifiers_amps)
-		self.status_formatted[3] = str(int(datastream[3])*misc_modifiers_amps)
-		self.status_formatted[4] = str(int(datastream[4])*misc_modifiers_amps)
-		self.status_formatted[5] = str(int(datastream[5])*misc_modifiers_volts)
-		self.status_formatted[6] = str(int(datastream[6])*misc_modifiers_volts)
-		self.status_formatted[7] = str(int(datastream[7])*misc_modifiers_amps)
-		self.status_formatted[11] = str(float(datastream[11])*0.1)
+		self.status_formatted[0] = int(datastream[0])
+		self.status_formatted[1] = int(datastream[1])
+		self.status_formatted[2] = int(datastream[2]) * misc_modifiers_amps
+		self.status_formatted[3] = int(datastream[3]) * misc_modifiers_amps
+		self.status_formatted[4] = int(datastream[4]) * misc_modifiers_amps
+		self.status_formatted[5] = int(datastream[5]) * misc_modifiers_volts
+		self.status_formatted[6] = int(datastream[6]) * misc_modifiers_volts
+		self.status_formatted[7] = int(datastream[7]) * misc_modifiers_amps
+		self.status_formatted[11] = float(datastream[11]) / 10
 
 
 		# Errors

@@ -42,7 +42,7 @@ class cc:
 	valuenames_formatted = [
 		'address',			#  [0] Port Address
 		'device_id',        #  [1] Device Type
-		'charge_current',   #  [2] Charge Current (tenths added)
+		'charge_current',   #  [2] Charger Current (tenths added)
 		'pv_current',       #  [3] PV Current
 		'pv_voltage',       #  [4] PV Voltage
 		'daily_kwh',        #  [5] Daily kWh
@@ -55,23 +55,43 @@ class cc:
 
 
 	def __init__(self):
-		# Object variables
+
 		self.dev_address = None
+
 		# Raw datastream
-		self.status_raw = []
+		self.status_raw = [0]*self.valuenames.__len__()
+
+		# Formatted datastream
+		self.status_formatted = [0]*self.valuenames_formatted.__len__()
+
 		# Device name
 		self.name = "FM/MX Charge Controller"
-	
-	
-		# Formatted datastream
-		self.status_formatted = []
+
 
 	#------------------------------#
 	# Get and format datastream	   #
 	#------------------------------#
 	def set_status(self,datastream):
-		self.status_formatted = []
+
 		self.status_raw = datastream
+
+		# Port Address
+		self.status_formatted[0] = int(datastream[0])
+		
+		# Device Type
+		self.status_formatted[1] = int(datastream[1])
+
+		# Charger Current
+		self.status_formatted[2] = int(datastream[3]) + (float(datastream[7]) / 10) # Amps + amps tenths
+
+		# PV Current
+		self.status_formatted[3] = int(datastream[4])
+
+		# PV Voltage
+		self.status_formatted[4] = int(datastream[5])
+
+		# Daily kWh
+		self.status_formatted[5] = float(datastream[6]) / 10
 
 		# AUX modes 
 		aux_mode= {'00':'Disabled','01':'Diversion','02':'Remote','03':'Manual',\
@@ -80,10 +100,16 @@ class cc:
 		aux_mode_active = {'64':'Disabled','65':'Diversion','66':'Remote','67':'Manual',\
 				   '68':'Vent Fan','69':'PV Trigger','70':'Float','71':'ERROR Output',\
 					'72':'Night Light', '73':'PWM Diversion', '74':'Low Battery'}
+
+		if int(datastream[8]) <= 10:
+			self.status_formatted[6] = aux_mode[datastream[8]]			# Gets one AUX mode from aux_mode dictionary
+		else:
+			self.status_formatted[6] = aux_mode_active[datastream[8]]	# Gets one AUX mode from aux_mode_active dictionary
+
+		# Error modes
 		raw_error = int(datastream[9])
 		error_list = []
 
-		# Error modes
 		if raw_error > 0:
 			if raw_error & 128:
 				error_list.append('High VOC')
@@ -94,31 +120,22 @@ class cc:
 		else:
 			error_list.append('None')
 
-		# Charge modes
-		charge_mode = {'00':'Silent','01':'Float','02':'Bulk','03':'Absorption','04':'EQ'}
-
-		# Port Address
-		self.status_formatted[0] = int(datastream[0])
-		self.status_formatted[1] = int(datastream[1])
-		self.status_formatted[2] = int(datastream[3]) + (int(datastream[7]) * 0.1) # Amps + amps tenths
-		self.status_formatted[3] = int(datastream[4])
-		self.status_formatted[4] = int(datastream[5])
-		self.status_formatted[5] = int(datastream[6]) * 0.1
-
-		if int(datastream[8]) <= 10:
-			self.status_formatted[6] = aux_mode[datastream[8]]			# Gets one AUX mode from aux_mode dictionary
-		else:
-			self.status_formatted[6] = aux_mode_active[datastream[8]]	# Gets one AUX mode from aux_mode_active dictionary
-
 		self.status_formatted[7] = error_list
+
+		# Charger mode
+		charge_mode = {'00':'Silent','01':'Float','02':'Bulk','03':'Absorption','04':'EQ'}
 		self.status_formatted[8] = charge_mode[datastream[10]]
-		self.status_formatted[9] = int(datastream[11]) * 0.1	# Format battery volts from XXX to XX.X
+
+		# Battery Voltage
+		self.status_formatted[9] = float(datastream[11]) / 10	# Format battery volts from XXX to XX.X
+
+		# Daily Ah
 		self.status_formatted[10] = int(datastream[12])
 
 
-#-----------------------------------#
-# Get all device values with labels #
-#-----------------------------------#
+	#-----------------------------------#
+	# Get all device values with labels #
+	#-----------------------------------#
 	def get_values_with_names(self):
  
 		values = {}
