@@ -203,8 +203,7 @@ class fndc():
 			self.status_formatted[26] = 'Off'
 
 		# Battery temp
-		if datastream[11] != "###":
-			self.status_formatted[27] = int(datastream[11]) - 10
+		self.status_formatted[27] = int(datastream[11]) - 10
 
 		# Battery volts
 		self.status_formatted[22] = float(datastream[7]) / 10
