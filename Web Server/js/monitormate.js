@@ -452,7 +452,7 @@ function set_status(HTML_id, value) {
 			content =	'<table><caption>Summary<div>' + device.date + '</div></caption>\
 						<tr><td class="label">Production:</td><td>' + device.ah_in + ' Ah, ' + device.kwh_in + ' kWh</td></tr>\
 						<tr><td class="label">Usage:</td><td>' + device.ah_out + ' Ah, ' + device.kwh_out + ' kWh</td></tr>\
-						<tr><td class="label">Net:</td><td>' + device.ah_net + ' Ah, ' + device.kwh_net.toFixed(2) + ' kWh</td></tr>\
+						<tr><td class="label">Net:</td><td>' + device.ah_net + ' Ah, ' + device.kwh_net + ' kWh</td></tr>\
 						<tr><td class="label">Max SOC:</td><td>' + device.max_soc + '%</td></tr>\
 						<tr><td class="label">Min SOC:</td><td>' + device.min_soc + '%</td></tr>\
 						<tr><td class="label">Max Temp:</td><td>' + device.max_temp + ' &deg;C (' + ((device.max_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
