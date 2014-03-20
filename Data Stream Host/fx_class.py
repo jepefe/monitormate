@@ -82,6 +82,25 @@ class fx():
 
 		self.dev_address = datastream[0]
 		self.status_raw = datastream
+
+		# Misc byte
+		# Outback mate1 documentation says the bit 1 indicates a 230V unit and the voltage read have to be doubled
+		# and the current divided by 2. But doing that with the devices I have borrowed for testings returns a bad readings
+		# Set 230V modifiers disabled by default 
+		misc_byte = int(datastream[12])
+		misc_modifiers_volts = 1
+		misc_modifiers_amps = 1
+		misc_info = 'Aux Output Off'
+
+		if misc_byte & 1:
+			if self.modifiers == 1:
+				misc_modifiers_amps = 0.5
+				misc_modifiers_volts = 2
+
+		if misc_byte & 128:
+			misc_info = 'Aux Output On'
+
+		self.status_formatted[12] = misc_info
 		
 		# Port Address
 		self.status_formatted[0] = int(datastream[0])
@@ -145,24 +164,6 @@ class fx():
 
 		# Battery Voltage
 		self.status_formatted[11] = float(datastream[11]) / 10
-
-		# Misc
-		# Outback mate1 documentation says the bit 1 indicates a 230V unit and the voltage read have to be doubled
-		# and the current divided by 2. But doing that with the devices I have borrowed for testings returns a bad readings
-		# Set 230V modifiers disabled by default 
-		misc_byte = int(datastream[12])
-		misc_modifiers_volts = 1
-		misc_modifiers_amps = 1
-		misc_info = 'Aux Output Off'
-
-		if misc_byte & 1:
-			if self.modifiers == 1:
-				misc_modifiers_amps = 0.5
-				misc_modifiers_volts = 2
-		if misc_byte & 128:
-			misc_info = 'Aux Output On'
-
-		self.status_formatted[12] = misc_info
 
 		# Warning Codes
 		warning_mode = int(datastream[13])
