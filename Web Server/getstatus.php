@@ -276,12 +276,22 @@ function db_connection() {
 
 function set_elementTypes(&$row) {
 	foreach ($row as $key => $value) {
-		if (is_numeric($value)) {
-			$value += 0;	//Set type to relevant numeric format
-			$row[$key] = $value;
+
+		// Look for temp value (99) that indicates a missing temp sensor.
+		$tempValues = array("battery_temp", "min_temp", "max_temp");
+		if (in_array($key, $tempValues) && $value == "99") {
+			$value = "###";	// the mate displays this in it's LCD, so we will display it too.
 		}
+		
+		// if the string is numeric, then convert it to to the relevant numeric type
+		if (is_numeric($value)) {
+			$value += 0;	// oddly this is the easiest way to do that...
+		}
+
+		// put the value back into the row...
+		$row[$key] = $value;
 	}
-	return $row;
+	return;
 }
 
 ?>

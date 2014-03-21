@@ -203,7 +203,12 @@ class fndc():
 			self.status_formatted[26] = 'Off'
 
 		# Battery temp
-		self.status_formatted[27] = int(datastream[11]) - 10
+		if int(datastream[11]) == 99:
+			# 99 indicates that a temp sensor isn't present, leave the value alone.
+			self.status_formatted[27] = int(datastream[11])
+		else:
+			# any other value is assumed to be a valid reading, subtract 10 to get Celsius.
+			self.status_formatted[27] = int(datastream[11]) - 10
 
 		# Battery volts
 		self.status_formatted[22] = float(datastream[7]) / 10
