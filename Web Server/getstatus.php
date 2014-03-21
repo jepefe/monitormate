@@ -225,12 +225,7 @@ function query_full_day($date, $scope){
 
 	// Summary only needs to net values to be computed, then add to full_day_data
 	while ($row = mysql_fetch_assoc($result_summary)) {
-		foreach ($row as $key => $value) {
-			if (is_numeric($value)) {
-				$value += 0;	//Set type to relevant numeric format
-				$row[$key] = $value;
-			}
-		}
+		set_elementTypes($row); // row passed as a reference.
 		$row['kwh_net'] = $row['kwh_in'] - $row['kwh_out'];
 		$row['ah_net'] = $row['ah_in'] - $row['ah_out'];
 		$full_day_data["summary"] = $row;
@@ -239,12 +234,7 @@ function query_full_day($date, $scope){
 	// All other queries need a proper timestamp added.
 	foreach ($full_day_querys as $i) {
 		while ($row = mysql_fetch_assoc($i)) {
-			foreach ($row as $key => $value) {
-				if (is_numeric($value)) {
-					$value += 0;	//Set type to relevant numeric format
-					$row[$key] = $value;
-				}
-			}
+			set_elementTypes($row); // row passed as a reference.
 			$timestamp = strtotime($row['date'])*1000;				// get timestamp in seconds, convert to milliseconds
 			$stampedRow = array("timestamp"=>$timestamp) + $row;	// put it in an assoc array and merge them
 			$full_day_data[$row["device_id"]][$row["address"]][] = $stampedRow;
@@ -255,6 +245,7 @@ function query_full_day($date, $scope){
 	if (count($full_day_data[3]) > 1) {
 		$result_cc_totals = mysql_query($query_cc_totals, $connection);
 		while ($row = mysql_fetch_assoc($result_cc_totals)) {
+			set_elementTypes($row); // row passed as a reference.
 			$timestamp = strtotime($row['date'])*1000;				// get timestamp in seconds, convert to milliseconds
 			$stampedRow = array("timestamp"=>$timestamp) + $row;	// put it in an assoc array and merge them
 			$full_day_data[3]["totals"][] = $stampedRow;
@@ -281,6 +272,16 @@ function db_connection() {
 	$connection = mysql_connect($dbhost, $dbuser, $dbpass);
 	mysql_select_db($dbname, $connection);
 	return $connection;
+}
+
+function set_elementTypes(&$row) {
+	foreach ($row as $key => $value) {
+		if (is_numeric($value)) {
+			$value += 0;	//Set type to relevant numeric format
+			$row[$key] = $value;
+		}
+	}
+	return $row;
 }
 
 ?>
