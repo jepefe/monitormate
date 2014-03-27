@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011 Jesus Perez <jepefe@gmail.com>
+Copyright (C) 2011-2014 Jesus Perez,Timothy Martin
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
@@ -11,12 +11,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License at <http://www.gnu.org/licenses/>
 for more details.
 */
-
-// constants for device-type IDs
-var FX_ID	= "2";	// 2 is a FX-series inverter
-var CC_ID	= "3";	// 3 is a FM/MX charge controller (CC)
-var FNDC_ID = "4";	// 4 is a FLEXnet DC
-var RAD_ID	= "6";	// 6 is a Radian-series inverter
 
 // some arrays for the labels for the devices and shunts.
 // these will get set up in set_labels() after get_datastream().
@@ -436,8 +430,8 @@ function set_status(HTML_id, value) {
 	}
 
 	if (value != "summary") {
-		device_id = value.split(/[:]/)[0];
-		address = value.split(/[:]/)[1];
+		device_id = parseInt(value.split(/[:]/)[0]);
+		address = parseInt(value.split(/[:]/)[1]);
 		device = json_status["device" + address];
 	} else {
 		device_id = "summary";
@@ -1358,7 +1352,7 @@ function get_fndc_amps_vs_volts() {
 			shunt_c_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_c_amps);
 			net_amps     = shunt_a_amps + shunt_b_amps + shunt_c_amps;
 
-			day_data_amps[i]   = [full_day_data[FNDC_ID][port][i].timestamp, net_amps];
+			day_data_amps[i]  = [full_day_data[FNDC_ID][port][i].timestamp, net_amps];
 			day_data_volts[i] = [full_day_data[FNDC_ID][port][i].timestamp, parseFloat(full_day_data[FNDC_ID][port][i].battery_volt)];
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 /*
-Copyright (C) 2012 Jesus Perez <jepefe@gmail.com>
+Copyright (C) 2012-2014 Jesus Perez, Timothy Martin
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
@@ -27,8 +27,8 @@ if(isset($_POST)){
 				$date_time = date('Y-m-d G:i',time()); //Date from localhost
 			}
 		
-			$flexnet_available = 0;
-			$fmmx_total = array(
+			$fndc_data = null;
+			$cc_total = array(
 				"total_daily_kwh" => 0,
 				"total_daily_ah" => 0,
 			);			
@@ -51,22 +51,22 @@ if(isset($_POST)){
 			foreach ($devices_array as $i) {
 				switch ($i["device_id"]) {
 
-					case '4': //Flexnet device id
-						$flexnet_available = $i;
-						register_flexnet($i, $date_time);
+					case FNDC_ID:
+						$fndc_data = $i;
+						register_fndc($i, $date_time);
 						break;
 
-					case '3': //FM/MX device id
-						$fmmx_total["total_daily_kwh"]	= $fmmx_total["total_daily_kwh"] + $i["daily_kwh"];
-						$fmmx_total["total_daily_ah"]	= $fmmx_total["total_daily_ah"] + $i["daily_ah"];
-						register_fmmx($i, $date_time);
+					case CC_ID:
+						$cc_total["total_daily_kwh"] = $cc_total["total_daily_kwh"] + $i["daily_kwh"];
+						$cc_total["total_daily_ah"] = $cc_total["total_daily_ah"] + $i["daily_ah"];
+						register_cc($i, $date_time);
 						break;
 
-					case '2': //FX device id
-						register_fxinv($i, $date_time);
+					case FX_ID:
+						register_fx($i, $date_time);
 						break;
 
-					case '6': //Radian device id
+					case RAD_ID:
 						register_radian($i, $date_time);
 						break;
 
@@ -75,15 +75,15 @@ if(isset($_POST)){
 				}
 			}
 
-			if ($flexnet_available != 0) {
-				$summary["kwh_in"]	= $flexnet_available["today_net_input_kwh"];
-				$summary["kwh_out"] = $flexnet_available["today_net_output_kwh"];
-				$summary["ah_in"]	= $flexnet_available["today_net_input_ah"]; 
-				$summary["ah_out"]	= $flexnet_available["today_net_output_ah"];
-				$summary["min_soc"]	= $flexnet_available['today_min_soc'];
+			if ($fndc_data != null) {
+				$summary["kwh_in"]	= $fndc_data["today_net_input_kwh"];
+				$summary["kwh_out"] = $fndc_data["today_net_output_kwh"];
+				$summary["ah_in"]	= $fndc_data["today_net_input_ah"]; 
+				$summary["ah_out"]	= $fndc_data["today_net_output_ah"];
+				$summary["min_soc"]	= $fndc_data['today_min_soc'];
 			} else {
-				$summary["kwh_in"]	=  $fmmx_total["total_daily_kwh"];
-				$summary["ah_in"]	=  $fmmx_total["total_daily_ah"]; 
+				$summary["kwh_in"]	=  $cc_total["total_daily_kwh"];
+				$summary["ah_in"]	=  $cc_total["total_daily_ah"]; 
 			}
 
 			register_summary($summary);
@@ -100,7 +100,7 @@ if(isset($_POST)){
 }
 
 
-function register_flexnet($device_array,$date_time) {
+function register_fndc($device_array,$date_time) {
 
 	 $query = "INSERT INTO monitormate_fndc (
 	 	date,
@@ -169,7 +169,7 @@ function register_flexnet($device_array,$date_time) {
 }
 
 
-function register_fmmx($device_array,$date_time){
+function register_cc($device_array,$date_time){
 	$query = "INSERT INTO monitormate_cc (
 		date,
 		address,
@@ -203,7 +203,7 @@ function register_fmmx($device_array,$date_time){
 }
 
 
-function register_fxinv($device_array,$date_time){
+function register_fx($device_array,$date_time){
 	$query = "INSERT INTO monitormate_fx (
 		date,
 		address,device_id,
