@@ -1371,16 +1371,17 @@ function get_fndc_amps_vs_volts() {
 	    	}
 	    },
 	    series: [{
+			name: "Amps",
+			color: cfg_colorUsage,
+			data: day_data_amps,
+			yAxis: 0
+	    }, {
 			name: 'Volts',
 			color: '#0b0',
 			data: day_data_volts,
 			negativeColor: cfg_colorUsage,
 			threshold: cfg_sysAbsorbVoltage,
-	    }, {
-			name: "Amps",
-			color: cfg_colorUsage,
-			data: day_data_amps,
-			yAxis: 1
+			yAxis: 1			
 	    }],
 		tooltip: {
 			formatter: function() {
@@ -1397,15 +1398,15 @@ function get_fndc_amps_vs_volts() {
 			useHTML: true
 		},
     	yAxis: [{ // primary axis
+			labels: {
+		        format: '{value} A'
+		    },
+    		opposite: false
+		}, { // secondary axis
     		labels: {
 		        format: '{value} V'
 		    },
     		minRange: cfg_sysVoltage/6,
-    		opposite: false
-		}, { // secondary axis
-			labels: {
-		        format: '{value} A'
-		    },
 		    opposite: true
 		}]
 	};
