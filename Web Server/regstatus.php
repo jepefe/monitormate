@@ -302,6 +302,8 @@ function register_summary($summary) {
 	
 	$connection = db_connection();
 	
+	// TODO: instead of doing five queries, we should just do one.
+	
 	$max_tempq = mysql_query("select max(battery_temp) from monitormate_fndc where date(date) ='".$summary['date']."'",$connection);
 	$max_temp = mysql_fetch_row($max_tempq);
 	if ($max_temp != NULL) {
@@ -382,7 +384,7 @@ function db_connection() {
 	global $dbname;
 	global $dbhost;
 	$connection = mysql_connect($dbhost, $dbuser, $dbpass);
-            	mysql_select_db($dbname, $connection);
+	mysql_select_db($dbname, $connection);
     return $connection;
 }
 

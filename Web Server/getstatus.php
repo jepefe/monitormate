@@ -86,7 +86,6 @@ function query_years($date) {
 
 	while($row = mysql_fetch_assoc($query_result)){
 			$result[] = $row;
-			
 	}
 	
 	$json_years = json_encode($result);
@@ -165,6 +164,7 @@ function query_days($date) {
 	$json_month_days = json_encode($result);
 	echo $json_month_days;
 }
+
 
 function query_full_day($date, $scope){
 	//
@@ -286,6 +286,7 @@ function db_connection() {
 	mysql_select_db($dbname, $connection);
 	return $connection;
 }
+
 
 function set_elementTypes(&$row) {
 	foreach ($row as $key => $value) {
