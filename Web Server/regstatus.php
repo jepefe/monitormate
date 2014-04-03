@@ -87,15 +87,12 @@ if(isset($_POST)){
 			}
 
 			register_summary($summary);
-			$file = "matelog";
-			$data = $_POST["devices"];
-			file_put_contents($file, $data);
-
-		} else {
-			$file = "matelog";
-			$data = $_POST["devices"];
-			file_put_contents($file, $data);
 		}
+	
+		$file = "status.json";
+		$data = $_POST["devices"];
+		file_put_contents($file, $data);
+
 	}
 }
 
