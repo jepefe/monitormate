@@ -1,8 +1,12 @@
 body {
-	margin: 48px 16px 16px 16px;
+	margin: 16px 16px 16px 16px;
 	font-family: Verdana;
 	font-size: 11px;
 	background-color: #eeeff9;
+}
+
+body.navbar {
+	margin-top: 48px;
 }
 
 #navbar {
@@ -102,14 +106,17 @@ input.datepicker {
 	LAYOUT 
 */
 
-#left-col {
-	float: left;
+.status {
 	width: 300px; /* if you change this, change right-col left margin. */
-	height: 840px;
-	margin-bottom: 10px;
 	background-color: white;
 	border-radius: 6px;
 	padding: 10px;
+}
+
+#left-col {
+	float: left;
+	height: 840px;
+	margin-bottom: 10px;
 }
 
 .right-col {
