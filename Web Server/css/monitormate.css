@@ -1,8 +1,20 @@
 body {
-	margin: 16px;
+	margin: 48px 16px 16px 16px;
 	font-family: Verdana;
 	font-size: 11px;
 	background-color: #eeeff9;
+}
+
+#navbar {
+	background-color: white;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100;
+	padding: 4px;
+	text-align: left;
 }
 
 /*
@@ -15,10 +27,16 @@ a:link {
 
 h2 {
 	color: #282828;
-	font-size: 16px;
-	text-align: left;
+	font-size: 12px;
 	font-weight: normal;
 	font-style: normal;
+	margin: 0px 0px 2px 0px;
+	text-align: left;
+}
+
+#display-date {
+	font-size: 12px;
+	font-weight: bold;
 }
 
 #left-col table {
@@ -106,6 +124,15 @@ input.datepicker {
 .multichart {
 	height: 250px;
 	min-width: 380px; /* should be double-wide width minus left margin (below) - */	
+}
+
+.fullwidth-chart {
+	background-color: white;
+	border-radius: 6px;	
+	clear: both;
+	margin: 20px 0px;	
+	min-width: 720px;
+	padding: 10px 0px 0px 10px;
 }
 
 .bottom-wide-chart {

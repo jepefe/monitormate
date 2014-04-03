@@ -335,6 +335,7 @@ function populate_chart_select(pselect) {
 			select_items.push('<option value="fndc_soc">State of Charge</option>');
 			select_items.push('<option value="fndc_shunts">Input/Output</option>');
 			select_items.push('<option value="fndc_amps_vs_volts">Battery Amps vs Volts</option>');
+			select_items.push('<option value="fndc_net_ah">Battery Net Ah</option>');
 		}
 	}
 
@@ -390,7 +391,7 @@ function get_current_status() {
 	/*global json_status */
 
 	if (json_status) {
-		$.getJSON("./matelog", function (data) {
+		$.getJSON("./status.json", function (data) {
 			json_status = data;
 		});
 	} else {
@@ -398,7 +399,7 @@ function get_current_status() {
 			async: false,
 			type: 'GET',
 			dataType: 'json',
-			url: 'matelog',
+			url: 'status.json',
 			success: function (data) {
 				json_status = data;
 			}
@@ -554,13 +555,16 @@ function set_status(HTML_id, value) {
 }
 
 
-function chart_years() {
+function chart_years(date) {
 
 	/*global years_data */
 	var years_data_kwhin = [];
 	var years_data_kwhout = [];
 	var years_net_kwh = [];
-	var date = get_formatted_date();
+
+	if (!date) {
+		date = get_formatted_date();
+	}
 	
 	//Get all years in database		
 	status = $.ajax({
@@ -928,22 +932,25 @@ function draw_chart(chart_id, content) {
 
 	switch (content) {
 		case "charge_power":
-			chart_data = get_cc_chargePower();
+			chart_data = get_cc_charge_power();
 			break;
 		case "charge_current":
-			chart_data = get_cc_chargeCurrent();
+			chart_data = get_cc_charge_current();
 			break;
 		case "array_volts":
-			chart_data = get_cc_inputVolts();
+			chart_data = get_cc_input_volts();
 			break;
 		case "array_current":
-			chart_data = get_cc_inputCurrent();
+			chart_data = get_cc_input_current();
 			break;
 		case "battery_volts":
 			chart_data = get_battery_volts();
 			break;
 		case "fndc_amps_vs_volts":
 			chart_data = get_fndc_amps_vs_volts();
+			break;
+		case "fndc_net_ah":
+			chart_data = get_fndc_net_ah();
 			break;
 		case "fndc_shunts":
 			chart_data = get_fndc_shunts();
@@ -965,7 +972,7 @@ function draw_chart(chart_id, content) {
 }
 
 
-function get_cc_chargePower() {
+function get_cc_charge_power() {
 
 	/*global deviceLabel, full_day_data */
 	var total_day_data_watts = [];
@@ -1059,7 +1066,7 @@ function get_cc_chargePower() {
 }
 
 
-function get_cc_chargeCurrent() {
+function get_cc_charge_current() {
 
 	/*global deviceLabel, full_day_data */
 	var total_day_data_amps = [];
@@ -1147,7 +1154,7 @@ function get_cc_chargeCurrent() {
 }
 
 
-function get_cc_inputVolts() {
+function get_cc_input_volts() {
 
 	/*global deviceLabel, full_day_data */
 	var total_day_data__array_volts = [];
@@ -1209,7 +1216,7 @@ function get_cc_inputVolts() {
 }
 
 
-function get_cc_inputCurrent() {
+function get_cc_input_current() {
 
 	/*global deviceLabel, full_day_data */
 	var total_day_data__array_amps = [];
@@ -1335,163 +1342,6 @@ function get_battery_volts() {
 
 	return chart_options;
 
-}
-
-
-function get_fndc_amps_vs_volts() {
-
-	/*global full_day_data */
-	var day_data_volts = [];
-	var day_data_amps = [];
-
-	
-	for (var port in full_day_data[FNDC_ID]) {
-		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
-			shunt_a_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_a_amps);
-			shunt_b_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_b_amps);
-			shunt_c_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_c_amps);
-			net_amps     = shunt_a_amps + shunt_b_amps + shunt_c_amps;
-
-			day_data_amps[i]  = [full_day_data[FNDC_ID][port][i].timestamp, net_amps];
-			day_data_volts[i] = [full_day_data[FNDC_ID][port][i].timestamp, parseFloat(full_day_data[FNDC_ID][port][i].battery_volt)];
-		}
-	}
-	
-	
-	chart_options = {
-	    legend: {
-	    	enabled: false 
-	    },
-	    plotOptions: {
-	    	line: {
-	    		marker: {
-	    			symbol: 'diamond',
-		    		fillColor: 'black'
-	    		}
-	    	}
-	    },
-	    series: [{
-			name: "Amps",
-			color: cfg_colorUsage,
-			data: day_data_amps,
-			yAxis: 0
-	    }, {
-			name: 'Volts',
-			color: '#0b0',
-			data: day_data_volts,
-			negativeColor: cfg_colorUsage,
-			threshold: cfg_sysAbsorbVoltage,
-			yAxis: 1			
-	    }],
-		tooltip: {
-			formatter: function() {
-				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				tipSeries = '';
-				for (var i = 0; i < this.points.length; i++) {
-					string = '<tr><td class="figure">' + this.points[i].y.toFixed(1) + '</td><td> ' + this.points[i].series.name + '</td></tr>';
-					tipSeries = tipSeries + string;
-				}
-				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
-				return toolTip;				
-			},
-			shared: true,
-			useHTML: true
-		},
-    	yAxis: [{ // primary axis
-			labels: {
-		        format: '{value} A'
-		    },
-    		opposite: false
-		}, { // secondary axis
-    		labels: {
-		        format: '{value} V'
-		    },
-    		minRange: cfg_sysVoltage/6,
-		    opposite: true
-		}]
-	};
-
-	return chart_options;
-
-}
-
-
-function get_fndc_shunts() {
-
-	/*global full_day_data, shuntLabel */
-	var day_data_shunt_a = [];
-	var day_data_shunt_b = [];
-	var day_data_shunt_c = [];
-	var day_data_net = [];
-
-	for (var port in full_day_data[FNDC_ID]) {
-		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
-			// each "i" is an object with all data for a given timestamp
-
-			shunt_a_watts = full_day_data[FNDC_ID][port][i].shunt_a_amps * full_day_data[FNDC_ID][port][i].battery_volt;
-			shunt_b_watts = full_day_data[FNDC_ID][port][i].shunt_b_amps * full_day_data[FNDC_ID][port][i].battery_volt;
-			shunt_c_watts = full_day_data[FNDC_ID][port][i].shunt_c_amps * full_day_data[FNDC_ID][port][i].battery_volt;
-			net_watts     = shunt_a_watts + shunt_b_watts + shunt_c_watts;
-			
-			day_data_shunt_a[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_a_watts];
-			day_data_shunt_b[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_b_watts];
-			day_data_shunt_c[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_c_watts];
-			day_data_net[i]     = [full_day_data[FNDC_ID][port][i].timestamp, net_watts];
-		}
-		break; // Only one iteration. there should be only one FNDC.
-	}
-
-	chart_options = {
-		chart: {
-			type: 'line'
-		},
-    	yAxis: {
-		    labels: {
-				formatter: function () {
-					return (this.value/1000).toFixed(1) + ' kW'
-				}
-		    }
-		},
-		tooltip: {
-			formatter: function() {
-				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				tipSeries = '';
-				for (var i = 0; i < this.points.length; i++) {
-					if (this.points[i].series.name == "Net") {
-						string = '<tr class="total"><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts ' + this.points[i].series.name + '</td></tr>';
-					} else {
-						string = '<tr><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts: ' + this.points[i].series.name + '</td></tr>';
-					}
-					tipSeries = tipSeries + string;
-				}
-				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
-				return toolTip;				
-			},
-			shared: true,
-			useHTML: true
-		},
-	    series: [{
-	    	name: shuntLabel[1],
-	    	color: cfg_colorShuntA,
-			data: day_data_shunt_a
-		}, {
-		    name: shuntLabel[2],
-	    	color: cfg_colorShuntB,
-			data: day_data_shunt_b
-		}, {
-		    name: shuntLabel[3],
-	    	color: cfg_colorShuntC,
-			data: day_data_shunt_c
-		}, {
-			name: "Net",
-			type: 'areaspline',
-			color: cfg_colorProduction,
-			negativeColor: cfg_colorUsage,
-			data: day_data_net
-	    }]
-	};
-
-	return chart_options;
 }
 
 
@@ -1685,6 +1535,241 @@ function get_fndc_soc_gauge() {
 			name: 'Charge',
 			data: [current_soc]
 	    }]
+	};
+
+	return chart_options;
+
+}
+
+
+function get_fndc_shunts() {
+
+	/*global full_day_data, shuntLabel */
+	var day_data_shunt_a = [];
+	var day_data_shunt_b = [];
+	var day_data_shunt_c = [];
+	var day_data_net = [];
+
+	for (var port in full_day_data[FNDC_ID]) {
+		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+			// each "i" is an object with all data for a given timestamp
+
+			shunt_a_watts = full_day_data[FNDC_ID][port][i].shunt_a_amps * full_day_data[FNDC_ID][port][i].battery_volt;
+			shunt_b_watts = full_day_data[FNDC_ID][port][i].shunt_b_amps * full_day_data[FNDC_ID][port][i].battery_volt;
+			shunt_c_watts = full_day_data[FNDC_ID][port][i].shunt_c_amps * full_day_data[FNDC_ID][port][i].battery_volt;
+			net_watts     = shunt_a_watts + shunt_b_watts + shunt_c_watts;
+			
+			day_data_shunt_a[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_a_watts];
+			day_data_shunt_b[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_b_watts];
+			day_data_shunt_c[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_c_watts];
+			day_data_net[i]     = [full_day_data[FNDC_ID][port][i].timestamp, net_watts];
+		}
+		break; // Only one iteration. there should be only one FNDC.
+	}
+
+	chart_options = {
+		chart: {
+			type: 'line'
+		},
+    	yAxis: {
+		    labels: {
+				formatter: function () {
+					return (this.value/1000).toFixed(1) + ' kW'
+				}
+		    }
+		},
+		tooltip: {
+			formatter: function() {
+				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
+				tipSeries = '';
+				for (var i = 0; i < this.points.length; i++) {
+					if (this.points[i].series.name == "Net") {
+						string = '<tr class="total"><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts ' + this.points[i].series.name + '</td></tr>';
+					} else {
+						string = '<tr><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts: ' + this.points[i].series.name + '</td></tr>';
+					}
+					tipSeries = tipSeries + string;
+				}
+				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
+				return toolTip;				
+			},
+			shared: true,
+			useHTML: true
+		},
+	    series: [{
+	    	name: shuntLabel[1],
+	    	color: cfg_colorShuntA,
+			data: day_data_shunt_a
+		}, {
+		    name: shuntLabel[2],
+	    	color: cfg_colorShuntB,
+			data: day_data_shunt_b
+		}, {
+		    name: shuntLabel[3],
+	    	color: cfg_colorShuntC,
+			data: day_data_shunt_c
+		}, {
+			name: "Net",
+			type: 'areaspline',
+			color: cfg_colorProduction,
+			negativeColor: cfg_colorUsage,
+			data: day_data_net
+	    }]
+	};
+
+	return chart_options;
+}
+
+
+function get_fndc_amps_vs_volts() {
+
+	/*global full_day_data */
+	var day_data_volts = [];
+	var day_data_amps = [];
+
+	
+	for (var port in full_day_data[FNDC_ID]) {
+		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+			shunt_a_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_a_amps);
+			shunt_b_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_b_amps);
+			shunt_c_amps = parseFloat(full_day_data[FNDC_ID][port][i].shunt_c_amps);
+			net_amps     = shunt_a_amps + shunt_b_amps + shunt_c_amps;
+
+			day_data_amps[i]  = [full_day_data[FNDC_ID][port][i].timestamp, net_amps];
+			day_data_volts[i] = [full_day_data[FNDC_ID][port][i].timestamp, parseFloat(full_day_data[FNDC_ID][port][i].battery_volt)];
+		}
+	}
+	
+	
+	chart_options = {
+	    legend: {
+	    	enabled: false 
+	    },
+	    plotOptions: {
+	    	line: {
+	    		marker: {
+	    			symbol: 'diamond',
+		    		fillColor: 'black'
+	    		}
+	    	}
+	    },
+	    series: [{
+			name: "Amps",
+			color: cfg_colorUsage,
+			data: day_data_amps,
+			yAxis: 0
+	    }, {
+			name: 'Volts',
+			color: '#0b0',
+			data: day_data_volts,
+			negativeColor: cfg_colorUsage,
+			threshold: cfg_sysAbsorbVoltage,
+			yAxis: 1			
+	    }],
+		tooltip: {
+			formatter: function() {
+				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
+				tipSeries = '';
+				for (var i = 0; i < this.points.length; i++) {
+					string = '<tr><td class="figure">' + this.points[i].y.toFixed(1) + '</td><td> ' + this.points[i].series.name + '</td></tr>';
+					tipSeries = tipSeries + string;
+				}
+				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
+				return toolTip;				
+			},
+			shared: true,
+			useHTML: true
+		},
+    	yAxis: [{ // primary axis
+			labels: {
+		        format: '{value} A'
+		    },
+    		opposite: false
+		}, { // secondary axis
+    		labels: {
+		        format: '{value} V'
+		    },
+    		minRange: cfg_sysVoltage/6,
+		    opposite: true
+		}]
+	};
+
+	return chart_options;
+
+}
+
+function get_fndc_net_ah() {
+
+	/*global full_day_data */
+	var day_data_netAh = [];
+	var day_data_compensatedAh = [];
+
+	
+	for (var port in full_day_data[FNDC_ID]) {
+		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+			netAh  = parseFloat(full_day_data[FNDC_ID][port][i].accumulated_ah_shunt_a);
+			netAh += parseFloat(full_day_data[FNDC_ID][port][i].accumulated_ah_shunt_b);
+			netAh += parseFloat(full_day_data[FNDC_ID][port][i].accumulated_ah_shunt_c);
+			compensatedAh = parseFloat(full_day_data[FNDC_ID][port][i].charge_factor_corrected_net_batt_ah);
+
+			day_data_netAh[i]  = [full_day_data[FNDC_ID][port][i].timestamp, netAh];
+			day_data_compensatedAh[i] = [full_day_data[FNDC_ID][port][i].timestamp, compensatedAh];
+		}
+	}
+	
+	
+	chart_options = {
+	    legend: {
+	    	enabled: false 
+	    },
+	    plotOptions: {
+	    	line: {
+	    		marker: {
+	    			symbol: 'diamond',
+		    		fillColor: 'black'
+	    		}
+	    	}
+	    },
+	    series: [{
+			name: "Ah Net",
+			color: cfg_colorUsage,
+			data: day_data_netAh,
+	    }, {
+			name: 'Ah Compensated',
+			color: cfg_colorUsage,
+			data: day_data_compensatedAh,
+	    }],
+		tooltip: {
+			formatter: function() {
+				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
+				tipSeries = '';
+				for (var i = 0; i < this.points.length; i++) {
+					string = '<tr><td class="figure">' + this.points[i].y.toFixed(1) + '</td><td> ' + this.points[i].series.name + '</td></tr>';
+					tipSeries = tipSeries + string;
+				}
+				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
+				return toolTip;				
+			},
+			shared: true,
+			useHTML: true
+		},
+    	yAxis: {
+			labels: {
+		        format: '{value} Ah'
+		    },
+		}
+//    	yAxis: [{ // primary axis
+//			labels: {
+//		        format: '{value} A'
+//		    },
+//    		opposite: false
+//		}, { // secondary axis
+//    		labels: {
+//		        format: '{value} V'
+//		    },
+//    		minRange: cfg_sysVoltage/6,
+//		    opposite: true
+//		}]
 	};
 
 	return chart_options;

@@ -14,53 +14,74 @@
 	<title>MonitorMate — Historical</title>
 </head>
 <body>
-	<h2>Historical Production/Usage:</h2>
+	<div id="navbar">
+		<form action="javascript:void(0)" method="get">
+			<button onclick="change_day(-1)">Prev</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)">Next</button>
+			— <span id="display-date"></span>
+		</form>
+	</div>
 	<div class="bottom-double-charts">
 		<div id="years_chart" class="left-chart"></div>
 		<div id="months_chart" class="right-chart"></div>
 	</div>
-	<div id="days_chart" class="bottom-wide-chart"></div>
-	<p>
-		<form action="javascript:void(0)" method="get">
-			<div style="text-align: center;">
-				<input id="datepicker" class="datepicker" type="text" value="" readonly="true" hidden="true">
-				<button onclick="change_day(-1)">Prev</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)">Next</button>
-			</div>
-		</form>
-	</p>
-	<div id="left-col" style="height: 240px;">
-		<div id="status" class="status_content"></div>
+	<div class="fullwidth-chart">
+		<div id="days_chart" class="multichart"></div>
 	</div>
-	<div class="right-col">
+<!--	<div id="left-col" style="height: 240px;">
+		<div id="status" class="status_content"></div>
+	</div>-->
+	<div class="fullwidth-chart">
+		<h2>State of Charge</h2>
 		<div id="fndc_soc" class="multichart"></div>
 	</div>
-	<h2>Input/Output:</h2>
-	<div id="fndc_shunts" class="bottom-wide-chart"></div>
-	<h2>Charge Amps vs Volts:</h2>
-	<div id="fndc_amps_vs_volts" class="bottom-wide-chart"></div>
-	<h2>Battery Voltage:</h2>
-	<div id="battery_volts" class="bottom-wide-chart"></div>
-	<h2>PV Charge Current:</h2>
-	<div id="charge_current" class="bottom-wide-chart"></div>
-	<h2>PV Charge Power:</h2>
-	<div id="charge_power" class="bottom-wide-chart"></div>
-	<h2>PV Array Volts:</h2>
-	<div id="array_volts" class="bottom-wide-chart"></div>
-	<h2>PV Array Current:</h2>
-	<div id="array_current" class="bottom-wide-chart"></div>
+	<div class="fullwidth-chart">	
+		<h2>Input/Output</h2>
+		<div id="fndc_shunts" class="multichart"></div>
+	</div>
+	<div class="fullwidth-chart">
+		<h2>Charge Amps vs Volts</h2>
+		<div id="fndc_amps_vs_volts" class="multichart"></div>
+	</div>
+	<div class="fullwidth-chart">
+		<h2>Battery Voltage</h2>
+		<div id="battery_volts" class="multichart"></div>
+	</div>
+	<div class="fullwidth-chart">
+		<h2>Battery Net Ah</h2>
+		<div id="fndc_net_ah" class="multichart"></div>
+	</div>
+	<div class="fullwidth-chart">
+		<h2>PV Charge Current</h2>
+		<div id="charge_current" class="multichart"></div>
+	</div>
+	<div class="fullwidth-chart">
+		<h2>PV Charge Power</h2>
+		<div id="charge_power" class="multichart"></div>
+	</div>
+	<div class="fullwidth-chart">
+		<h2>PV Array Volts</h2>
+		<div id="array_volts" class="multichart"></div>
+	</div>
+	<div class="fullwidth-chart">
+		<h2>PV Array Current</h2>
+		<div id="array_current" class="multichart"></div>
+	</div>
 
 	<script>
 		
 		function refresh_data() {
 
 			/*global display_date */
+			
 			if (display_date == get_formatted_date()) { // if it's today.
 				update_URL('historical.html');
-				document.title = "MonitorMate — Today";				
+				document.title = "MonitorMate — Today";
 			} else {
 				update_URL('historical.html', display_date);
-				document.title = "MonitorMate — " + display_date;				
+				document.title = "MonitorMate — " + display_date;
 			}
+
+			$('#display-date').text(display_date);
 
 //			// FIXME: check if i need to redraw the charts, it's a waste of time otherwise.
 //			var chartDate = null;
@@ -76,11 +97,12 @@
 
 			get_dataStream(display_date);
 
-			set_status("status", "summary");
+//			set_status("status", "summary");
 			draw_chart('fndc_soc','fndc_soc');
 			draw_chart('fndc_shunts','fndc_shunts');
 			draw_chart('fndc_amps_vs_volts','fndc_amps_vs_volts');
 			draw_chart('battery_volts','battery_volts');
+			draw_chart('fndc_net_ah','fndc_net_ah');
 			draw_chart('charge_power','charge_power');
 			draw_chart('charge_current','charge_current');
 			draw_chart('array_volts','array_volts');
@@ -131,7 +153,7 @@
 			Highcharts.setOptions(Highcharts.theme);
 			
 			// these should move into refresh_data()
-			chart_years();
+			chart_years(display_date);
 			chart_months();
 			chart_days();
 												
