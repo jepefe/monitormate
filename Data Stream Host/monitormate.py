@@ -91,12 +91,12 @@ def start(options):
 					return
 				else:
 					conn = httplib.HTTPConnection(urllist[1])
-					devices_status = "devices="+json.dumps(mate.get_status_dict(int(options.device_address)))
+					devices_status = "devices="+json.dumps(mate.get_status_dict(int(options.device_address)), sort_keys=True)
 					if options.token:
 						devices_status = devices_status+"&token="+ options.token
 					if options.date_time:
 						devices_status = devices_status+"&datetime="+str(datetime.now())
-					conn.request("POST", urllist[2], devices_status , headers)
+					conn.request("POST", urllist[2], devices_status, headers)
 
 			# Clear screen
 			os.system('cls' if os.name == 'nt' else 'clear')
@@ -121,7 +121,7 @@ def start(options):
 
 			# Print status of in JSON format
 			if options.json:
-				print  json.dumps(mate.get_status_dict(int(options.device_address)))
+				print  json.dumps(mate.get_status_dict(int(options.device_address)), sort_keys=True)
 
 			# Print only device status in especified address
 			if options.device_address and not options.json:
