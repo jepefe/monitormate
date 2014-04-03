@@ -20,10 +20,16 @@ if(isset($_POST)){
 	date_default_timezone_set($timezone);
 
 	if ($_POST["token"] == $token) {
-		if (!(date('i',time())%$reg_interval)) {
+		// if the posted token matches the config file
+		
+		if (!(date('i',time()) % $reg_interval)) {
+			// if the time matches the interval
+			
 			if (isset($_POST["datetime"])) {
+				// if we got a date/time from the data stream host
 				$date_time = date('Y-m-d G:i',$_POST["datetime"]); //Date from remote host 
 			} else {
+				// otherwise we just use server time
 				$date_time = date('Y-m-d G:i',time()); //Date from localhost
 			}
 		
@@ -57,6 +63,7 @@ if(isset($_POST)){
 						break;
 
 					case CC_ID:
+						// calculate total Ah and kWh from individual charge controllers in case you don't have FNDC.
 						$cc_total["total_daily_kwh"] = $cc_total["total_daily_kwh"] + $i["daily_kwh"];
 						$cc_total["total_daily_ah"] = $cc_total["total_daily_ah"] + $i["daily_ah"];
 						register_cc($i, $date_time);
@@ -75,13 +82,16 @@ if(isset($_POST)){
 				}
 			}
 
+			// populate the summary array
 			if ($fndc_data != null) {
+				// use the FNDC data if you have one.
 				$summary["kwh_in"]	= $fndc_data["today_net_input_kwh"];
 				$summary["kwh_out"] = $fndc_data["today_net_output_kwh"];
 				$summary["ah_in"]	= $fndc_data["today_net_input_ah"]; 
 				$summary["ah_out"]	= $fndc_data["today_net_output_ah"];
 				$summary["min_soc"]	= $fndc_data['today_min_soc'];
 			} else {
+				// otherwise use accumulated charge controller data.
 				$summary["kwh_in"]	=  $cc_total["total_daily_kwh"];
 				$summary["ah_in"]	=  $cc_total["total_daily_ah"]; 
 			}
