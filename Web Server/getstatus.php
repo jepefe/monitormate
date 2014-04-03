@@ -67,10 +67,10 @@ function query_years($date) {
 
 	if (!empty($date)) {
 		// if there's a date, use that to define the range.
-		$whereClause = "date > DATE_SUB(year(date('".$date."')), INTERVAL 2 YEAR)";		
+		$whereClause = "date > DATE_SUB(year(date('".$date."')), INTERVAL 5 YEAR)";		
 	} else {
 		// if there's no date, then we just scope it from now.
-		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 4 YEAR)";
+		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 5 YEAR)";
 	}
 
 	$query =	"SELECT
