@@ -66,9 +66,13 @@ Highcharts.theme = {
 		borderRadius: 2, 
 		floating: true,
 		align: 'left',
+		itemStyle: {
+			fontSize: '11px'
+		},
 		verticalAlign: 'top',
 		x: 0,
 		y: 2,
+		zIndex: 4
 	},
 	plotOptions: {
 		column: {
@@ -409,15 +413,15 @@ function get_current_status() {
 
 
 function set_status(HTML_id, value) {
-	// TODO: I don't like the use of "value", don't all variables have a value??
 
 	/*global deviceLabel, full_day_data, json_status, shuntLabel, status_content */
 	var HTML_id = HTML_id;
 	var value = value;
-	var data = '';
-	var device_id;
+
 	var address;
+	var content = '';
 	var device;
+	var device_id;
 		
 	if (value == "none") {
 		for (var i in json_status) {
@@ -440,7 +444,6 @@ function set_status(HTML_id, value) {
 		device = full_day_data["summary"];
 	}
 
-	var content = '';
 	switch (device_id) {
 
 		case "summary":
@@ -790,6 +793,21 @@ function chart_days(date) {
 			marginTop: 20,
 			zoomType: 'none'
 		},
+		legend: {
+			labelFormatter: function() {
+				if (this.name == "Production") {
+//					legendString = "<br/><span style='font-size:10px'>(" + days_avg_kwhin.toFixed(1) + " kWh daily)</span>";
+					legendString = " (" + days_avg_kwhin.toFixed(1) + " kWh daily)";
+				} else if (this.name == "Usage") {
+//					legendString = "<br/><span style='font-size:10px'>(" + days_avg_kwhout.toFixed(1) + " kWh daily)</span>";
+					legendString = " (" + days_avg_kwhout.toFixed(1) + " kWh daily)";
+				} else {
+					legendString = "";
+				}
+				return this.name + legendString;
+			},
+//			useHTML: true
+		},
 		plotOptions: {
 			series: {
 				point: {
@@ -871,34 +889,34 @@ function chart_days(date) {
 	    yAxis: {
 			plotLines: [{
 				color: cfg_colorProduction,
-				label: {
-					align: 'left',
-					style: {
-						backgroundColor: 'rgba(255,255,255,0.75)',
-						fontSize: '10px'
-					},
-					text: days_avg_kwhin.toFixed(1) + 'kWh',
-					useHTML: true,
-					verticalAlign: 'top',
-					x: -1,
-					y: -2
-				},
+//				label: {
+//					align: 'left',
+//					style: {
+//						backgroundColor: 'rgba(255,255,255,0.75)',
+//						fontSize: '10px'
+//					},
+//					text: days_avg_kwhin.toFixed(1) + 'kWh',
+//					useHTML: false,
+//					verticalAlign: 'top',
+//					x: -1,
+//					y: -2
+//				},
 				value: days_avg_kwhin,
 				width: 1,
 				zIndex: 4,
 			},{
 				color: cfg_colorUsage,
-				label: {
-					align: 'left',
-					style: {
-						backgroundColor: 'rgba(255,255,255,0.75)',
-						fontSize: '10px'
-					},
-					text: days_avg_kwhout.toFixed(1) + 'kWh',
-					useHTML: true,
-					x: -1,
-					y: 11
-				},
+//				label: {
+//					align: 'left',
+//					style: {
+//						backgroundColor: 'rgba(255,255,255,0.75)',
+//						fontSize: '10px'
+//					},
+//					text: days_avg_kwhout.toFixed(1) + 'kWh',
+//					useHTML: false,
+//					x: -1,
+//					y: 11
+//				},
 				value: days_avg_kwhout,
 				width: 1,
 				zIndex: 4,
@@ -1643,7 +1661,8 @@ function get_fndc_amps_vs_volts() {
 	
 	chart_options = {
 	    legend: {
-	    	enabled: false 
+	    	enabled: true,
+	    	x: 40
 	    },
 	    plotOptions: {
 	    	line: {
@@ -1655,7 +1674,7 @@ function get_fndc_amps_vs_volts() {
 	    },
 	    series: [{
 			name: "Amps",
-			color: cfg_colorUsage,
+			color: cfg_colorProduction,
 			data: day_data_amps,
 			yAxis: 0
 	    }, {
@@ -1720,7 +1739,7 @@ function get_fndc_net_ah() {
 	
 	chart_options = {
 	    legend: {
-	    	enabled: false 
+	    	enabled: true
 	    },
 	    plotOptions: {
 	    	line: {
@@ -1735,7 +1754,7 @@ function get_fndc_net_ah() {
 			color: cfg_colorUsage,
 			data: day_data_netAh,
 	    }, {
-			name: 'Ah Compensated',
+			name: 'Ah Corrected',
 			color: cfg_colorUsage,
 			data: day_data_compensatedAh,
 	    }],
