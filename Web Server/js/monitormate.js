@@ -94,7 +94,7 @@ Highcharts.theme = {
 				states: {
 					hover: {
 						enabled: true,
-						radius: 4,
+						radius: 3,
 						lineWidth: 1,
 						lineColor: '#FFFFFF'
 					}
@@ -117,7 +117,7 @@ Highcharts.theme = {
 				states: {
 					hover: {
 						enabled: true,
-						radius: 4,
+						radius: 3,
 						lineWidth: 1,
 						lineColor: '#FFFFFF'
 					}
@@ -1741,21 +1741,13 @@ function get_fndc_net_ah() {
 	    legend: {
 	    	enabled: true
 	    },
-	    plotOptions: {
-	    	line: {
-	    		marker: {
-	    			symbol: 'diamond',
-		    		fillColor: 'black'
-	    		}
-	    	}
-	    },
 	    series: [{
 			name: "Ah Net",
 			color: cfg_colorUsage,
 			data: day_data_netAh,
 	    }, {
 			name: 'Ah Corrected',
-			color: cfg_colorUsage,
+			color: cfg_colorProduction,
 			data: day_data_compensatedAh,
 	    }],
 		tooltip: {
