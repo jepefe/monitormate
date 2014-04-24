@@ -97,6 +97,12 @@ if(isset($_POST)){
 			}
 
 			register_summary($summary);
+
+			// TESTING let's see if i can make a json feed with more calculated values.
+			$file = "status-test.json";
+			$testJSON = json_encode($devices_array + array("summary"=>$summary));
+			file_put_contents($file, $testJSON);
+
 		}
 	
 		$file = "status.json";
@@ -375,7 +381,7 @@ function register_summary($summary) {
 		WHERE date(date)='".$summary['date']."'";
 			
 	if ($todaysRecord) { // if we have a record for today
-		if ($todaysRecord['kwh_in'] <= $summary['kwh_in'] AND $todaysRecord['kwh_out'] <= $summary['kwh_out']) {
+		if (($summary['kwh_in'] >= $todaysRecord['kwh_in']) && ($summary['kwh_out'] >= $todaysRecord['kwh_out'])) {
 			// go ahead and update, the numbers look safe.
 			mysql_query($update_query, $connection);
 		}
