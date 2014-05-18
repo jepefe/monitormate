@@ -2,6 +2,7 @@
 /*
 Copyright (C) 2012 Jesus Perez <jepefe@gmail.com>
 Copyright (C) 2014 Timothy Martin <https://github.com/instanttim>
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
@@ -73,7 +74,18 @@ $colorChargers = array('#fab800', '#f68a98');
 // BY JAVASCRIPT AS A CONFIG FILE, BUT THE PHP WILL AUTOMATICALLY 
 // GENERATE THE NECESSARY INFORMATION IN THE JAVASCRIPT BELOW.
 
+// Constants for device-type IDs
+define("FX_ID", 2);		// 2 is a FX-series inverter
+define("CC_ID", 3);		// 3 is a FM/MX charge controller (CC)
+define("FNDC_ID", 4);	// 4 is a FLEXnet DC
+define("RAD_ID", 6);	// 6 is a Radian-series inverter
+
 ?>
+
+var FX_ID = <?php echo FX_ID; ?>;	
+var CC_ID = <?php echo CC_ID; ?>;
+var FNDC_ID = <?php echo FNDC_ID; ?>;
+var RAD_ID = <?php echo RAD_ID; ?>;
 
 var cfg_sysVoltage = <?php echo $system_voltage; ?>;
 var cfg_sysAbsorbVoltage = <?php echo $system_absorbVoltage; ?>;
