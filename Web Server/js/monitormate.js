@@ -211,7 +211,7 @@ function set_labels() {
 
 				if (cfg_deviceLabel[port] === "") { 
 					// Assign default name based on ID type 
-					switch (type) {
+					switch (parseInt(type)) {
 						case FX_ID:
 							deviceLabel[port] = "FX Inverter (" + full_day_data[type][port][0].address + ")";
 							break;
@@ -224,6 +224,9 @@ function set_labels() {
 						case FNDC_ID:
 							deviceLabel[port] = "FLEXnet DC (" + full_day_data[type][port][0].address + ")";
 							break;
+						default:
+							deviceLabel[port] = "Unknown Device (" + type + ")";
+						break;	
 					}
 				} else {
 					deviceLabel[port] = cfg_deviceLabel[port];
