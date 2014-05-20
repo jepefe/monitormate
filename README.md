@@ -83,10 +83,11 @@ Installation and Execution
 1. Download monitormate and extract it.
 2. Rename the config file to config.php (remove .sample)
 2. Edit the config file to your liking.
-3. Use database.sql to create tables in your MySQL database. (I suggest phpAdmin to import)
-4. Copy the “Web Server” directory content to your web server.
-5. copy the "Data Stream Host" directory content to your host computer (if it's not the one you're using)
-6. Run monitormate.py on the host with the correct parameters.
+3. Create the database manually, and a new database user if necessary.
+4. Use database.sql to create tables in your MySQL database. (I suggest phpAdmin to import)
+5. Copy the “Web Server” directory content to your web server.
+6. copy the "Data Stream Host" directory content to your host computer (if it's not the one you're using)
+7. Run monitormate.py on the host with the correct parameters.
 
 Optionally, if you want it to run as a daemon on Linux (assumes Debian-style, modify as necessary):
 
