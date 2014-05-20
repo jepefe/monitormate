@@ -1441,9 +1441,18 @@ function get_fndc_soc_gauge() {
 		var device = json_status["device" + port];
 		var current_soc = device.soc;
 		var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
-		var chargeDirection = "⬇︎"; // assume charge is falling
+		if (cfg_isApple) {
+//			var upArrow = "⬆︎";
+//			var downArrow = "⬇︎";
+			var upArrow = "&#11014;";
+			var downArrow = "&#11015;";
+		} else {
+			var upArrow = "&#8593;";
+			var downArrow = "&#8595;";
+		}
+		var chargeDirection = downArrow; // assume charge is falling
 		if (total_shunt_amps > 0) {
-			chargeDirection = "⬆︎"; // if the amps are positive, then charging is going up!
+			chargeDirection = upArrow; // if the amps are positive, then charging is going up!
 		}
 		break; // only one FNDC!
 	}

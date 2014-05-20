@@ -80,6 +80,9 @@ define("CC_ID", 3);		// 3 is a FM/MX charge controller (CC)
 define("FNDC_ID", 4);	// 4 is a FLEXnet DC
 define("RAD_ID", 6);	// 6 is a Radian-series inverter
 
+// Platform detection, looks for Apple platforms both OS X and iOS.
+var cfg_isApple = navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)?true:false;
+
 ?>
 
 var FX_ID = <?php echo FX_ID; ?>;	
