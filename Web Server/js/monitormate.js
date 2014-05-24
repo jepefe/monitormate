@@ -210,7 +210,7 @@ function set_labels() {
 			for (var port in full_day_data[type]) {
 
 				if (cfg_deviceLabel[port] === "") { 
-					// Assign default name based on ID type 
+					// If there's not a label in the config, then assign default name based on ID type 
 					switch (parseInt(type)) {
 						case FX_ID:
 							deviceLabel[port] = "FX Inverter (" + full_day_data[type][port][0].address + ")";
