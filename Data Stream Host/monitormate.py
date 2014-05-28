@@ -43,7 +43,8 @@ def main():
 
 	parser.add_option('-j','--json',help='Prints JSON formatted string with all devices status to stdout',dest='json',\
 					  default=False,action='store_true')
-	parser.add_option('-n','--datetime',help='Include date and time and send to url. Use with -u.',dest="date_time",action='store_true',default=False)
+	parser.add_option('-n','--datetime-host',help='Include date and time from this host and send to url. Use with -u.',dest="host_date_time",action='store_true',default=False)
+	parser.add_option('-m','--datetime-mate',help='Include date and time from MATE3 (specify ip address) and send to url. Use with -u.',dest="mate_date_time",action='store_true',default=False)
 	parser.add_option('-u','--send-json-url',help='Send JSON via POST to specified url',dest='url')
 	parser.add_option('-t','--token',help='Include security token and send to url. Use with -u.',dest='token')
 	parser.add_option('-r','--repeat-mate',help='Re-send MATE3 data to specified ip and port in format IP:PORT',dest='ip_port')
@@ -94,8 +95,13 @@ def start(options):
 					devices_status = "devices="+json.dumps(mate.get_status_dict(int(options.device_address)), sort_keys=True)
 					if options.token:
 						devices_status = devices_status+"&token="+ options.token
-					if options.date_time:
+					if options.host_date_time:
 						devices_status = devices_status+"&datetime="+str(datetime.now())
+					if options.mate_date_time:
+						response = urllib2.urlopen('http://'+options.mate_date_time+'/Dev_status.cgi?&Port=0')
+						json_data = json.load(response)
+						datetime_string = datetime.datetime.utcfromtimestamp(json_data['devstatus']['Sys_Time'])
+						devices_status = devices_status+"&datetime="+datetime_string
 					conn.request("POST", urllist[2], devices_status, headers)
 
 			# Clear screen
