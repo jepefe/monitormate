@@ -385,6 +385,7 @@ function register_summary($summary) {
 	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$summary['date']."'",$connection);
 
 	if (mysql_num_rows($todaysRecordq) > 0) { // if we have a record for today
+
 		while ($row = mysql_fetch_assoc($todaysRecordq)) {
 			// DEBUG
 			$debug_log = "Summary Values:\n".print_r($row, TRUE)."\n";
@@ -394,7 +395,10 @@ function register_summary($summary) {
 				// go ahead and update, the numbers look safe.
 				$query = $update_query;
 			}
+			
+			break; // there should only be one record, but break just in case.
 		}
+
 	} else { // if this is the first record for the day
 		$query = $insert_query;
 	}
