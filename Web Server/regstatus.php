@@ -345,7 +345,7 @@ function register_summary($summary) {
 		$summary['max_soc'] = $max_soc[0];
 	}
 	
-	$query = "INSERT INTO monitormate_summary (
+	$insert_query = "INSERT INTO monitormate_summary (
 		date,
 		kwh_in,
 		kwh_out,
@@ -379,20 +379,40 @@ function register_summary($summary) {
 		max_soc=".$summary['max_soc'].",
 		min_soc=".$summary['min_soc'].",
 		max_pv_voltage=".$summary['max_pv_voltage']."
-		WHERE date(date)='".$summary['date']."'";
+		WHERE date='".$summary['date']."'";
 
-	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date(date) ='".$summary['date']."'",$connection);
+	$query = NULL;	
+	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$summary['date']."'",$connection);
 
-	if ($todaysRecordq) { // if we have a record for today
-		$todaysRecord = mysql_fetch_row($todaysRecordq);
-		// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
-		if ((floatval($summary['kwh_in']) >= floatval($todaysRecord['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($todaysRecord['kwh_out']))) {
-			// go ahead and update, the numbers look safe.
-			mysql_query($update_query, $connection);
+	if (mysql_num_rows($todaysRecordq) > 0) { // if we have a record for today
+		while ($row = mysql_fetch_assoc($todaysRecordq)) {
+			// DEBUG
+			$debug_log = "Summary Values:\n".print_r($row, TRUE)."\n";
+			
+			// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
+			if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
+				// go ahead and update, the numbers look safe.
+				$query = $update_query;
+			}
 		}
 	} else { // if this is the first record for the day
-		mysql_query($query, $connection);
+		$query = $insert_query;
 	}
+	
+	// DEBUG
+	$file = "./data/query.log";
+	$data = date('Y-m-d H:i:s')."\n-------------------\n";
+	$data .= $debug_log;
+	if ($query) {
+		$data .= "Query:\n".$query;
+	} else {
+		$file = "./data/error.log";
+		$data. = "Skipped updating summary table, values have been reset.\n";
+		$data. = $update_query;
+	}
+	file_put_contents($file, $data);
+	
+	mysql_query($query, $connection);
 }
 
 
