@@ -385,6 +385,7 @@ function register_summary($summary) {
 
 	if ($todaysRecordq) { // if we have a record for today
 		$todaysRecord = mysql_fetch_row($todaysRecordq);
+		// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
 		if ((floatval($summary['kwh_in']) >= floatval($todaysRecord['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($todaysRecord['kwh_out']))) {
 			// go ahead and update, the numbers look safe.
 			mysql_query($update_query, $connection);
