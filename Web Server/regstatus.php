@@ -382,10 +382,10 @@ function register_summary($summary) {
 		WHERE date(date)='".$summary['date']."'";
 
 	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date(date) ='".$summary['date']."'",$connection);
-	$todaysRecord = mysql_fetch_row($todaysRecordq);
 
-	if ($todaysRecord['kwh_in'] != NULL && $todaysRecord['kwh_out'] != NULL) { // if we have a record for today
-		if (($summary['kwh_in'] >= $todaysRecord['kwh_in']) && ($summary['kwh_out'] >= $todaysRecord['kwh_out'])) {
+	if ($todaysRecordq) { // if we have a record for today
+		$todaysRecord = mysql_fetch_row($todaysRecordq);
+		if ((floatval($summary['kwh_in']) >= floatval($todaysRecord['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($todaysRecord['kwh_out']))) {
 			// go ahead and update, the numbers look safe.
 			mysql_query($update_query, $connection);
 		}
