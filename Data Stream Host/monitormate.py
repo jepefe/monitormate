@@ -97,11 +97,11 @@ def start(options):
 						devices_status = devices_status+"&token="+ options.token
 					if options.host_date_time:
 						devices_status = devices_status+"&datetime="+str(datetime.now())
-					if options.mate_date_time:
+					elif options.mate_date_time:
 						response = urllib2.urlopen('http://'+options.mate_date_time+'/Dev_status.cgi?&Port=0')
 						json_data = json.load(response)
-						datetime_string = datetime.datetime.utcfromtimestamp(json_data['devstatus']['Sys_Time'])
-						devices_status = devices_status+"&datetime="+datetime_string
+						datetime_obj = datetime.utcfromtimestamp(json_data['devstatus']['Sys_Time'])
+						devices_status = devices_status+"&datetime="+str(datetime_obj)
 					conn.request("POST", urllist[2], devices_status, headers)
 
 			# Clear screen
