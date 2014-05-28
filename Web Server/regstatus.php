@@ -99,16 +99,20 @@ if(isset($_POST)){
 			register_summary($summary);
 
 			// TESTING let's see if i can make a json feed with more calculated values.
-			$file = "status-test.json";
+			$file = "./data/test.json";
 			$testJSON = json_encode($devices_array + array("summary"=>$summary));
 			file_put_contents($file, $testJSON);
 
 		}
 	
-		$file = "status.json";
+		$file = "./data/status.json";
 		$data = $_POST["devices"];
 		file_put_contents($file, $data);
 
+		// DEBUG
+		$file = "./data/regstatus.log";
+		$data = print_r($_POST, TRUE);
+		file_put_contents($file, $data);
 	}
 }
 

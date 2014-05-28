@@ -398,7 +398,7 @@ function get_current_status() {
 	/*global json_status */
 
 	if (json_status) {
-		$.getJSON("./status.json", function (data) {
+		$.getJSON("./data/status.json", function (data) {
 			json_status = data;
 		});
 	} else {
@@ -406,7 +406,7 @@ function get_current_status() {
 			async: false,
 			type: 'GET',
 			dataType: 'json',
-			url: 'status.json',
+			url: 'data/status.json',
 			success: function (data) {
 				json_status = data;
 			}
