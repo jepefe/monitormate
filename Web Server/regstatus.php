@@ -402,7 +402,7 @@ function register_summary($summary) {
 	} else { // if this is the first record for the day
 		$query = $insert_query;
 	}
-	
+		
 	// DEBUG
 	$file = "./data/query.log";
 	$data = date('Y-m-d H:i:s')."\n-------------------\n";
@@ -411,8 +411,8 @@ function register_summary($summary) {
 		$data .= "Query:\n".$query;
 	} else {
 		$file = "./data/error.log";
-		$data. = "Skipped updating summary table, values have been reset.\n";
-		$data. = $update_query;
+		$data .= "Skipped updating summary table, values have been reset.\n";
+		$data .= $update_query;
 	}
 	file_put_contents($file, $data);
 	
