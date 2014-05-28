@@ -40,7 +40,7 @@ if(isset($_POST)){
 			);			
 			
 			$summary = array(
-				"date" => date('Y-m-d ', strtotime($date_time)),
+				"date" => date('Y-m-d', strtotime($date_time)),
 				"kwh_in" => 0,
 				"kwh_out" => 0,
 				"ah_in" => 0,
@@ -345,9 +345,6 @@ function register_summary($summary) {
 		$summary['max_soc'] = $max_soc[0];
 	}
 	
-	$todaysRecord = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date(date) ='".$summary['date']."'",$connection);
-	$todaysRecord = mysql_fetch_row($todaysRecord);
-
 	$query = "INSERT INTO monitormate_summary (
 		date,
 		kwh_in,
@@ -383,8 +380,11 @@ function register_summary($summary) {
 		min_soc=".$summary['min_soc'].",
 		max_pv_voltage=".$summary['max_pv_voltage']."
 		WHERE date(date)='".$summary['date']."'";
-			
-	if ($todaysRecord) { // if we have a record for today
+
+	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date(date) ='".$summary['date']."'",$connection);
+	$todaysRecord = mysql_fetch_row($todaysRecordq);
+
+	if ($todaysRecord['kwh_in'] != NULL && $todaysRecord['kwh_out'] != NULL) { // if we have a record for today
 		if (($summary['kwh_in'] >= $todaysRecord['kwh_in']) && ($summary['kwh_out'] >= $todaysRecord['kwh_out'])) {
 			// go ahead and update, the numbers look safe.
 			mysql_query($update_query, $connection);
