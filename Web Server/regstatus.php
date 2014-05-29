@@ -384,11 +384,11 @@ function register_summary($summary) {
 	$query = NULL;	
 	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$summary['date']."'",$connection);
 
-	if (mysql_num_rows($todaysRecordq) > 0) { // if we have a record for today
+	if (mysql_num_rows($todaysRecordq) > 0) { // successful query, still might be empty.
 
 		while ($row = mysql_fetch_assoc($todaysRecordq)) {
 			// DEBUG
-			$debug_log = "Summary Values:\n".print_r($row, TRUE)."\n";
+			$msgLog = "SUMMARY VALUES:\n".print_r($row, TRUE)."\n";
 			
 			// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
 			if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
@@ -404,17 +404,11 @@ function register_summary($summary) {
 	}
 		
 	// DEBUG
-	$file = "./data/query.log";
-	$data = date('Y-m-d H:i:s')."\n-------------------\n";
-	$data .= $debug_log;
 	if ($query) {
-		$data .= "Query:\n".$query;
+		mmLog('query', $msgLog."Query:\n".$query);
 	} else {
-		$file = "./data/error.log";
-		$data .= "Skipped updating summary table, values have been reset.\n";
-		$data .= $update_query;
+		mmLog('error', $msgLog."SKIPPED QUERY: Values appear to have been reset!\n".$query);
 	}
-	file_put_contents($file, $data);
 	
 	mysql_query($query, $connection);
 }
@@ -428,6 +422,21 @@ function db_connection() {
 	$connection = mysql_connect($dbhost, $dbuser, $dbpass);
 	mysql_select_db($dbname, $connection);
     return $connection;
+}
+
+function mmLog($type, $msg) {
+	$data = "-------------------\n".date('Y-m-d H:i:s')."\n-------------------\n";
+	$data .= $msg."\n";
+	switch ($type) {
+		case 'error':
+			file_put_contents('./data/error.log', $data, FILE_APPEND);
+			break;
+		case 'query':
+			file_put_contents('./data/query.log', $data);
+			break;
+		default:
+			break;
+	}
 }
 
 ?>
