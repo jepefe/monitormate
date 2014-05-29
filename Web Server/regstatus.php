@@ -388,7 +388,7 @@ function register_summary($summary) {
 
 		while ($row = mysql_fetch_assoc($todaysRecordq)) {
 			// DEBUG
-			$msgLog = "SUMMARY VALUES:\n".print_r($row, TRUE)."\n";
+			$msgLog = "SUMMARY VALUES:".print_r($row, TRUE)."\n";
 			
 			// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
 			if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
@@ -405,9 +405,9 @@ function register_summary($summary) {
 		
 	// DEBUG
 	if ($query) {
-		mmLog('query', $msgLog."Query:\n".$query);
+		mmLog('query', $msgLog."QUERY: ".$query);
 	} else {
-		mmLog('error', $msgLog."SKIPPED QUERY: Values appear to have been reset!\n".$query);
+		mmLog('error', $msgLog."CLOCK MISMATCH: Values appear to have been reset!\nSKIPPED QUERY: ".$query);
 	}
 	
 	mysql_query($query, $connection);
