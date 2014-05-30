@@ -44,7 +44,7 @@ def main():
 	parser.add_option('-j','--json',help='Prints JSON formatted string with all devices status to stdout',dest='json',\
 					  default=False,action='store_true')
 	parser.add_option('-n','--datetime-host',help='Include date and time from this host and send to url. Use with -u.',dest="host_date_time",action='store_true',default=False)
-	parser.add_option('-m','--datetime-mate',help='Include date and time from MATE3 (specify ip address) and send to url. Use with -u.',dest="mate_date_time",action='store_true',default=False)
+	parser.add_option('-m','--datetime-mate',help='Include date and time from MATE3 (specify ip address) and send to url. Use with -u.',dest="mate_date_time")
 	parser.add_option('-u','--send-json-url',help='Send JSON via POST to specified url',dest='url')
 	parser.add_option('-t','--token',help='Include security token and send to url. Use with -u.',dest='token')
 	parser.add_option('-r','--repeat-mate',help='Re-send MATE3 data to specified ip and port in format IP:PORT',dest='ip_port')
