@@ -390,10 +390,14 @@ function register_summary($summary) {
 			// DEBUG
 			$msgLog = "SUMMARY VALUES:".print_r($row, TRUE)."\n";
 			
-			// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
-			if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
-				// go ahead and update, the numbers look safe.
-				$query = $update_query;
+			// let's do an summary table anti-clobber check if it's near the end of a day
+			// TODO: Not sure using the current time is the right choice... dunno.
+			if (time() > strtotime('22:30:00')) {
+				// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
+				if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
+					// go ahead and update, the numbers look safe.
+					$query = $update_query;
+				}			
 			}
 			
 			break; // there should only be one record, but break just in case.
