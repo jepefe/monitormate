@@ -382,29 +382,39 @@ function register_summary($summary) {
 		WHERE date='".$summary['date']."'";
 
 	$query = NULL;	
-	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$summary['date']."'",$connection);
+	if (time() < strtotime('01:30:00')) {
+		// we look at the last record from the previous day.
+		$previousDay = date('Y-m-d', strtotime('-1 day', strtotime($summary['date'])));
+		$prevdayRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$previousDay."'",$connection);
+	}
 
+	// we look at the last record from today
+	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$summary['date']."'",$connection);
+	
 	if (mysql_num_rows($todaysRecordq) > 0) { // successful query, still might be empty.
 
 		while ($row = mysql_fetch_assoc($todaysRecordq)) {
 			// DEBUG
 			$msgLog = "SUMMARY VALUES:".print_r($row, TRUE)."\n";
 			
-			// let's do an summary table anti-clobber check if it's near the end of a day
-			// TODO: Not sure using the current time is the right choice... dunno.
-			if (time() > strtotime('22:30:00')) {
-				// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
-				if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
-					// go ahead and update, the numbers look safe.
-					$query = $update_query;
-				}			
+			// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
+			if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
+				// go ahead and update, the numbers look safe.
+				$query = $update_query;
 			}
-			
 			break; // there should only be one record, but break just in case.
 		}
 
 	} else { // if this is the first record for the day
-		$query = $insert_query;
+		// let's do an summary table anti-clobber check if it's near the end of a day
+		// for the first 1.5 hours of the day, the data needs to be less than the last
+		// data point from the previous day. Seems mostly reasonable.
+		while ($row = mysql_fetch_assoc($prevdayRecordq)) {
+			if (!(floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && !(floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
+				$query = $insert_query;		
+			}
+			break; // there should only be one record, but break just in case.
+		}
 	}
 		
 	// DEBUG
