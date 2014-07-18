@@ -1,25 +1,103 @@
 body {
-	margin: 16px 16px 16px 16px;
+	margin: 48px 16px 16px 16px;
 	font-family: Verdana;
 	font-size: 11px;
 	background-color: #eeeff9;
 }
 
-body.navbar {
-	margin-top: 48px;
-}
+/*
+  NAVBAR
+*/
 
 #navbar {
-	background-color: white;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
+	height: 34px;
+	padding: 0px 10px;
+	background-color: white;
+	overflow: hidden;
+	box-sizing: border-box;
+	text-align: center;
 	z-index: 100;
-	padding: 4px;
-	text-align: left;
 }
+
+#navbar h1 {
+	color: black;
+	display: inline-block;
+	font: 14px "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	line-height: 34px;
+	margin: 0px;
+}
+
+/*
+  TABS
+*/
+
+ol#toc {
+    height: 22px;
+    list-style: none;
+    position: absolute;
+    left: 10px;
+    margin: 6px 0px 0px 0px;
+    padding: 0;
+}
+
+ol#toc li {
+    background: rgba(0, 0, 0, 0.1);
+    float: left;
+    margin: 0 1px 0 0;
+    padding-left: 10px;
+}
+
+ol#toc a {
+    color: #000000;
+    float: left;
+    line-height: 22px;
+    padding-right: 10px;
+    text-decoration: none;
+}
+
+ol#toc li.current {
+    background-color: #48f;
+}
+
+ol#toc li.current a {
+    color: #fff;
+}
+
+/*
+  BUTTONS
+*/
+
+#navbar #button-cluster {
+	display: inline-block;
+	margin: 6px 4px;
+	position: absolute;
+	right: 10px;
+}
+
+button {
+	margin: 0px;
+	height: 22px;
+	width: 72px;
+	border: 1px solid rgba(51, 51, 51, 0.33);
+	border-radius: 4px;
+	background-color: white;
+}
+
+button.square {
+	width: 24px;
+}
+
+button:active {
+	border: 1px solid #0473ea;
+	border-radius: 4px;
+	background-color: #3a98fc;
+	color: white;
+}
+
 
 /*
 	STYLE
@@ -27,6 +105,16 @@ body.navbar {
 
 a:link {
 	text-decoration: none;
+}
+
+h1 {
+	color: #282828;
+	font-size: 13px;
+	font-weight: bold;
+	font-style: normal;
+	margin: 0px 0px 0px 0px;
+	text-align: left;
+	display: inline;
 }
 
 h2 {
@@ -39,8 +127,8 @@ h2 {
 }
 
 #display-date {
-	font-size: 12px;
-	font-weight: bold;
+	font-size: 11px;
+	font-weight: normal;
 }
 
 #left-col table {

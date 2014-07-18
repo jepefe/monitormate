@@ -13,13 +13,17 @@
 	<script src="./js/monitormate.js"></script>
 	<title>MonitorMate — Historical</title>
 </head>
-<body class="navbar">
+<body>
 	<div id="navbar">
-		<form action="javascript:void(0)" method="get">
-			<button onclick="change_day(-1)">Prev</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)">Next</button>
-			— <span id="display-date"></span>
-		</form>
-	</div>
+		<ol id="toc">
+			<li><a href="monitormate.html">Current Conditions</a></li>
+			<li class="current"><a href="Historical.html">Historical</a></li>
+		</ol>
+		<h1 id="display-date">Martin Ranch</h1>
+		<div id="button-cluster">
+			<button onclick="change_day(-1)" class="square"><</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)" class="square">></button>
+		</div>		
+	</div>	
 	<div class="bottom-double-charts">
 		<div id="years_chart" class="left-chart"></div>
 		<div id="months_chart" class="right-chart"></div>
