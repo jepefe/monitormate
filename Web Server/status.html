@@ -11,29 +11,42 @@
 	<title>MonitorMate — Status</title>
 </head>
 <body>
-	<div id="status_summary" class="status" style="margin-bottom: 16px;"></div>
-	<div id="status_port1" class="status" style="display: inline-block; margin-bottom: 16px;"></div>
-	<div id="status_port2" class="status" style="display: inline-block; margin-bottom: 16px;"></div>
-	<br />
-	<div id="status_port3" class="status" style="display: inline-block; margin-bottom: 16px;"></div>
-	<div id="status_port4" class="status" style="display: inline-block; margin-bottom: 16px;"></div>
-	<br />
-	<div id="status_port5" class="status" style="display: inline-block;"></div>
-	<div id="status_port6" class="status"></div>
-	<div id="status_port7" class="status"></div>
-	<div id="status_port8" class="status"></div>
-	<div id="status_port9" class="status"></div>
-	<div id="status_port10" class="status"></div>
-
+	<div id="navbar">
+		<ol id="toc">
+			<li><a href="monitormate.html">Current Conditions</a></li>
+			<li><a href="historical.html">Historical</a></li>
+			<li class="current"><a href="status.html">Status</a></li>
+		</ol>
+		<h1 id="navtitle"></h1>
+	</div>
+	<div id="hubinfo">
+	</div>
+	<div id="inverters" class="status">
+		<h2>Inverters</h2>
+		<div id="status_port1" class="status_content" style="display: inline-block;"></div>
+		&nbsp;
+		<div id="status_port2" class="status_content" style="display: inline-block;"></div>
+	</div>
+	<div id="chargecontrollers" class="status">
+		<h2>Charge Controllers</h2>
+		<div id="status_port3" class="status_content" style="display: inline-block;"></div>
+		&nbsp;
+		<div id="status_port4" class="status_content" style="display: inline-block;"></div>
+	</div>
+	<div id="summary" class="status">
+		<h2>Battery Monitor</h2>
+		<div id="status_port5" class="status_content" style="display: inline-block; margin-bottom: 16px;"></div>
+	</div>
+	
 	<script>
 
 		$(document).ready(function() {
 
-			get_dataStream(false, 1); // get 1 hour of data
+			// set the system name in the navbar		
+			$('#navtitle').text(cfg_sysName);
 
 			get_current_status();
 
-			set_status('status_summary', 'summary');			
 			set_status('status_port1', '2:1');
 			set_status('status_port2', '2:2');
 			set_status('status_port3', '3:3');

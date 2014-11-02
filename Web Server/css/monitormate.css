@@ -114,8 +114,6 @@ h1 {
 	font-weight: bold;
 	font-style: normal;
 	margin: 0px 0px 0px 0px;
-	text-align: left;
-	display: inline;
 }
 
 h2 {
@@ -132,8 +130,8 @@ h2 {
 	font-weight: normal;
 }
 
-#left-col table {
-	width: 100%;
+.status table {
+	width: 300px;
 	table-layout: fixed;
 }
 
@@ -196,13 +194,14 @@ input.datepicker {
 */
 
 .status {
-	width: 300px; /* if you change this, change right-col left margin. */
 	background-color: white;
 	border-radius: 6px;
 	padding: 10px;
+	margin-bottom: 10px;
 }
 
 #left-col {
+	width: 300px; /* if you change this, change right-col left margin. */
 	float: left;
 	height: 840px;
 	margin-bottom: 10px;
