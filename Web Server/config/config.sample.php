@@ -30,6 +30,7 @@ $token="";			//Token
 $timezone="America/Los_Angeles";	//See http://www.php.net/manual/en/timezones.php, example for Spain: Europe/Madrid
 
 // SYSTEM
+$system_name = "My System";		// System Name
 $system_voltage = 48;			// Nominal system voltage
 $system_absorbVoltage = 58.8;	// Absorb voltage for your chargers
 $system_endAmps = 12.5;			// The FNDC configured return amps setting
@@ -90,6 +91,7 @@ var CC_ID = <?php echo CC_ID; ?>;
 var FNDC_ID = <?php echo FNDC_ID; ?>;
 var RAD_ID = <?php echo RAD_ID; ?>;
 
+var cfg_sysName = <?php echo $system_name; ?>;
 var cfg_sysVoltage = <?php echo $system_voltage; ?>;
 var cfg_sysAbsorbVoltage = <?php echo $system_absorbVoltage; ?>;
 var cfg_sysEndAmps = <?php echo $system_endAmps; ?>;

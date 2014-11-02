@@ -9,8 +9,8 @@
 	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script src="http://code.highcharts.com/3/highcharts.js"></script>
-	<script src="http://code.highcharts.com/3/highcharts-more.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/highcharts-more.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<title>MonitorMate</title>
@@ -18,10 +18,10 @@
 <body>
 	<div id="navbar">
 		<ol id="toc">
-			<li class="current"><a href="Current.html">Current Conditions</a></li>
+			<li class="current"><a href="monitormate.html">Current Conditions</a></li>
 			<li><a href="historical.html">Historical</a></li>
 		</ol>
-		<h1>Martin Ranch</h1>
+		<h1 id="navtitle"></h1>
 	</div>
 	<div id="left-col" class="status">
 		<div id="soc_gauge" class="gauge-chart"></div>
@@ -55,9 +55,12 @@
 		$(document).ready(function() {
 		
 			/*global chart_content, status_content */
+
+			// set the system name in the navbar
+			$('#navtitle').text(cfg_sysName);
 			
 			// get the datastream with no date (will use now) for 16 hours of data.
-			get_dataStream(false, 16); 
+			get_dataStream(false, 12); 
 
 			// get the cookie data and status
 			get_cookies();
