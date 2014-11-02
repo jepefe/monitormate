@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-2014 Jesus Perez,Timothy Martin
+Copyright (C) 2011-2014 Jesus Perez, Timothy Martin
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
@@ -425,17 +425,23 @@ function set_status(HTML_id, value) {
 	var content = '';
 	var device;
 	var device_id;
-		
-	if (value == "none") {
-		for (var i in json_status) {
-			switch (json_status[i].device_id) {
-				// what's this?
-				case CC_ID:
-					value = json_status[i].device_id + ":" + Math.round(json_status[i].address);
-					break;
-			}
-		}
+
+	// If full_day_data is empty, it's needed for device names and summary.
+	if (full_day_data.length == 0) {
+		get_dataStream(false, 1); // get 1 hour of data
 	}
+	
+	// i don't think set_status is ever called without a value.	
+//	if (value == "none") {
+//		for (var i in json_status) {
+//			switch (json_status[i].device_id) {
+//				// what's this?
+//				case CC_ID:
+//					value = json_status[i].device_id + ":" + Math.round(json_status[i].address);
+//					break;
+//			}
+//		}
+//	}
 
 	if (value != "summary") {
 		device_id = parseInt(value.split(/[:]/)[0]);
