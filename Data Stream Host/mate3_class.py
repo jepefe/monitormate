@@ -112,25 +112,23 @@ class mate3:
 
 
 	def get_status_dict(self, address):
-		address = int(address)-1
 		if self.total_devices != None:
 			devices_status = {}
-			if address == -1:
+			if address == 0:
 				for i in self.matedevices:
 					if i != 0:
 						devices_status['device'+str(i.dev_address)] = i.get_values_with_names()
 				return devices_status
 			else:
-				if self.matedevices[address] != 0:
-					return self.matedevices[address].get_values_with_names()
+				if self.matedevices[address-1] != 0:
+					return self.matedevices[address-1].get_values_with_names()
 				else:
 					return "No devices found"
 
 
 	def get_device_status(self,address):
-		address = int(address)-1
-		if self.matedevices[address] != 0:
-			status = self.matedevices[address]
+		if self.matedevices[address-1] != 0:
+			status = self.matedevices[address-1]
 			return status
 		else:
 			return False
