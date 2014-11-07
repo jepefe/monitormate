@@ -596,10 +596,9 @@ function chart_years(date) {
 	//Fill array with series
 	for (i = 0; i < years_data.length; i++) {
 
-		// TODO: can't i get the clean year data directly from the database with the right sql query?
-
-		split_date = years_data[i].date.split(/[- :]/);	// split the YYYY-MM-DD into an array
-		comp_date = new Date(split_date[0], 0, 1);				// use the year to make a date object for jan 1st of that year
+//		split_date = years_data[i].date.split(/[- :]/);	// split the YYYY-MM-DD into an array
+//		comp_date = new Date(split_date[0], 0, 1);				// use the year to make a date object for jan 1st of that year
+		comp_date = new Date(years_data[i].year);				// use the year to make a date object for jan 1st of that year
 		year = comp_date.getTime();								// turn it into millisecond timestamp
 
 		kwh_in = Math.round(years_data[i].kwh_in);
@@ -686,7 +685,7 @@ function chart_months(date) {
 	//Fill array with series
 	for (i = 0; i < months_data.length; i++) {
 
-		split_date = months_data[i].date.split(/[- :]/);		// split the YYYY-MM-DD into an array
+		split_date = months_data[i].month.split(/[- :]/);		// split the YYYY-MM-DD into an array
 		month_date = new Date(split_date[0], split_date[1] - 1, 1);	// use the month to make a date object for the 1st of the month
 		month = month_date.getTime();								// turn it into millisecond timestamp
 

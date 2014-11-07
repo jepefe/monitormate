@@ -74,7 +74,7 @@ function query_years($date) {
 	}
 
 	$query =	"SELECT
-					date,
+					year(date) AS year,
 					sum(kwh_in) AS kwh_in,
 					sum(kwh_out) AS kwh_out
 				FROM monitormate_summary
@@ -90,6 +90,24 @@ function query_years($date) {
 	
 	$json_years = json_encode($result);
 	echo $json_years;
+	
+	/*
+	//	Sample Response
+	
+	[
+		{
+			"kwh_in": "584.519998550415",
+			"kwh_out": "460.670000076294",
+			"year": "2013"
+		},
+		{
+			"kwh_in": "4634.67998754978",
+			"kwh_out": "3655.19000339508",
+			"year": "2014",
+		}
+	]
+
+	*/	
 }
 
 
@@ -108,13 +126,13 @@ function query_months($date) {
 	}
 
 	$query =	"SELECT
-					date,
+					DATE_FORMAT(date, '%Y-%m') as month,
 					sum(kwh_in) AS kwh_in,
 					sum(kwh_out) AS kwh_out
 				FROM monitormate_summary
 				WHERE ".$whereClause."
-				GROUP BY month(date)
-				ORDER BY date";
+				GROUP BY month
+				ORDER BY month";
 
 	$query_result = mysql_query($query, $connection);
 	$result=NULL;
@@ -125,6 +143,39 @@ function query_months($date) {
 	
 	$json_months = json_encode($result);
 	echo $json_months;
+
+	/*
+	//	Sample Response
+	
+	[
+		{
+			"kwh_in": "109.800001144409",
+			"kwh_out": "78.5799999237061",
+			"month": "2013-11"
+		},
+		{
+			"kwh_in": "474.719997406006",
+			"kwh_out": "382.090000152588",
+			"month": "2013-12"
+		},
+		{
+			"kwh_in": "436.1499979496",
+			"kwh_out": "353.429999351501",
+			"month": "2014-01"
+		},
+		{
+			"kwh_in": "382.749998807907",
+			"kwh_out": "320.140001296997",
+			"month": "2014-02"
+		},
+		{
+			"kwh_in": "406.219999790192",
+			"kwh_out": "329.260001182556",
+			"month": "2014-03"
+		}
+	]
+		
+	*/
 }
 
 
