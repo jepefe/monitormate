@@ -102,6 +102,7 @@ Highcharts.theme = {
 			},
 			states: {
 				hover: {
+					halo: false,
 					lineWidth: 1.5
 				}
 			}
@@ -121,6 +122,11 @@ Highcharts.theme = {
 						lineWidth: 1,
 						lineColor: '#FFFFFF'
 					}
+				}
+			},
+			states: {
+				hover: {
+					halo: false
 				}
 			},
 			showInLegend: false,
@@ -257,6 +263,16 @@ function set_labels() {
 		}
 	}
 }
+
+// combine the two functions?
+function get_data(date, scope) {
+	if (date == "current") {
+		get_current_status();
+	} else {
+		get_dataStream(date, scope);
+	}
+}
+
 
 function get_dataStream(date, scope) {
 
@@ -1309,6 +1325,7 @@ function get_battery_volts() {
 
 	/*global full_day_data */
 	var day_data_volts = [];
+	var day_data_target = [];
 
 	if (full_day_data[FNDC_ID]) {
 		// if you have a fndc, get the data from there
@@ -1316,6 +1333,9 @@ function get_battery_volts() {
 
 			for (j = 0; j < full_day_data[FNDC_ID][port].length; j++) {
 				day_data_volts[j] = [full_day_data[FNDC_ID][port][j].timestamp, parseFloat(full_day_data[FNDC_ID][port][j].battery_volt)];
+				// 0.005 V per 2 V cell, per 1 degree C -- target voltage goes up when cold and down when hot
+				temp_compensation = (0.005) * (cfg_sysVoltage/2) * (parseInt(full_day_data[FNDC_ID][port][j].battery_temp) - 25);
+				day_data_target[j] = [full_day_data[FNDC_ID][port][j].timestamp, (cfg_sysAbsorbVoltage - temp_compensation)];
 			}
 
 		}
@@ -1335,6 +1355,12 @@ function get_battery_volts() {
 	    	enabled: false  
 	    },
 	    series: [{
+			name: 'Absorb Voltage',
+			color: 'rgba(0, 187, 0, 0.2)',
+			enableMouseTracking: false,
+			lineWidth: 7.5,
+			data: day_data_target
+	    },{
 			name: 'Volts',
 			color: cfg_colorUsage,
 			data: day_data_volts
@@ -1352,11 +1378,11 @@ function get_battery_volts() {
 		        format: '{value} V'
 		    },
     		minRange: cfg_sysVoltage/6,
-			plotLines: [{
-				color: '#00bb00',
-				width: 1.5,
-				value: cfg_sysAbsorbVoltage
-			}],
+//			plotLines: [{
+//				color: '#00bb00',
+//				width: 1.5,
+//				value: cfg_sysAbsorbVoltage
+//			}],
 		    plotBands: [{
 		    	// red for below the system voltage plus a tad: 12.2, 24.4, or 48.8
                 color: '#ffedee',
@@ -1681,14 +1707,14 @@ function get_fndc_amps_vs_volts() {
 	    	enabled: true,
 	    	x: 40
 	    },
-	    plotOptions: {
-	    	line: {
-	    		marker: {
-	    			symbol: 'diamond',
-		    		fillColor: 'black'
-	    		}
-	    	}
-	    },
+//	    plotOptions: {
+//	    	line: {
+//	    		marker: {
+//	    			symbol: 'diamond',
+//		    		fillColor: 'black'
+//	    		}
+//	    	}
+//	    },
 	    series: [{
 			name: "Amps",
 			color: cfg_colorProduction,
@@ -1696,10 +1722,10 @@ function get_fndc_amps_vs_volts() {
 			yAxis: 0
 	    }, {
 			name: 'Volts',
-			color: '#0b0',
+			color: cfg_colorUsage,
 			data: day_data_volts,
-			negativeColor: cfg_colorUsage,
-			threshold: cfg_sysAbsorbVoltage,
+//			negativeColor: cfg_colorUsage,
+//			threshold: cfg_sysAbsorbVoltage,
 			yAxis: 1			
 	    }],
 		tooltip: {
