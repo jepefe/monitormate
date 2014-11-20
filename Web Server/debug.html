@@ -20,12 +20,7 @@
 </head>
 <body>
 
-	<h1>Posted Data <a href="data/regstatus.log">(link)</a></h1>
-	<textarea id="regstatus" class="file" spellcheck="false">
-		Loading…
-	</textarea>
-
-	<h1>status.json <a href="data/status.json">(link)</a></h1>
+	<h1>status.json <a href="data/status.json">(link)</a> <a href="data/regstatus.log">(complete POST data)</a></h1>
 	<textarea id="status_json" class="file" spellcheck="false">
 		Loading…
 	</textarea>
@@ -43,7 +38,6 @@
 	<script>
 
 		$(document).ready(function() {
-			$("#regstatus").load("data/regstatus.log");
 			$("#status_json").load("data/status.json");
 			$("#query_log").load("data/query.log");
 			$("#error_log").load("data/error.log");
