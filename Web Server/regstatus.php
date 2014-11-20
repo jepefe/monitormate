@@ -110,8 +110,8 @@ if(isset($_POST)){
 		file_put_contents($file, $data);
 
 		// DEBUG
-		$file = "./data/regstatus.log";
-		$data = print_r($_POST, TRUE);
+		$file = "./data/regstatus.html";
+		$data = "<html><body><pre>".print_r($_POST, TRUE)."</pre></body></html>";
 		file_put_contents($file, $data);
 	}
 }
@@ -320,6 +320,7 @@ function register_summary($summary) {
 	$connection = db_connection();
 	
 	// TODO: instead of doing five queries, we should just do one.
+	// currently it gets max_temp, min_temp, max_pv_voltage, max_soc from database queries, since then puts them back into summary table.
 	
 	$max_tempq = mysql_query("select max(battery_temp) from monitormate_fndc where date(date) ='".$summary['date']."'",$connection);
 	$max_temp = mysql_fetch_row($max_tempq);
@@ -381,7 +382,8 @@ function register_summary($summary) {
 		max_pv_voltage=".$summary['max_pv_voltage']."
 		WHERE date='".$summary['date']."'";
 
-	$query = NULL;	
+	$query = NULL;
+	
 	if (time() < strtotime('01:30:00')) {
 		// we look at the last record from the previous day.
 		$previousDay = date('Y-m-d', strtotime('-1 day', strtotime($summary['date'])));
@@ -391,40 +393,53 @@ function register_summary($summary) {
 	// we look at the last record from today
 	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$summary['date']."'",$connection);
 	
-	if (mysql_num_rows($todaysRecordq) > 0) { // successful query, still might be empty.
+	if (mysql_num_rows($todaysRecordq) > 0) { // successful query for today, with more than zero results.
 
 		while ($row = mysql_fetch_assoc($todaysRecordq)) {
 			// DEBUG
-			$msgLog = "SUMMARY VALUES:".print_r($row, TRUE)."\n";
+			$msgLog = "EXISTING VALUES (TODAY):\n".print_r($row, TRUE)."\n";
 			
 			// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
 			if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
 				// go ahead and update, the numbers look safe.
 				$query = $update_query;
+			} else {
+				// the query we decided not to use.
+				$msgLog .= "\n".$update_query."\n";
 			}
 			break; // there should only be one record, but break just in case.
 		}
 
-	} else { // if this is the first record for the day
-		// let's do an summary table anti-clobber check if it's near the end of a day
+	} else if (mysql_num_rows($prevdayRecordq) > 0) { // successful query for previous day, with more than zero results. 
+		// let's do a summary table anti-clobber check if it's near the end of a day
 		// for the first 1.5 hours of the day, the data needs to be less than the last
 		// data point from the previous day. Seems mostly reasonable.
 		while ($row = mysql_fetch_assoc($prevdayRecordq)) {
+			// DEBUG
+			$msgLog = "EXISTING VALUES (PREVIOUS DAY):\n".print_r($row, TRUE)."\n";
+			
 			if (!(floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && !(floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
-				$query = $insert_query;		
+				$query = $insert_query;
+			} else {
+				// the query we decided not to use.
+				$msgLog .= "\n".$insert_query."\n";
 			}
 			break; // there should only be one record, but break just in case.
 		}
+	} else {
+		// This should only happen the very first time you ever run this system.
+		$msgLog = "Somehow we didn't get query results for today or yesterday. Maybe this is the first day of logging.\n";
+		$query = $insert_query;
 	}
 		
-	// DEBUG
 	if ($query) {
 		mmLog('query', $msgLog."QUERY: ".$query);
+		mysql_query($query, $connection);
 	} else {
-		mmLog('error', $msgLog."CLOCK MISMATCH: Values appear to have been reset!\nSKIPPED QUERY: ".$query);
+		$msgLog .= "\nProbable clock mis-synchronization.\nValues not inserted or updated because they either have been reset before the day was over, or not reset yet even though it's a new day.\n";
+		mmLog('error', $msgLog);
 	}
-	
-	mysql_query($query, $connection);
+
 }
 
 
