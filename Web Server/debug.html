@@ -4,15 +4,52 @@
 	<meta charset="utf-8">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<style>
+		.file {
+			width: 480pt;
+			height: 280pt;
+			border: 1px solid #333;
+			overflow: scroll;
+			padding: 4px 8px;
+			white-space: pre;
+			background-color: white;
+		}
+	</style>
 	<title>MonitorMate — Debug</title>
 </head>
 <body>
-	<h1>Debugging</h1>
-	<ul>
-		<li><a href="data/regstatus.html">Posted Data (to regstatus.php by python)</a></li>
-		<li><a href="data/status.json">status.json (saved by regstatus.php)</a></li>
-		<li><a href="data/query.log">Last Query Executed (by regstatus.php)</a></li>
-		<li><a href="data/error.log">Error Log</a></li>
-	</ul>
+
+	<h1>Posted Data <a href="data/regstatus.log">(link)</a></h1>
+	<textarea id="regstatus" class="file" spellcheck="false">
+		Loading…
+	</textarea>
+
+	<h1>status.json <a href="data/status.json">(link)</a></h1>
+	<textarea id="status_json" class="file" spellcheck="false">
+		Loading…
+	</textarea>
+
+	<h1>Last Query Executed <a href="data/query.log">(link)</a></h1>
+	<textarea id="query_log" class="file" spellcheck="false">
+		Loading…
+	</textarea>
+	
+	<h1>Error Log <a href="data/error.log">(link)</a></h1>
+	<textarea id="error_log" class="file" spellcheck="false">
+		Loading…
+	</textarea>
+	
+	<script>
+
+		$(document).ready(function() {
+			$("#regstatus").load("data/regstatus.log");
+			$("#status_json").load("data/status.json");
+			$("#query_log").load("data/query.log");
+			$("#error_log").load("data/error.log");
+		});
+
+	</script>
+	
 </body>
 </html>

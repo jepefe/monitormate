@@ -114,8 +114,8 @@ if(isset($_POST)){
 		file_put_contents($file, $data);
 
 		// DEBUG
-		$file = "./data/regstatus.html";
-		$data = "<html><body><pre>".print_r($_POST, TRUE)."</pre></body></html>";
+		$file = "./data/regstatus.log";
+		$data = print_r($_POST, TRUE);
 		file_put_contents($file, $data);
 	}
 }
