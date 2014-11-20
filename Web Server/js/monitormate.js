@@ -95,14 +95,17 @@ Highcharts.theme = {
 					hover: {
 						enabled: true,
 						radius: 3,
-						lineWidth: 1,
+						lineWidth: 2,
 						lineColor: '#FFFFFF'
 					}
 				}
 			},
 			states: {
 				hover: {
-					halo: false,
+					halo: {
+						opacity: 1,
+						size: 5
+					},
 					lineWidth: 1.5
 				}
 			}
@@ -112,22 +115,11 @@ Highcharts.theme = {
 			lineWidth: 0,
 			marker: {
 				enabled: false,
-				symbol: 'circle',
-				lineColor: null, // inherit from series color
-				fillColor: null, // inherit from series color
 				states: {
 					hover: {
-						enabled: true,
-						radius: 3,
-						lineWidth: 1,
-						lineColor: '#FFFFFF'
+						enabled: false
 					}
-				}
-			},
-			states: {
-				hover: {
-					halo: false
-				}
+				}				
 			},
 			showInLegend: false,
 			zIndex: -1
@@ -1707,14 +1699,6 @@ function get_fndc_amps_vs_volts() {
 	    	enabled: true,
 	    	x: 40
 	    },
-//	    plotOptions: {
-//	    	line: {
-//	    		marker: {
-//	    			symbol: 'diamond',
-//		    		fillColor: 'black'
-//	    		}
-//	    	}
-//	    },
 	    series: [{
 			name: "Amps",
 			color: cfg_colorProduction,
@@ -1724,8 +1708,6 @@ function get_fndc_amps_vs_volts() {
 			name: 'Volts',
 			color: cfg_colorUsage,
 			data: day_data_volts,
-//			negativeColor: cfg_colorUsage,
-//			threshold: cfg_sysAbsorbVoltage,
 			yAxis: 1			
 	    }],
 		tooltip: {
