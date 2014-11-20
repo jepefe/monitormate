@@ -27,7 +27,11 @@ if(isset($_POST)){
 			
 			if (isset($_POST["datetime"])) {
 				// if we got a date/time from the data stream host
-				$date_time = date('Y-m-d G:i',$_POST["datetime"]); //Date from remote host 
+
+				// PHP needs date information in a very particular way for the date() function. SQL is more forgiving
+				//$date_time = date('Y-m-d G:i',$_POST["datetime"]); //Date from remote host
+				$date_time = $_POST["datetime"]; 	//Date from remote hos
+
 			} else {
 				// otherwise we just use server time
 				$date_time = date('Y-m-d G:i',time()); //Date from localhost
