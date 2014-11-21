@@ -22,23 +22,13 @@
 	<div id="hubinfo">
 	</div>
 	<h1>Inverters</h1>
-	<div class="status" style="display: inline-block;">
-		<div id="status_port1" class="status_content"></div>
-	</div>
-	<div class="status" style="display: inline-block;">
-		<div id="status_port2" class="status_content"></div>
-	</div>
+	<div id="inverters">None Found</div>
+	
 	<h1>Charge Controllers</h1>
-	<div class="status" style="display: inline-block;">
-		<div id="status_port3" class="status_content"></div>
-	</div>
-	<div class="status" style="display: inline-block;">
-		<div id="status_port4" class="status_content"></div>
-	</div>
+	<div id="charge_controllers">None Found</div>
+
 	<h1>Battery Monitor</h1>
-	<div id="summary" class="status" style="display: inline-block;">
-		<div id="status_port5" class="status_content"></div>
-	</div>
+	<div id="fndc">None Found</div>
 	
 	<script>
 
@@ -49,21 +39,51 @@
 
 			get_current_status();
 
-			set_status('status_port1', '2:1');
-			set_status('status_port2', '2:2');
-			set_status('status_port3', '3:3');
-			set_status('status_port4', '3:4');
-			set_status('status_port5', '4:5');
-//			set_status('status_port6',);
-//			set_status('status_port7',);
-//			set_status('status_port8',);
-//			set_status('status_port9',);
-//			set_status('status_port10',);
+			for (var device in json_status) {
+				switch (json_status[device].device_id) {
+					case FX_ID:
+						if ($('#inverters').text() == "None Found") {
+							$('#inverters').text('');
+						}
+						$('#inverters').append("<div class='status' style='display: inline-block;'><div id='"+device+"' class='status_content'>Inverter Found.</div></div>&nbsp;");
+						$('#'+device).data('devAddress', FX_ID+':'+json_status[device].address);
+						set_status(device, $('#'+device).data('devAddress'));
+						break;
+					case CC_ID:
+						if ($('#charge_controllers').text() == "None Found") {
+							$('#charge_controllers').text('');
+						}
+						$('#charge_controllers').append('<div class="status" style="display: inline-block;"><div id="'+device+'" class="status_content">Charge Controller Found.</div></div>&nbsp;');
+						$('#'+device).data('devAddress', CC_ID+':'+json_status[device].address);
+						set_status(device, $('#'+device).data('devAddress'));
+						break;
+					case FNDC_ID:
+						if ($('#fndc').text() == "None Found") {
+							$('#fndc').text('');
+						}
+						$('#fndc').append('<div class="status" style="display: inline-block;"><div id="'+device+'" class="status_content">FNDC Found.</div></div>&nbsp;');
+						$('#'+device).data('devAddress', FNDC_ID+':'+json_status[device].address);
+						set_status(device, $('#'+device).data('devAddress'));
+						break;
+				}
+			}
 					
-			setInterval("get_current_status()", 5000);
+			setInterval("refresh_data()", 10000);
 			
 		});
-		
+
+		function refresh_data() {
+			get_current_status();
+			for (address = 1; address <= 10; address++) {
+				
+				if ($('#device'+address).length > 0) {
+					set_status('device'+address, $('#device'+address).data('devAddress'));
+				}
+				
+			}
+
+		}		
+
 	</script>
 </body>
 </html>

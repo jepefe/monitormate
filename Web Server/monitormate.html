@@ -20,6 +20,7 @@
 		<ol id="toc">
 			<li class="current"><a href="monitormate.html">Current Conditions</a></li>
 			<li><a href="historical.html">Historical</a></li>
+			<li><a href="status.html">Status</a></li>
 		</ol>
 		<h1 id="navtitle"></h1>
 	</div>
@@ -87,12 +88,18 @@
 
 			// put in the day chart along the bottom
 			chart_days();
-		
+					
 			// update the status regularly
-			setInterval("get_current_status()", 5000);
-
+			setInterval("refresh_data()", 10000);
+	
 		});
-		
+
+		function refresh_data() {
+			get_current_status();
+			set_status("status_top", status_content["status_top"]);
+			set_status("status_bottom", status_content["status_bottom"]);
+		}		
+
 	</script>
 </body>
 </html>
