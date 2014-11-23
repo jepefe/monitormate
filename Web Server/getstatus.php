@@ -79,7 +79,8 @@ function query_years($date) {
 					sum(kwh_out) AS kwh_out
 				FROM monitormate_summary
 				WHERE ".$whereClause."				
-				GROUP BY year(date)";
+				GROUP BY year(date)
+				ORDER BY year";
 
 	$query_result = mysql_query($query,$connection);
 	$result = NULL;
@@ -201,7 +202,8 @@ function query_days($date) {
 					kwh_in,
 					kwh_out
 				FROM monitormate_summary
-				WHERE ".$whereClause;
+				WHERE ".$whereClause."
+				ORDER BY date";
 				
 	$query_result = mysql_query($query, $connection);
 	$result=NULL;
@@ -262,12 +264,13 @@ function query_full_day($date, $scope){
 	$query_cc_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts 
 						FROM `monitormate_cc`
 						WHERE ".$whereClause."
-						GROUP BY date";
+						GROUP BY date
+						ORDER BY date";
 	 
 	$query_fndc =		"SELECT *
 						FROM monitormate_fndc
 						WHERE ".$whereClause."
-						ORDER by date";
+						ORDER BY date";
 
 	$query_fx =			"SELECT *
 						FROM monitormate_fx
