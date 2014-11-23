@@ -43,7 +43,8 @@ Highcharts.theme = {
 	chart: {
 		animation: {
 			duration: 500
-        },	
+        },
+        plotBorderWidth: 0,
 		marginRight: 65,
 		// FIXME: only set the zoomType if we're not mobile.
 //		zoomType: 'x'
@@ -153,6 +154,8 @@ Highcharts.theme = {
 		type: 'datetime'
 	},
 	yAxis: {
+		endOnTick: true,
+		maxPadding: 0.01,
 		opposite: true,
 		title: {
 			text: null
@@ -1725,11 +1728,13 @@ function get_fndc_amps_vs_volts() {
 			useHTML: true
 		},
     	yAxis: [{ // primary axis
+			endOnTick: true,
 			labels: {
 		        format: '{value} A'
 		    },
     		opposite: false
 		}, { // secondary axis
+			endOnTick: true,
     		labels: {
 		        format: '{value} V'
 		    },
