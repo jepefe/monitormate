@@ -400,14 +400,14 @@ function register_summary($summary) {
 	if (mysql_num_rows($todaysRecordq) > 0) { // successful query for today, with more than zero results.
 
 		while ($row = mysql_fetch_assoc($todaysRecordq)) {
-			// DEBUG
-			$msgLog = "EXISTING VALUES (TODAY):\n".print_r($row, TRUE)."\n";
 			
 			// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
 			if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
 				// go ahead and update, the numbers look safe.
 				$query = $update_query;
 			} else {
+				// the values that lead to not updating the values
+				$msgLog = "EXISTING VALUES (TODAY):\n".print_r($row, TRUE)."\n";
 				// the query we decided not to use.
 				$msgLog .= "\n".$update_query."\n";
 			}
@@ -419,12 +419,12 @@ function register_summary($summary) {
 		// for the first 1.5 hours of the day, the data needs to be less than the last
 		// data point from the previous day. Seems mostly reasonable.
 		while ($row = mysql_fetch_assoc($prevdayRecordq)) {
-			// DEBUG
-			$msgLog = "EXISTING VALUES (PREVIOUS DAY):\n".print_r($row, TRUE)."\n";
 			
 			if (!(floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && !(floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
 				$query = $insert_query;
 			} else {
+				// the values that lead to not inserting new values
+				$msgLog = "EXISTING VALUES (PREVIOUS DAY):\n".print_r($row, TRUE)."\n";
 				// the query we decided not to use.
 				$msgLog .= "\n".$insert_query."\n";
 			}
@@ -440,7 +440,7 @@ function register_summary($summary) {
 		mmLog('query', $msgLog."QUERY: ".$query);
 		mysql_query($query, $connection);
 	} else {
-		$msgLog .= "\nProbable clock mis-synchronization.\nValues not inserted or updated because they either have been reset before the day was over, or not reset yet even though it's a new day.\n";
+		$msgLog .= "\nProbable clock mis-synchronization. Values not inserted/updated.\n";
 		mmLog('error', $msgLog);
 	}
 
