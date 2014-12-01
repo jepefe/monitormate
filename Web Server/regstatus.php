@@ -56,9 +56,9 @@ if(isset($_POST)){
 				"max_pv_voltage" => 0,
 			);
 			
-			$devices_array = json_decode($_POST["devices"],True);
+			$status_array = json_decode($_POST["status"],True);
 		
-			foreach ($devices_array as $i) {
+			foreach ($status_array['status']['devices'] as $i) {
 				switch ($i["device_id"]) {
 
 					case FNDC_ID:
@@ -102,15 +102,11 @@ if(isset($_POST)){
 
 			register_summary($summary);
 
-			// TESTING let's see if i can make a json feed with more calculated values.
-			$file = "./data/test.json";
-			$testJSON = json_encode($devices_array + array("summary"=>$summary));
-			file_put_contents($file, $testJSON);
-
 		}
 	
 		$file = "./data/status.json";
-		$data = $_POST["devices"];
+		// TESTING let's see if i can make a json feed with more calculated values.
+		$data = json_encode($status_array + array("summary"=>$summary));
 		file_put_contents($file, $data);
 
 		// DEBUG
@@ -121,7 +117,7 @@ if(isset($_POST)){
 }
 
 
-function register_fndc($device_array,$date_time) {
+function register_fndc($device_array, $date_time) {
 
 	 $query = "INSERT INTO monitormate_fndc (
 	 	date,

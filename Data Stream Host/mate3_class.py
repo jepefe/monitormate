@@ -106,7 +106,7 @@ class mate3:
 				if i != 0:
 					print '-------------'+i.name+'----------------'
 					for val in range(i.valuenames_formatted.__len__()):
-						print str(i.get_values_with_names().keys()[val])+": \t\t\t\t"+str(i.get_values_with_names().values()[val])
+						print str(i.get_values_with_names().keys()[val])+": "+str(i.get_values_with_names().values()[val])
 		else:
 			print "No devices found"
 
@@ -114,10 +114,12 @@ class mate3:
 	def get_status_dict(self, address):
 		if self.total_devices != None:
 			devices_status = {}
+			devices_status['status'] = {}
+			devices_status['status']['devices'] = []
 			if address == 0:
 				for i in self.matedevices:
 					if i != 0:
-						devices_status['device'+str(i.dev_address)] = i.get_values_with_names()
+						devices_status['status']['devices'].append(i.get_values_with_names())
 				return devices_status
 			else:
 				if self.matedevices[address-1] != 0:
@@ -126,7 +128,7 @@ class mate3:
 					return "No devices found"
 
 
-	def get_device_status(self,address):
+	def get_device_status(self, address):
 		if self.matedevices[address-1] != 0:
 			status = self.matedevices[address-1]
 			return status

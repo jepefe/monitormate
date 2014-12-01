@@ -456,8 +456,8 @@ function set_status(HTML_id, value) {
 
 	if (value != "summary") {
 		device_id = parseInt(value.split(/[:]/)[0]);
-		address = parseInt(value.split(/[:]/)[1]);
-		device = json_status["device" + address];
+		address = parseInt(value.split(/[:]/)[1] - 1);
+		device = json_status['status']['devices'][address];
 	} else {
 		device_id = "summary";
 		address = "summary";
@@ -1467,12 +1467,10 @@ function get_fndc_soc_gauge() {
 	}
 
 	for (var port in full_day_data[FNDC_ID]) {
-		var device = json_status["device" + port];
+		var device = json_status['status']['devices'][port - 1];
 		var current_soc = device.soc;
 		var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
 		if (cfg_isApple) {
-//			var upArrow = "⬆︎";
-//			var downArrow = "⬇︎";
 			var upArrow = "&#11014;";
 			var downArrow = "&#11015;";
 		} else {

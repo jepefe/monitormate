@@ -100,7 +100,7 @@ def start(options):
 				else:
 					conn = httplib.HTTPConnection(urllist[1])
 					# this adds things to the URL... as arguments. I'd rather embed more info in the JSON
-					devices_status = "devices="+json.dumps(mate.get_status_dict(int(options.device_address)), sort_keys=True)
+					devices_status = "status="+json.dumps(mate.get_status_dict(int(options.device_address)), sort_keys=True)
 					if options.token:
 						devices_status = devices_status+"&token="+ options.token
 					if options.host_date_time:
