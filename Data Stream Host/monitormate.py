@@ -48,6 +48,7 @@ def main():
 	parser.add_option('-u','--send-json-url',help='Send JSON via POST to specified url',dest='url')
 	parser.add_option('-t','--token',help='Include security token and send to url. Use with -u.',dest='token')
 	parser.add_option('-r','--repeat-mate',help='Re-send MATE3 data to specified ip and port in format IP:PORT',dest='ip_port')
+	parser.add_option('-x','--debug',help='Debug with saved datastream',dest='debug',default=False)
 	(options, args) = parser.parse_args()
 	start(options)
 
@@ -59,6 +60,8 @@ def start(options):
 	if options.port:
 		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		s.bind(('', int(options.port)))
+	elif options.debug:
+		print "Debugging using file: ", options.debug
 	else:
 		print "Port is mandatory"
 		return
@@ -81,7 +84,11 @@ def start(options):
 			continuous = options.continuous
 			
 			# Get datastream
-			received_data,addr = s.recvfrom(1024)
+			if options.debug:
+				f = open(options.debug, 'r')
+				received_data = f.read()
+			else:
+				received_data,addr = s.recvfrom(1024)
 			mate.process_datastream(str(received_data))
 			
 			# Send JSON to URL
@@ -92,6 +99,7 @@ def start(options):
 					return
 				else:
 					conn = httplib.HTTPConnection(urllist[1])
+					# this adds things to the URL... as arguments. I'd rather embed more info in the JSON
 					devices_status = "devices="+json.dumps(mate.get_status_dict(int(options.device_address)), sort_keys=True)
 					if options.token:
 						devices_status = devices_status+"&token="+ options.token
