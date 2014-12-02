@@ -20,7 +20,7 @@ var shuntLabel  = [];
 // the date, status, and arrays with all the data.
 var display_date  = null;
 var json_status   = null;
-var full_day_data = [];
+var full_day_data = {};
 var years_data    = [];
 var months_data   = [];
 var days_data     = [];
@@ -409,10 +409,12 @@ function get_current_status() {
 	/*global json_status */
 
 	if (json_status) {
-		$.getJSON("./data/status.json", function (data) {
+		// if we're just updating the status, it can be asynchronous.
+		$.getJSON("data/status.json", function (data) {
 			json_status = data;
 		});
 	} else {
+		// if the rendering needs the status, it needs to be synchronous.
 		$.ajax({
 			async: false,
 			type: 'GET',
@@ -438,6 +440,7 @@ function set_status(HTML_id, value) {
 	var device_id;
 
 	// If full_day_data is empty, it's needed for device names and summary.
+	// TODO: once the JSON includes the summary and device names, we can do away with this!
 	if (full_day_data.length == 0) {
 		get_dataStream(false, 1); // get 1 hour of data
 	}
@@ -574,6 +577,7 @@ function set_status(HTML_id, value) {
 	status_content[HTML_id] = value;
 	$('#' + HTML_id).html(content);
 	$('#' + HTML_id + '_select').val(value);
+	// FIXME: setting cookies doesn't appy to all situations, yet we do it anyway.
 	set_cookies(HTML_id, value);
 }
 
@@ -1701,15 +1705,15 @@ function get_fndc_amps_vs_volts() {
 	    	x: 40
 	    },
 	    series: [{
-			name: "Amps",
-			color: cfg_colorProduction,
-			data: day_data_amps,
-			yAxis: 0
-	    }, {
 			name: 'Volts',
 			color: cfg_colorUsage,
 			data: day_data_volts,
-			yAxis: 1			
+			yAxis: 0			
+	    }, {
+			name: "Amps",
+			color: cfg_colorProduction,
+			data: day_data_amps,
+			yAxis: 1
 	    }],
 		tooltip: {
 			formatter: function() {
@@ -1727,16 +1731,16 @@ function get_fndc_amps_vs_volts() {
 		},
     	yAxis: [{ // primary axis
 			endOnTick: true,
-			labels: {
-		        format: '{value} A'
-		    },
-    		opposite: false
-		}, { // secondary axis
-			endOnTick: true,
     		labels: {
 		        format: '{value} V'
 		    },
     		minRange: cfg_sysVoltage/6,
+    		opposite: false
+		}, { // secondary axis
+			endOnTick: true,
+			labels: {
+		        format: '{value} A'
+		    },
 		    opposite: true
 		}]
 	};
