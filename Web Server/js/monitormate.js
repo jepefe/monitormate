@@ -47,7 +47,7 @@ Highcharts.theme = {
         plotBorderWidth: 0,
 		marginRight: 65,
 		// FIXME: only set the zoomType if we're not mobile.
-//		zoomType: 'x'
+		zoomType: 'x'
 	},
 	colors: ['black'],
 	credits: {
@@ -59,21 +59,12 @@ Highcharts.theme = {
 		useUTC: false
 	},
 	legend: {
-		enabled: true,
-		layout: 'vertical',
-		backgroundColor: '#FFF',
-		borderColor: '#CCC',
-		borderWidth: 1,
-		borderRadius: 2, 
-		floating: true,
-		align: 'left',
+		borderColor: '#BBB',
+		borderWidth: 0.5,
+		borderRadius: 4,
 		itemStyle: {
 			fontSize: '11px'
-		},
-		verticalAlign: 'top',
-		x: 0,
-		y: 2,
-		zIndex: 4
+		}
 	},
 	plotOptions: {
 		column: {
@@ -137,7 +128,7 @@ Highcharts.theme = {
 			color: '#333333',
 			fontSize: '10px',
 			padding: '6px'
-		}
+		},
 	},
 	xAxis: {
 		dateTimeLabelFormats: {
@@ -816,21 +807,6 @@ function chart_days(date) {
 			marginTop: 20,
 			zoomType: 'none'
 		},
-		legend: {
-			labelFormatter: function() {
-				if (this.name == "Production") {
-//					legendString = "<br/><span style='font-size:10px'>(" + days_avg_kwhin.toFixed(1) + " kWh daily)</span>";
-					legendString = " (" + days_avg_kwhin.toFixed(1) + " kWh daily)";
-				} else if (this.name == "Usage") {
-//					legendString = "<br/><span style='font-size:10px'>(" + days_avg_kwhout.toFixed(1) + " kWh daily)</span>";
-					legendString = " (" + days_avg_kwhout.toFixed(1) + " kWh daily)";
-				} else {
-					legendString = "";
-				}
-				return this.name + legendString;
-			},
-//			useHTML: true
-		},
 		plotOptions: {
 			series: {
 				point: {
@@ -864,9 +840,18 @@ function chart_days(date) {
 				marker: {
 					enabled: true,
 					fillColor: 'black',
-					lineColor: 'rgba(255,255,255,0.75)',
-					lineWidth: 1,
-					symbol: 'diamond',
+					lineColor: 'rgba(255,255,255,0.5)',
+					lineWidth: 0,
+					radius: 2,
+					symbol: 'circle',
+					states: {
+						hover: {
+							enabled: true,
+							radius: 3,
+							lineWidth: 1,
+							lineColor: '#FFFFFF',
+						},
+					},
 				},
 			},
 		},
@@ -912,37 +897,39 @@ function chart_days(date) {
 	    yAxis: {
 			plotLines: [{
 				color: cfg_colorProduction,
-//				label: {
-//					align: 'left',
-//					style: {
-//						backgroundColor: 'rgba(255,255,255,0.75)',
-//						fontSize: '10px'
-//					},
-//					text: days_avg_kwhin.toFixed(1) + 'kWh',
-//					useHTML: false,
-//					verticalAlign: 'top',
-//					x: -1,
-//					y: -2
-//				},
+				dashStyle: 'shortdash',
+				label: {
+					align: 'left',
+					style: {
+						backgroundColor: 'rgba(255,255,255,0.75)',
+						fontSize: '10px'
+					},
+					text: days_avg_kwhin.toFixed(1) + 'kWh',
+					useHTML: false,
+					verticalAlign: 'top',
+					x: -1,
+					y: -4
+				},
 				value: days_avg_kwhin,
 				width: 1,
-				zIndex: 4,
+				zIndex: 5,
 			},{
 				color: cfg_colorUsage,
-//				label: {
-//					align: 'left',
-//					style: {
-//						backgroundColor: 'rgba(255,255,255,0.75)',
-//						fontSize: '10px'
-//					},
-//					text: days_avg_kwhout.toFixed(1) + 'kWh',
-//					useHTML: false,
-//					x: -1,
-//					y: 11
-//				},
+				dashStyle: 'shortdash',
+				label: {
+					align: 'left',
+					style: {
+						backgroundColor: 'rgba(255,255,255,0.75)',
+						fontSize: '10px'
+					},
+					text: days_avg_kwhout.toFixed(1) + 'kWh',
+					useHTML: false,
+					x: -1,
+					y: 11
+				},
 				value: days_avg_kwhout,
 				width: 1,
-				zIndex: 4,
+				zIndex: 5,
 			}]
 	    },
 	});
