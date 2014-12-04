@@ -114,12 +114,11 @@ class mate3:
 	def get_status_dict(self, address):
 		if self.total_devices != None:
 			devices_status = {}
-			devices_status['status'] = {}
-			devices_status['status']['devices'] = []
+			devices_status['devices'] = []
 			if address == 0:
 				for i in self.matedevices:
 					if i != 0:
-						devices_status['status']['devices'].append(i.get_values_with_names())
+						devices_status['devices'].append(i.get_values_with_names())
 				return devices_status
 			else:
 				if self.matedevices[address-1] != 0:

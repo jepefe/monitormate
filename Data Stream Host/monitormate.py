@@ -32,23 +32,19 @@ except ImportError:
 
 def main():
 	parser = OptionParser()
-	parser.add_option('-p','--port',help='Port to listen',dest='port')
-	parser.add_option('-g','--get-status',help='Get all devices status',dest='get_status',action='store_true',default=False)
-	parser.add_option('-f' , '--fxmodifier', help='Doubles voltage and divide current in 230V FX inverters',\
-					  dest="fxmod",action='store_true',default=False)
-	parser.add_option('-s','--show-devices',help='Show connected devices to MATE3',dest="info",action='store_true',default=False)
-	parser.add_option('-c','--continuous',help='Print data continuously',dest="continuous",action='store_true',default=False)
-	parser.add_option('-d','--device-address',help='Show specific device status',dest='device_address',default=0)
-	parser.add_option('-i','--interval',help='Time interval between reads in seconds. Use with -c',dest='time_interval',default=0)
-
-	parser.add_option('-j','--json',help='Prints JSON formatted string with all devices status to stdout',dest='json',\
-					  default=False,action='store_true')
-	parser.add_option('-n','--datetime-host',help='Include date and time from this host and send to url. Use with -u.',dest="host_date_time")
-	parser.add_option('-m','--datetime-mate',help='Include date and time from MATE3 (specify ip address) and send to url. Use with -u.',dest="mate_date_time")
-	parser.add_option('-u','--send-json-url',help='Send JSON via POST to specified url',dest='url')
-	parser.add_option('-t','--token',help='Include security token and send to url. Use with -u.',dest='token')
-	parser.add_option('-r','--repeat-mate',help='Re-send MATE3 data to specified ip and port in format IP:PORT',dest='ip_port')
-	parser.add_option('-x','--debug',help='Debug with saved datastream',dest='debug',default=False)
+	parser.add_option('-p','--port', help='Port to listen', dest='port')
+	parser.add_option('-g','--get-status', help='Get all devices status', dest='get_status', action='store_true', default=False)
+	parser.add_option('-f','--fxmodifier', help='Doubles voltage and divide current in 230V FX inverters', dest="fxmod", action='store_true', default=False)
+	parser.add_option('-s','--show-devices', help='Show connected devices to MATE3', dest="info", action='store_true', default=False)
+	parser.add_option('-c','--continuous', help='Print data continuously', dest="continuous", action='store_true', default=False)
+	parser.add_option('-d','--device-address', help='Show specific device status', dest='device_address', default=0)
+	parser.add_option('-i','--interval', help='Time interval between reads in seconds. Use with -c', dest='time_interval', default=0)
+	parser.add_option('-j','--json', help='Prints JSON formatted string with all devices status to stdout', dest='json', default=False, action='store_true')
+	parser.add_option('-m','--datetime-mate', help='Include date and time from MATE3 (specify ip address) and send to url. Use with -u.', dest="mate_date_time")
+	parser.add_option('-u','--send-json-url', help='Send JSON via POST to specified url', dest='url')
+	parser.add_option('-t','--token', help='Include security token and send to url. Use with -u.', dest='token')
+	parser.add_option('-r','--repeat-mate', help='Re-send MATE3 data to specified ip and port in format IP:PORT', dest='ip_port')
+	parser.add_option('-x','--debug', help='Debug with saved datastream', dest='debug', default=False)
 	(options, args) = parser.parse_args()
 	start(options)
 
@@ -70,17 +66,17 @@ def start(options):
 	headers = {}
 	if options.url:
 		headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
-		
-	# Set continuous to true for first iteration 
-	continuous = True
 	
 	# Enable Fx inverter 230V modifiers to true 
 	if options.fxmod:
 		mate.enable_fx_modifiers()
+
+	# Set continuous to true for first iteration 
+	continuous = True
 	
 	while continuous:
 		try:
-			# Set continuous mode if selected
+			# Set continuous mode if selected, otherwise false
 			continuous = options.continuous
 			
 			# Get datastream
@@ -90,6 +86,20 @@ def start(options):
 			else:
 				received_data,addr = s.recvfrom(1024)
 			mate.process_datastream(str(received_data))
+
+			# Time to make the JSON
+			if options.json or options.url:
+				json_data = {}
+				json_data['status'] = {}
+				json_data['status'] = mate.get_status_dict(int(options.device_address))
+				json_data['time'] = {}
+				json_data['time']['host_time_utc'] = str(datetime.utcnow())
+				# time from the mate goes here... 
+				if options.mate_date_time:
+					response = urllib2.urlopen('http://'+options.mate_date_time+'/Dev_status.cgi?&Port=0')
+					mate_json_data = json.load(response)
+					datetime_obj = datetime.utcfromtimestamp(mate_json_data['devstatus']['Sys_Time'])
+					json_data['time']['mate_time'] = str(datetime_obj)
 			
 			# Send JSON to URL
 			if options.url:
@@ -99,18 +109,12 @@ def start(options):
 					return
 				else:
 					conn = httplib.HTTPConnection(urllist[1])
-					# this adds things to the URL... as arguments. I'd rather embed more info in the JSON
-					devices_status = "status="+json.dumps(mate.get_status_dict(int(options.device_address)), sort_keys=True)
+					url_args = "status="+json.dumps(json_data, separators=(',', ':'), sort_keys=True)
+					
 					if options.token:
-						devices_status = devices_status+"&token="+ options.token
-					if options.host_date_time:
-						devices_status = devices_status+"&datetime="+str(datetime.now())
-					elif options.mate_date_time:
-						response = urllib2.urlopen('http://'+options.mate_date_time+'/Dev_status.cgi?&Port=0')
-						json_data = json.load(response)
-						datetime_obj = datetime.utcfromtimestamp(json_data['devstatus']['Sys_Time'])
-						devices_status = devices_status+"&datetime="+str(datetime_obj)
-					conn.request("POST", urllist[2], devices_status, headers)
+						url_args = url_args+"&token="+options.token
+
+					conn.request("POST", urllist[2], url_args, headers)
 
 			# Clear screen
 			os.system('cls' if os.name == 'nt' else 'clear')
@@ -135,7 +139,7 @@ def start(options):
 
 			# Print status of in JSON format
 			if options.json:
-				print  json.dumps(mate.get_status_dict(int(options.device_address)), sort_keys=True)
+				print json.dumps(json_data, separators=(',', ':'), sort_keys=True)
 
 			# Print only device status in especified address
 			if options.device_address and not options.json:
@@ -158,7 +162,8 @@ def start(options):
 					mate.process_datastream(str(received_data))
 
 		except:
-				print "Error, retrying..."
+				print "\nError. Exiting monitormate.py.\n"
+				exit(0)
 
 
 if __name__ == '__main__':
