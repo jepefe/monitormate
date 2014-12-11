@@ -38,6 +38,7 @@ var status_content = {
 	status_bottom: "none",
 };
 
+
 // Common theme for all the charts.
 Highcharts.theme = {
 	chart: {
@@ -46,8 +47,8 @@ Highcharts.theme = {
         },
         plotBorderWidth: 0,
 		marginRight: 65,
-		// FIXME: only set the zoomType if we're not mobile.
-		zoomType: 'x'
+		// FIXME: only set the zoomType if we're not touch
+		zoomType: 'none'
 	},
 	colors: ['black'],
 	credits: {
@@ -1687,9 +1688,8 @@ function get_fndc_amps_vs_volts() {
 	
 	
 	chart_options = {
-	    legend: {
-	    	enabled: true,
-	    	x: 40
+	    chart: {
+		    marginLeft: 65,
 	    },
 	    series: [{
 			name: 'Volts',
