@@ -93,7 +93,10 @@ def start(options):
 				json_data['status'] = {}
 				json_data['status'] = mate.get_status_dict(int(options.device_address))
 				json_data['time'] = {}
-				json_data['time']['host_time_utc'] = str(datetime.utcnow())
+                json_data['time']['host_utc_time'] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+0000")
+                #json_data['time']['host_local_time'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+                #json_data['time']['mate_local_time'] =
+                                                
 				# time from the mate goes here... 
 				if options.mate_date_time:
 					response = urllib2.urlopen('http://'+options.mate_date_time+'/Dev_status.cgi?&Port=0')
@@ -109,10 +112,10 @@ def start(options):
 					return
 				else:
 					conn = httplib.HTTPConnection(urllist[1])
-					url_args = "status="+json.dumps(json_data, separators=(',', ':'), sort_keys=True)
+					url_args = "status=" + urllib.quote(json.dumps(json_data, separators=(',', ':'), sort_keys=True))
 					
 					if options.token:
-						url_args = url_args+"&token="+options.token
+						url_args = url_args+"&token=" + urllib.quote(options.token)
 
 					conn.request("POST", urllist[2], url_args, headers)
 
