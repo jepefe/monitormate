@@ -56,7 +56,7 @@ if(isset($_POST)){
 				"max_pv_voltage" => 0,
 			);
 			
-			$status_array = json_decode($_POST["status"],True);
+			$status_array = json_decode($_POST["status"], true);
 		
 			foreach ($status_array['status']['devices'] as $i) {
 				switch ($i["device_id"]) {
@@ -104,15 +104,29 @@ if(isset($_POST)){
 
 		}
 	
-		$file = "./data/status.json";
 		// TESTING let's see if i can make a json feed with more calculated values.
-		$data = json_encode($status_array + array("summary"=>$summary));
-		file_put_contents($file, $data);
+		$status_array = $status_array + array("summary" => $summary);
+//		array_push($status_array, array("summary" => $summary));
+		$server_time = array("server_utc_time" => gmdate(DATE_ISO8601));
+		$status_array['time'] = array_merge($status_array['time'], $server_time);
+		
+		// DEBUG: dump the posted data into a log
+		file_put_contents(
+			"./data/regstatus.log",
+			print_r($_POST, TRUE)
+		);
 
-		// DEBUG
-		$file = "./data/regstatus.log";
-		$data = print_r($_POST, TRUE);
-		file_put_contents($file, $data);
+		// DEBUG: dump the php variable into a file
+		file_put_contents(
+			"./data/status.var",
+			print_r($status_array, TRUE)
+		);
+
+		file_put_contents(
+			"./data/status.json",
+			json_encode($status_array)
+		);
+		
 	}
 }
 
