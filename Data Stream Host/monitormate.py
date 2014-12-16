@@ -165,8 +165,9 @@ def start(options):
 					mate.process_datastream(str(received_data))
 
 		except:
-				print "\nError. Exiting monitormate.py.\n"
-				exit(0)
+				print "\nError. Trying again...\n"
+				#print "\nError. Exiting monitormate.py.\n"
+				#exit(0)
 
 
 if __name__ == '__main__':
