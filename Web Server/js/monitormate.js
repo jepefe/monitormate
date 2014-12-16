@@ -114,7 +114,7 @@ Highcharts.theme = {
 					}
 				}				
 			},
-			showInLegend: false,
+			showInLegend: true,
 			zIndex: -1
 		}
 	},
@@ -1374,7 +1374,7 @@ function get_battery_volts() {
 		    	// red for below the system voltage plus a tad: 12.2, 24.4, or 48.8
                 color: '#ffedee',
                 from: 0,
-				to: cfg_sysVoltage * 1.0167
+				to: cfg_sysVoltage
 			}]
 		},
 	};
