@@ -1622,7 +1622,8 @@ function get_fndc_shunts() {
 				formatter: function () {
 					return (this.value/1000).toFixed(1) + ' kW'
 				}
-		    }
+		    },
+		    minRange: 1000
 		},
 		tooltip: {
 			formatter: function() {
