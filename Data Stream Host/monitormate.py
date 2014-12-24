@@ -112,12 +112,12 @@ def start(options):
 					return
 				else:
 					conn = httplib.HTTPConnection(urllist[1])
-					url_args = "status=" + urllib.quote(json.dumps(json_data, separators=(',', ':'), sort_keys=True))
+					post_data = "status=" + urllib.quote(json.dumps(json_data, separators=(',', ':'), sort_keys=True))
 					
 					if options.token:
-						url_args = url_args+"&token=" + urllib.quote(options.token)
+						post_data = post_data+"&token=" + urllib.quote(options.token)
 
-					conn.request("POST", urllist[2], url_args, headers)
+					conn.request("POST", urllist[2], post_data, headers)
 
 			# Clear screen
 			os.system('cls' if os.name == 'nt' else 'clear')
