@@ -93,10 +93,10 @@ def start(options):
 				json_data['status'] = {}
 				json_data['status'] = mate.get_status_dict(int(options.device_address))
 				json_data['time'] = {}
-                json_data['time']['host_utc_time'] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+0000")
-                #json_data['time']['host_local_time'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-                #json_data['time']['mate_local_time'] =
-                                                
+				json_data['time']['host_utc_time'] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+0000")
+				#json_data['time']['host_local_time'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+				#json_data['time']['mate_local_time'] =
+
 				# time from the mate goes here... 
 				if options.mate_date_time:
 					response = urllib2.urlopen('http://'+options.mate_date_time+'/Dev_status.cgi?&Port=0')
@@ -168,7 +168,6 @@ def start(options):
 				print "\nError. Trying again...\n"
 				#print "\nError. Exiting monitormate.py.\n"
 				#exit(0)
-
 
 if __name__ == '__main__':
 	main()
