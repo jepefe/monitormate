@@ -85,7 +85,7 @@ if(isset($_POST)){
 				        break;
 			    }
 			    $json_error .=  PHP_EOL;
-			    mmLog('error', $json_error)
+			    mmLog('error', $json_error);
 			}
 			
 			foreach ($status_array['status']['devices'] as $i) {
@@ -148,7 +148,7 @@ if(isset($_POST)){
 
 		// DEBUG: dump the php variable into a file
 		// FIXME: $status_array doesn't exist unless we're at the register interval!!
-//		file_put_contents("./data/status.var", print_r($status_array, TRUE));
+//		file_put_contents("./data/debug.log", print_r($status_array, TRUE));
 //		file_put_contents("./data/status.json", json_encode($status_array));
 
 				
