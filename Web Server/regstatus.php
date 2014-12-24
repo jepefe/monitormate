@@ -55,9 +55,39 @@ if(isset($_POST)){
 				"max_soc"  => 0,
 				"max_pv_voltage" => 0,
 			);
+
+			$status_array = json_decode($_POST['status'], TRUE);
+//			$status_obj = json_decode($_POST['status']);
+
+			// error in the json decode
+			if ($status_array == NULL) {
+			    switch (json_last_error()) {
+			        case JSON_ERROR_NONE:
+			            $json_error =  'JSON ERROR: No errors';
+				        break;
+			        case JSON_ERROR_DEPTH:
+			            $json_error =  'JSON ERROR: Maximum stack depth exceeded';
+				        break;
+			        case JSON_ERROR_STATE_MISMATCH:
+			            $json_error =  'JSON ERROR: Underflow or the modes mismatch';
+				        break;
+			        case JSON_ERROR_CTRL_CHAR:
+			            $json_error =  'JSON ERROR: Unexpected control character found';
+				        break;
+			        case JSON_ERROR_SYNTAX:
+			            $json_error =  'JSON ERROR: Syntax error, malformed JSON';
+				        break;
+			        case JSON_ERROR_UTF8:
+			            $json_error =  'JSON ERROR: Malformed UTF-8 characters, possibly incorrectly encoded';
+				        break;
+			        default:
+			            $json_error =  'JSON ERROR: Unknown error';
+				        break;
+			    }
+			    $json_error .=  PHP_EOL;
+			    mmLog('error', $json_error)
+			}
 			
-			$status_array = json_decode($_POST["status"], true);
-		
 			foreach ($status_array['status']['devices'] as $i) {
 				switch ($i["device_id"]) {
 
@@ -103,30 +133,25 @@ if(isset($_POST)){
 			register_summary($summary);
 
 		}
-	
+
+		// add the server time in UTC	
+//		$server_time = array("server_utc_time" => gmdate(DATE_ISO8601));
+//		$status_array['time'] = array_merge($status_array['time'], $server_time);
+
 		// TESTING let's see if i can make a json feed with more calculated values.
-		$status_array = $status_array + array("summary" => $summary);
-//		array_push($status_array, array("summary" => $summary));
-		$server_time = array("server_utc_time" => gmdate(DATE_ISO8601));
-		$status_array['time'] = array_merge($status_array['time'], $server_time);
+//		$status_array = $status_array + array("summary" => $summary);
+//		$status_array['summary'] = $summary;
 		
 		// DEBUG: dump the posted data into a log
-		file_put_contents(
-			"./data/regstatus.log",
-			print_r($_POST, TRUE)
-		);
+		file_put_contents("./data/regstatus.log", print_r($_POST, TRUE));
+		file_put_contents("./data/status.json", $_POST['status']);
 
 		// DEBUG: dump the php variable into a file
-		file_put_contents(
-			"./data/status.var",
-			print_r($status_array, TRUE)
-		);
+		// FIXME: $status_array doesn't exist unless we're at the register interval!!
+//		file_put_contents("./data/status.var", print_r($status_array, TRUE));
+//		file_put_contents("./data/status.json", json_encode($status_array));
 
-		file_put_contents(
-			"./data/status.json",
-			json_encode($status_array)
-		);
-		
+				
 	}
 }
 
