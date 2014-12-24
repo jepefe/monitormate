@@ -123,7 +123,7 @@ class cc:
 		self.status_formatted[7] = error_list
 
 		# Charger mode
-		charge_mode = {'00':'Silent','01':'Float','02':'Bulk','03':'Absorption','04':'EQ'}
+		charge_mode = {'00':'Silent','01':'Float','02':'Bulk','03':'Absorb','04':'Equalize'}
 		self.status_formatted[8] = charge_mode[datastream[10]]
 
 		# Battery Voltage

@@ -128,10 +128,10 @@ class fx():
 
 		# Inverter Operating Mode
 		oper_modes = {'00':'Inverter Off', '01':'Search', '02':'Inverter On', 
-				'03':'Charge', '04':'Silent', '05':'Float', '06':'EQ',
+				'03':'Charge', '04':'Silent', '05':'Float', '06':'Equalize',
 				'07':'Charger Off', '08':'Support', '09':'Sell Enabled',
-				'10':'Pass Thru', '90':'FX Error', '91':'AGS Error',
-				'92':'Com Error'}
+				'10':'Pass-through', '90':'Inverter Error', '91':'AGS Error',
+				'92':'Comm Error'}
 		self.status_formatted[8] = oper_modes[datastream[8]]
 
 		# Error Codes
