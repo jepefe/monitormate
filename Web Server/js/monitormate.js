@@ -659,7 +659,7 @@ function chart_years(date) {
 			maxRange: 157785000000, 				// 5 years in milliseconds
 			minorTickWidth: 0,						// no minor ticks
 			tickInterval: 24 * 3600 * 1000 * 365	// 1 year
-	    },
+	    }
 	});
 
 }
