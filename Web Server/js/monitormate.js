@@ -474,7 +474,7 @@ function set_status(HTML_id, value) {
 			break;
 
 		case FX_ID:
-			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
+			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
 						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
 						<tr><td class="label">AC Output Voltage:</td><td>' + device.ac_output_voltage + ' V</td></tr>\
@@ -491,7 +491,7 @@ function set_status(HTML_id, value) {
 			break;
 
 		case RAD_ID:
-			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
+			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
 						<tr><td class="label">AC Input Mode:</td><td>' + device.ac_mode + '</td></tr>\
 						<tr><td class="label">AC Output Voltage L1:</td><td>' + device.ac_output_voltage_l1 + ' V</td></tr>\
@@ -516,7 +516,7 @@ function set_status(HTML_id, value) {
 
 		case CC_ID:
 			var charge_watts = parseFloat(device.battery_volts) * parseFloat(device.charge_current);
-			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
+			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Charge Mode:</td><td>' + device.charge_mode + '</td></tr>\
 						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volts + ' V</td></tr>\
 						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
@@ -536,7 +536,7 @@ function set_status(HTML_id, value) {
 			var net_accumulated_kwh = parseFloat(device.accumulated_kwh_shunt_a) + parseFloat(device.accumulated_kwh_shunt_b) + parseFloat(device.accumulated_kwh_shunt_c);
 			var today_net_ah  = parseInt(device.today_net_input_ah) - parseInt(device.today_net_output_ah);
 			var today_net_kwh = parseFloat(device.today_net_input_kwh) - parseFloat(device.today_net_output_kwh);
-			content =	'<table><caption>' + deviceLabel[parseInt(device.address)] + '<div>Port ' + device.address + '</div></caption>\
+			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">State of Charge:</td><td>' + device.soc + '%</td></tr>\
 						<tr><td class="label">Days Since Charged:</td><td>' + device.days_since_full + ' Days</td></tr>\
 						<tr><td class="label">Charge Required:</td><td>' + (device.charge_factor_corrected_net_batt_ah * -1) + ' Ah, ' + (device.charge_factor_corrected_net_batt_kwh * -1) + ' kWh</td></tr>\

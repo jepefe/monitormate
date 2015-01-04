@@ -90,6 +90,10 @@ if(isset($_POST)){
 		    mmLog('error', $json_error);
 		}
 		
+		for ($i = 0; $i < count($status_array['status']['devices']); $i++) {
+			$status_array['status']['devices'][$i]['label'] = $deviceLabel[$i+1];
+		}
+		
 		foreach ($status_array['status']['devices'] as $i) {
 			switch ($i["device_id"]) {
 	
