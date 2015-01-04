@@ -18,140 +18,136 @@ if(isset($_POST)){
     require_once './config/config.php';
 	ob_end_clean(); 
 	date_default_timezone_set($timezone);
+	
+	if (isset($_POST["token"]) AND $_POST["token"] == $token) {
+		// token is set and valid
 
-	if ($_POST["token"] == $token) {
-		// if the posted token matches the config file
-		
 		if (!(date('i',time()) % $reg_interval)) {
-			// if the time matches the interval
-			
-			if (isset($_POST["datetime"])) {
-				// if we got a date/time from the data stream host
-
-				// PHP needs date information in a very particular way for the date() function. SQL is more forgiving
-				//$date_time = date('Y-m-d G:i',$_POST["datetime"]); //Date from remote host
-				$date_time = $_POST["datetime"]; 	//Date from remote hos
-
-			} else {
-				// otherwise we just use server time
-				$date_time = date('Y-m-d G:i',time()); //Date from localhost
-			}
-		
-			$fndc_data = null;
-			$cc_total = array(
-				"total_daily_kwh" => 0,
-				"total_daily_ah" => 0,
-			);			
-			
-			$summary = array(
-				"date" => date('Y-m-d', strtotime($date_time)),
-				"kwh_in" => 0,
-				"kwh_out" => 0,
-				"ah_in" => 0,
-				"ah_out" =>  0,
-				"max_temp" => 0,
-				"min_temp" => 0,
-				"min_soc"  => 0,
-				"max_soc"  => 0,
-				"max_pv_voltage" => 0,
-			);
-
-			$status_array = json_decode($_POST['status'], TRUE);
-//			$status_obj = json_decode($_POST['status']);
-
-			// error in the json decode
-			if ($status_array == NULL) {
-			    switch (json_last_error()) {
-			        case JSON_ERROR_NONE:
-			            $json_error =  'JSON ERROR: No errors';
-				        break;
-			        case JSON_ERROR_DEPTH:
-			            $json_error =  'JSON ERROR: Maximum stack depth exceeded';
-				        break;
-			        case JSON_ERROR_STATE_MISMATCH:
-			            $json_error =  'JSON ERROR: Underflow or the modes mismatch';
-				        break;
-			        case JSON_ERROR_CTRL_CHAR:
-			            $json_error =  'JSON ERROR: Unexpected control character found';
-				        break;
-			        case JSON_ERROR_SYNTAX:
-			            $json_error =  'JSON ERROR: Syntax error, malformed JSON';
-				        break;
-			        case JSON_ERROR_UTF8:
-			            $json_error =  'JSON ERROR: Malformed UTF-8 characters, possibly incorrectly encoded';
-				        break;
-			        default:
-			            $json_error =  'JSON ERROR: Unknown error';
-				        break;
-			    }
-			    $json_error .=  PHP_EOL;
-			    mmLog('error', $json_error);
-			}
-			
-			foreach ($status_array['status']['devices'] as $i) {
-				switch ($i["device_id"]) {
-
-					case FNDC_ID:
-						$fndc_data = $i;
-						register_fndc($i, $date_time);
-						break;
-
-					case CC_ID:
-						// calculate total Ah and kWh from individual charge controllers in case you don't have FNDC.
-						$cc_total["total_daily_kwh"] = $cc_total["total_daily_kwh"] + $i["daily_kwh"];
-						$cc_total["total_daily_ah"] = $cc_total["total_daily_ah"] + $i["daily_ah"];
-						register_cc($i, $date_time);
-						break;
-
-					case FX_ID:
-						register_fx($i, $date_time);
-						break;
-
-					case RAD_ID:
-						register_radian($i, $date_time);
-						break;
-
-					default:
-						break;
-				}
-			}
-
-			// populate the summary array
-			if ($fndc_data != null) {
-				// use the FNDC data if you have one.
-				$summary["kwh_in"]	= $fndc_data["today_net_input_kwh"];
-				$summary["kwh_out"] = $fndc_data["today_net_output_kwh"];
-				$summary["ah_in"]	= $fndc_data["today_net_input_ah"]; 
-				$summary["ah_out"]	= $fndc_data["today_net_output_ah"];
-				$summary["min_soc"]	= $fndc_data['today_min_soc'];
-			} else {
-				// otherwise use accumulated charge controller data.
-				$summary["kwh_in"]	=  $cc_total["total_daily_kwh"];
-				$summary["ah_in"]	=  $cc_total["total_daily_ah"]; 
-			}
-
-			register_summary($summary);
-
+			// current time matche the reg_interval so we should register data in the database
+			$reg = true;
 		}
 
-		// add the server time in UTC	
-//		$server_time = array("server_utc_time" => gmdate(DATE_ISO8601));
-//		$status_array['time'] = array_merge($status_array['time'], $server_time);
-
-		// TESTING let's see if i can make a json feed with more calculated values.
-//		$status_array = $status_array + array("summary" => $summary);
-//		$status_array['summary'] = $summary;
+		if (isset($_POST["datetime"])) {
+			// if we got a date/time from the data stream host
+	
+			// PHP needs date information in a very particular way for the date() function. SQL is more forgiving
+			//$date_time = date('Y-m-d G:i',$_POST["datetime"]); //Date from remote host
+			$date_time = $_POST["datetime"]; 	//Date from remote hos
+	
+		} else {
+			// otherwise we just use server time
+			$date_time = date('Y-m-d G:i',time()); //Date from localhost
+		}
+	
+		$fndc_data = null;
+		$cc_total = array(
+			"total_daily_kwh" => 0,
+			"total_daily_ah" => 0,
+		);			
 		
-		// DEBUG: dump the posted data into a log
+		$summary = array(
+			"date" => date('Y-m-d', strtotime($date_time)),
+			"kwh_in" => 0,
+			"kwh_out" => 0,
+			"ah_in" => 0,
+			"ah_out" =>  0,
+			"max_temp" => 0,
+			"min_temp" => 0,
+			"min_soc"  => 0,
+			"max_soc"  => 0,
+			"max_pv_voltage" => 0,
+		);
+	
+		$status_array = json_decode($_POST['status'], TRUE);
+//		$status_obj = json_decode($_POST['status']);
+	
+		// error in the json decode
+		if ($status_array == NULL) {
+		    switch (json_last_error()) {
+		        case JSON_ERROR_NONE:
+		            $json_error =  'JSON ERROR: No errors';
+			        break;
+		        case JSON_ERROR_DEPTH:
+		            $json_error =  'JSON ERROR: Maximum stack depth exceeded';
+			        break;
+		        case JSON_ERROR_STATE_MISMATCH:
+		            $json_error =  'JSON ERROR: Underflow or the modes mismatch';
+			        break;
+		        case JSON_ERROR_CTRL_CHAR:
+		            $json_error =  'JSON ERROR: Unexpected control character found';
+			        break;
+		        case JSON_ERROR_SYNTAX:
+		            $json_error =  'JSON ERROR: Syntax error, malformed JSON';
+			        break;
+		        case JSON_ERROR_UTF8:
+		            $json_error =  'JSON ERROR: Malformed UTF-8 characters, possibly incorrectly encoded';
+			        break;
+		        default:
+		            $json_error =  'JSON ERROR: Unknown error';
+			        break;
+		    }
+		    $json_error .=  PHP_EOL;
+		    mmLog('error', $json_error);
+		}
+		
+		foreach ($status_array['status']['devices'] as $i) {
+			switch ($i["device_id"]) {
+	
+				case FNDC_ID:
+					$fndc_data = $i;
+					$reg ? register_fndc($i, $date_time):false;
+					break;
+	
+				case CC_ID:
+					// calculate total Ah and kWh from individual charge controllers in case you don't have FNDC.
+					$cc_total["total_daily_kwh"] = $cc_total["total_daily_kwh"] + $i["daily_kwh"];
+					$cc_total["total_daily_ah"] = $cc_total["total_daily_ah"] + $i["daily_ah"];
+					$reg ? register_cc($i, $date_time):false;
+					break;
+	
+				case FX_ID:
+					$reg ? register_fx($i, $date_time):false;
+					break;
+	
+				case RAD_ID:
+					$reg ? register_radian($i, $date_time):false;
+					break;
+	
+				default:
+					break;
+			}
+		}
+	
+		// populate the summary array
+		if ($fndc_data != null) {
+			// use the FNDC data if you have one.
+			$summary["kwh_in"]	= $fndc_data["today_net_input_kwh"];
+			$summary["kwh_out"] = $fndc_data["today_net_output_kwh"];
+			$summary["ah_in"]	= $fndc_data["today_net_input_ah"]; 
+			$summary["ah_out"]	= $fndc_data["today_net_output_ah"];
+			$summary["min_soc"]	= $fndc_data['today_min_soc'];
+		} else {
+			// otherwise use accumulated charge controller data.
+			$summary["kwh_in"]	=  $cc_total["total_daily_kwh"];
+			$summary["ah_in"]	=  $cc_total["total_daily_ah"]; 
+		}
+	
+		$reg ? register_summary($summary):false;
+	
+		// add the server time in UTC	
+		$status_array['time']['server_utc_time'] = gmdate(DATE_ISO8601);
+	
+		// add the summary data
+		$status_array['summary'] = $summary;
+		
+		// output the files...
 		file_put_contents("./data/regstatus.log", print_r($_POST, TRUE));
-		file_put_contents("./data/status.json", $_POST['status']);
+		file_put_contents("./data/status.json", json_encode($status_array));
+//		file_put_contents("./data/status.json", $_POST['status']);
 
-		// DEBUG: dump the php variable into a file
-		// FIXME: $status_array doesn't exist unless we're at the register interval!!
-//		file_put_contents("./data/debug.log", print_r($status_array, TRUE));
-//		file_put_contents("./data/status.json", json_encode($status_array));
-
-				
+	} else {
+		// it's either missing the token or it doesn't match... 
+		exit;
 	}
 }
 
