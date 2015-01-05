@@ -206,19 +206,19 @@ function set_labels() {
 					// If there's not a label in the config, then assign default name based on ID type 
 					switch (parseInt(type)) {
 						case FX_ID:
-							deviceLabel[port] = "FX Inverter (" + full_day_data[type][port][0].address + ")";
+							deviceLabel[port] = "FX Inverter";
 							break;
 						case RAD_ID:
-							deviceLabel[port] = "Radian (" + full_day_data[type][port][0].address + ")";
+							deviceLabel[port] = "Radian";
 							break;
 						case CC_ID:
-							deviceLabel[port] = "FM/MX (" + full_day_data[type][port][0].address + ")";
+							deviceLabel[port] = "FM/MX";
 							break;
 						case FNDC_ID:
-							deviceLabel[port] = "FLEXnet DC (" + full_day_data[type][port][0].address + ")";
+							deviceLabel[port] = "FLEXnet DC";
 							break;
 						default:
-							deviceLabel[port] = "Unknown Device (" + type + ")";
+							deviceLabel[port] = "Unknown Device";
 						break;	
 					}
 				} else {
@@ -384,7 +384,7 @@ function populate_status_select() {
 					var val = '';
 	
 					val = i + ":" + port;
-					tabs.push("<option value=" + val + ">" + deviceLabel[port] + "</option>");
+					tabs.push("<option value=" + val + ">" + deviceLabel[port] + " (" + port + ")</option>");
 				}
 			}
 		}

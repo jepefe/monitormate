@@ -65,7 +65,7 @@ if(isset($_POST)){
 		if ($status_array == NULL) {
 		    switch (json_last_error()) {
 		        case JSON_ERROR_NONE:
-		            $json_error =  'JSON ERROR: No errors';
+		            $json_error =  'JSON ERROR: No errors, NULL input';
 			        break;
 		        case JSON_ERROR_DEPTH:
 		            $json_error =  'JSON ERROR: Maximum stack depth exceeded';
@@ -91,7 +91,29 @@ if(isset($_POST)){
 		}
 		
 		for ($i = 0; $i < count($status_array['status']['devices']); $i++) {
-			$status_array['status']['devices'][$i]['label'] = $deviceLabel[$i+1];
+			if ($deviceLabel[$i+1] === "") { 
+				// If there's not a label in the config, then assign default name based on ID type 
+				switch ($status_array['status']['devices'][$i]['device_id']) {
+					case FX_ID:
+						$label = "FX Inverter";
+						break;
+					case RAD_ID:
+						$label = "Radian";
+						break;
+					case CC_ID:
+						$label = "FM/MX";
+						break;
+					case FNDC_ID:
+						$label = "FLEXnet DC";
+						break;
+					default:
+						$label = "Unknown Device";
+					break;	
+				}
+			} else {
+				$label = $deviceLabel[$i+1];
+			}
+			$status_array['status']['devices'][$i]['label'] = $label;
 		}
 		
 		foreach ($status_array['status']['devices'] as $i) {
