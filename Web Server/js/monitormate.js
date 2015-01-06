@@ -1325,9 +1325,10 @@ function get_battery_volts() {
 
 			for (j = 0; j < full_day_data[FNDC_ID][port].length; j++) {
 				day_data_volts[j] = [full_day_data[FNDC_ID][port][j].timestamp, parseFloat(full_day_data[FNDC_ID][port][j].battery_volt)];
-				// 0.005 V per 2 V cell, per 1 degree C -- target voltage goes up when cold and down when hot
+				// 0.005 V per 2 V cell, per 1 degree C above or below 25° -- target voltage goes up when cold and down when hot
 				temp_compensation = (0.005) * (cfg_sysVoltage/2) * (parseInt(full_day_data[FNDC_ID][port][j].battery_temp) - 25);
-				day_data_target[j] = [full_day_data[FNDC_ID][port][j].timestamp, (cfg_sysAbsorbVoltage - temp_compensation)];
+				voltage_target = cfg_sysAbsorbVoltage - temp_compensation - 0.25; //fudge factor
+				day_data_target[j] = [full_day_data[FNDC_ID][port][j].timestamp, voltage_target];
 			}
 
 		}
@@ -1348,9 +1349,10 @@ function get_battery_volts() {
 	    },
 	    series: [{
 			name: 'Absorb Voltage',
-			color: 'rgba(0, 187, 0, 0.2)',
+			color: 'Black',
+			dashStyle: 'shortdash',
+			lineWidth: 1,
 			enableMouseTracking: false,
-			lineWidth: 7.5,
 			data: day_data_target
 	    },{
 			name: 'Volts',
@@ -1463,25 +1465,26 @@ function get_fndc_soc_gauge() {
 		var max_soc = full_day_data["summary"].max_soc;		
 	}
 
-	for (var port in full_day_data[FNDC_ID]) {
-		var device = json_status['status']['devices'][port - 1];
-		var current_soc = device.soc;
-		var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
-		if (cfg_isApple) {
-			var upArrow = "&#11014;";
-			var downArrow = "&#11015;";
-		} else {
-			var upArrow = "&#8593;";
-			var downArrow = "&#8595;";
+	for (var i = 0; i < json_status['status']['devices'].length; i++) {
+		if (json_status['status']['devices'][i]['device_id'] == FNDC_ID) {
+			var device = json_status['status']['devices'][i];
+			var current_soc = device.soc;
+			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
+			if (cfg_isApple) {
+				var upArrow = "&#11014;";
+				var downArrow = "&#11015;";
+			} else {
+				var upArrow = "&#8593;";
+				var downArrow = "&#8595;";
+			}
+			var chargeDirection = downArrow; // assume charge is falling
+			if (total_shunt_amps > 0) {
+				chargeDirection = upArrow; // if the amps are positive, then charging is going up!
+			}
+			break; // only one FNDC!
 		}
-		var chargeDirection = downArrow; // assume charge is falling
-		if (total_shunt_amps > 0) {
-			chargeDirection = upArrow; // if the amps are positive, then charging is going up!
-		}
-		break; // only one FNDC!
 	}
-	
-	
+
 	chart_options = {
 		chart: {
 			type: 'gauge',
