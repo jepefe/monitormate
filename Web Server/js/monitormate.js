@@ -75,6 +75,7 @@ Highcharts.theme = {
 			shadow: false,
 			cursor: 'pointer',
 			stickyTracking: false,
+			stacking: 'normal'
 		},
 		line: {
 			stickyTracking: true,
@@ -116,6 +117,32 @@ Highcharts.theme = {
 			},
 			showInLegend: true,
 			zIndex: -1
+		},
+		spline: {
+			cursor: 'pointer',
+			lineWidth: 1.5,
+			dashStyle: 'shortdot',
+			marker: {
+				enabled: true,
+				fillColor: 'black',
+				lineColor: 'rgba(255,255,255,0.5)',
+				lineWidth: 0,
+				radius: 2,
+				symbol: 'circle',
+				states: {
+					hover: {
+						enabled: true,
+						radius: 3,
+						lineWidth: 1,
+						lineColor: '#FFFFFF',
+					}
+				}
+			},
+			states: {
+				hover: {
+					enabled: false
+				}
+			}
 		}
 	},
 	title: {
@@ -617,7 +644,7 @@ function chart_years(date) {
 		kwh_out = Math.round(years_data[i].kwh_out);
 
 		years_data_kwhin[i] = [year, kwh_in];
-		years_data_kwhout[i] = [year, kwh_out];
+		years_data_kwhout[i] = [year, -kwh_out];
 		
 		years_net_kwh[i] = [year, (kwh_in - kwh_out)];
 	}
@@ -644,6 +671,10 @@ function chart_years(date) {
 		    name: 'Usage',
 	    	color: cfg_colorUsage,
 			data: years_data_kwhout
+		}, {
+	        name: 'Net',
+	        type: 'spline',
+	        data: years_net_kwh,
 	    }],
 	    tooltip: {
     		crosshairs: false,
@@ -697,7 +728,7 @@ function chart_months(date) {
 	//Fill array with series
 	for (i = 0; i < months_data.length; i++) {
 
-		split_date = months_data[i].month.split(/[- :]/);		// split the YYYY-MM-DD into an array
+		split_date = months_data[i].month.split(/[- :]/);			// split the YYYY-MM-DD into an array
 		month_date = new Date(split_date[0], split_date[1] - 1, 1);	// use the month to make a date object for the 1st of the month
 		month = month_date.getTime();								// turn it into millisecond timestamp
 
@@ -705,7 +736,7 @@ function chart_months(date) {
 		kwh_out = Math.round(months_data[i].kwh_out);
 		
 		months_data_kwhin[i]  = [month, kwh_in];
-		months_data_kwhout[i] = [month, kwh_out];
+		months_data_kwhout[i] = [month, -kwh_out];
 
 		months_net_kwh[i] = [month, (kwh_in - kwh_out)];
 
@@ -733,10 +764,10 @@ function chart_months(date) {
 	        name: 'Usage',
 	        color: cfg_colorUsage,
 	        data: months_data_kwhout,
-//	    }, {
-//	        name: 'Net',
-//	        type: 'areaspline',
-//	        data: months_net_kwh,
+	    }, {
+	        name: 'Net',
+	        type: 'spline',
+	        data: months_net_kwh,
 	    }],
 	    tooltip: {
     		crosshairs: false,
@@ -836,30 +867,7 @@ function chart_days(date) {
 						}
 					}
 				}
-			},
-			column: {
-				stacking: 'normal',
-			},
-			line: {
-				cursor: 'pointer',
-				lineWidth: 0,
-				marker: {
-					enabled: true,
-					fillColor: 'black',
-					lineColor: 'rgba(255,255,255,0.5)',
-					lineWidth: 0,
-					radius: 2,
-					symbol: 'circle',
-					states: {
-						hover: {
-							enabled: true,
-							radius: 3,
-							lineWidth: 1,
-							lineColor: '#FFFFFF',
-						},
-					},
-				},
-			},
+			}
 		},
 	    series: [{
 			name: 'Production',
@@ -871,7 +879,7 @@ function chart_days(date) {
 	        data: days_data_kwhout,
 	    }, {
 	        name: 'Net',
-	        type: 'line',
+	        type: 'spline',
 	        data: days_net_kwh,
 	    }],
 	    tooltip: {
