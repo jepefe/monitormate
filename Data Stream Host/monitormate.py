@@ -94,15 +94,14 @@ def start(options):
 				json_data['devices'] = mate.get_status_dict(int(options.device_address))
 				json_data['time'] = {}
 				json_data['time']['host_utc_time'] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+0000")
-				#json_data['time']['host_local_time'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-				#json_data['time']['mate_local_time'] =
+				json_data['time']['host_local_time'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
 				# time from the mate goes here... 
 				if options.mate_date_time:
 					response = urllib2.urlopen('http://'+options.mate_date_time+'/Dev_status.cgi?&Port=0')
 					mate_json_data = json.load(response)
 					datetime_obj = datetime.utcfromtimestamp(mate_json_data['devstatus']['Sys_Time'])
-					json_data['time']['mate_time'] = str(datetime_obj)
+					json_data['time']['mate_local_time'] = datetime_obj.strftime("%Y-%m-%dT%H:%M:%S")
 			
 			# Send JSON to URL
 			if options.url:
