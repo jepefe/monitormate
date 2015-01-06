@@ -451,8 +451,13 @@ function set_status(HTML_id, value) {
 
 	if (value != "summary") {
 		device_id = parseInt(value.split(/[:]/)[0]);
-		address = parseInt(value.split(/[:]/)[1] - 1);
-		device = json_status['status']['devices'][address];
+		address = parseInt(value.split(/[:]/)[1]);
+		for (var i = 0; i < json_status['status']['devices'].length; i++) {
+			if (json_status['status']['devices'][i]['address'] == address) {
+				device = json_status['status']['devices'][i];
+				break;
+			}
+		}
 	} else {
 		device_id = "summary";
 		address = "summary";
