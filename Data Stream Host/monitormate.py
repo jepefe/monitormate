@@ -93,7 +93,7 @@ def start(options):
 				json_data['devices'] = {}
 				json_data['devices'] = mate.get_status_dict(int(options.device_address))
 				json_data['time'] = {}
-				json_data['time']['host_utc_time'] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+0000")
+				#json_data['time']['host_utc_time'] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+0000")
 				json_data['time']['host_local_time'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
 				# time from the mate goes here... 

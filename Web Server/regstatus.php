@@ -22,45 +22,10 @@ if(isset($_POST)){
 	if (isset($_POST["token"]) AND $_POST["token"] == $token) {
 		// token is set and valid
 
-		if (!(date('i',time()) % $reg_interval)) {
-			// current time matche the reg_interval so we should register data in the database
-			$reg = true;
-		}
-
-		if (isset($_POST["datetime"])) {
-			// if we got a date/time from the data stream host
-	
-			// PHP needs date information in a very particular way for the date() function. SQL is more forgiving
-			//$date_time = date('Y-m-d G:i',$_POST["datetime"]); //Date from remote host
-			$date_time = $_POST["datetime"]; 	//Date from remote hos
-	
-		} else {
-			// otherwise we just use server time
-			$date_time = date('Y-m-d G:i',time()); //Date from localhost
-		}
-	
-		$fndc_data = null;
-		$cc_total = array(
-			"total_daily_kwh" => 0,
-			"total_daily_ah" => 0,
-		);			
-		
-		$summary = array(
-			"date" => date('Y-m-d', strtotime($date_time)),
-			"kwh_in" => 0,
-			"kwh_out" => 0,
-			"ah_in" => 0,
-			"ah_out" =>  0,
-			"max_temp" => 0,
-			"min_temp" => 0,
-			"min_soc"  => 0,
-			"max_soc"  => 0,
-			"max_pv_voltage" => 0,
-		);
-	
+		// populate the status array from the entire JSON feed from the host.
 		$status_array = json_decode($_POST['status'], TRUE);
 	
-		// error in the json decode
+		// check for errors in the json decode
 		if ($status_array == NULL) {
 		    switch (json_last_error()) {
 		        case JSON_ERROR_NONE:
@@ -88,6 +53,46 @@ if(isset($_POST)){
 		    $json_error .=  PHP_EOL;
 		    mmLog('error', $json_error);
 		}
+
+		// add the server time in UTC	
+		$status_array['time']['server_local_time'] = date(DATE_ISO8601);
+		//$status_array['time']['server_utc_time'] = gmdate(DATE_ISO8601);
+		
+		// TODO: the datetime is no longer posted in the data, there are now a variety of available
+		// strings in the JSON itself. Based on config setting, which one should we use?
+		if (isset($_POST["datetime"])) {
+			// PHP needs date information in a very particular way for the date() function. SQL is more forgiving
+			//$date_time = date('Y-m-d G:i',$_POST["datetime"]); //Date from remote host
+			$date_time = $_POST["datetime"]; 	//Date from remote hos	
+		} else {
+			// otherwise we just use server time
+			$date_time = date('Y-m-d G:i',time()); //Date from localhost
+		}
+
+		// are we at the configured registration interval?
+		if (!(date('i',time()) % $reg_interval)) {
+			// current time matche the reg_interval so we should register data in the database
+			$reg = true;
+		}
+	
+		$fndc_data = null;
+		$cc_total = array(
+			"total_daily_kwh" => 0,
+			"total_daily_ah" => 0,
+		);			
+		
+		$summary = array(
+			"date" => date('Y-m-d', strtotime($date_time)),
+			"kwh_in" => 0,
+			"kwh_out" => 0,
+			"ah_in" => 0,
+			"ah_out" =>  0,
+			"max_temp" => 0,
+			"min_temp" => 0,
+			"min_soc"  => 0,
+			"max_soc"  => 0,
+			"max_pv_voltage" => 0,
+		);
 		
 		for ($i = 0; $i < count($status_array['devices']); $i++) {
 			if ($deviceLabel[$i+1] === "") { 
@@ -158,10 +163,7 @@ if(isset($_POST)){
 		}
 	
 		$reg ? register_summary($summary):false;
-	
-		// add the server time in UTC	
-		$status_array['time']['server_utc_time'] = gmdate(DATE_ISO8601);
-	
+		
 		// add the summary data
 		$status_array['summary'] = $summary;
 		
