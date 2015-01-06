@@ -59,7 +59,6 @@ if(isset($_POST)){
 		);
 	
 		$status_array = json_decode($_POST['status'], TRUE);
-//		$status_obj = json_decode($_POST['status']);
 	
 		// error in the json decode
 		if ($status_array == NULL) {
@@ -90,10 +89,10 @@ if(isset($_POST)){
 		    mmLog('error', $json_error);
 		}
 		
-		for ($i = 0; $i < count($status_array['status']['devices']); $i++) {
+		for ($i = 0; $i < count($status_array['devices']); $i++) {
 			if ($deviceLabel[$i+1] === "") { 
 				// If there's not a label in the config, then assign default name based on ID type 
-				switch ($status_array['status']['devices'][$i]['device_id']) {
+				switch ($status_array['devices'][$i]['device_id']) {
 					case FX_ID:
 						$label = "FX Inverter";
 						break;
@@ -113,10 +112,10 @@ if(isset($_POST)){
 			} else {
 				$label = $deviceLabel[$i+1];
 			}
-			$status_array['status']['devices'][$i]['label'] = $label;
+			$status_array['devices'][$i]['label'] = $label;
 		}
 		
-		foreach ($status_array['status']['devices'] as $i) {
+		foreach ($status_array['devices'] as $i) {
 			switch ($i["device_id"]) {
 	
 				case FNDC_ID:
@@ -168,8 +167,9 @@ if(isset($_POST)){
 		
 		// output the files...
 		file_put_contents("./data/regstatus.log", print_r($_POST, TRUE));
-		file_put_contents("./data/status.json", json_encode($status_array));
-//		file_put_contents("./data/status.json", $_POST['status']);
+		file_put_contents("./data/status.json.tmp", json_encode($status_array));
+		rename("./data/status.json.tmp", "./data/status.json");
+//		file_put_contents("./data/status.json", $_POST['devices']);
 
 	} else {
 		// it's either missing the token or it doesn't match... 

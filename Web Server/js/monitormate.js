@@ -479,9 +479,9 @@ function set_status(HTML_id, value) {
 	if (value != "summary") {
 		device_id = parseInt(value.split(/[:]/)[0]);
 		address = parseInt(value.split(/[:]/)[1]);
-		for (var i = 0; i < json_status['status']['devices'].length; i++) {
-			if (json_status['status']['devices'][i]['address'] == address) {
-				device = json_status['status']['devices'][i];
+		for (var i = 0; i < json_status['devices'].length; i++) {
+			if (json_status['devices'][i]['address'] == address) {
+				device = json_status['devices'][i];
 				break;
 			}
 		}
@@ -1473,9 +1473,9 @@ function get_fndc_soc_gauge() {
 		var max_soc = full_day_data["summary"].max_soc;		
 	}
 
-	for (var i = 0; i < json_status['status']['devices'].length; i++) {
-		if (json_status['status']['devices'][i]['device_id'] == FNDC_ID) {
-			var device = json_status['status']['devices'][i];
+	for (var i = 0; i < json_status['devices'].length; i++) {
+		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
+			var device = json_status['devices'][i];
 			var current_soc = device.soc;
 			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
 			if (cfg_isApple) {
