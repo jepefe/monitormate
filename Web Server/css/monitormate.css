@@ -260,3 +260,14 @@ input.datepicker {
 	height: 250px;
 	margin-left: 20px;
 }
+
+.file {
+	width: 480pt;
+	height: 280pt;
+	border: 1px solid #333;
+	overflow: scroll;
+	padding: 4px 8px;
+	white-space: pre;
+	background-color: white;
+	font-family: Menlo, Courier, monospace;
+}
