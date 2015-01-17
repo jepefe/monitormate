@@ -128,7 +128,7 @@ def start(options):
 
 			# Get available devices info
 			if options.info:
-				devices_info = mate.get_devies_info()
+				devices_info = mate.get_devices_info()
 				for i in devices_info:
 					print "\nAddress:\n", i[0]
 					print "Name:\n", i[1]

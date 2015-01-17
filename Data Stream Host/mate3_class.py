@@ -134,7 +134,7 @@ class mate3:
 			return False
 
 
-	def get_devies_info(self):
+	def get_devices_info(self):
 		device_info = []
 		for i in self.matedevices:
 			if i != 0:
