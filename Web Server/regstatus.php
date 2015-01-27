@@ -173,6 +173,9 @@ if(isset($_POST)){
 		rename("./data/status.json.tmp", "./data/status.json");
 //		file_put_contents("./data/status.json", $_POST['devices']);
 
+	} else if (isset($_GET["clearlog"])) {
+		file_put_contents('./data/error.log', NULL);
+		print("Error log has been cleared.");
 	} else {
 		// it's either missing the token or it doesn't match... 
 		exit;
