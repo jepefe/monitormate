@@ -69,8 +69,9 @@ function query_years($date) {
 		// if there's a date, use that to define the range.
 		$whereClause = "date > DATE_SUB(year(date('".$date."')), INTERVAL 5 YEAR)";		
 	} else {
-		// if there's no date, then we just scope it from now.
-		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 5 YEAR)";
+		// if there's no date, then we just scope it from jan 1st of this year.
+		$start_date = date('Y',time())."-01-01";
+		$whereClause = "date >= DATE_SUB('".$start_date."', INTERVAL 5 YEAR)";
 	}
 
 	$query =	"SELECT
@@ -122,8 +123,9 @@ function query_months($date) {
 		// if there's a date, use that to define the range.
 		$whereClause = "year(date) = year(date('".$date."'))";
 	} else {
-		// if there's no date, then we just scope it from now.
-		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 12 MONTH)";
+		// if there's no date, then we just scope it from the first of this month.
+		$start_date = date('Y-m',time())."-01";
+		$whereClause = "date >= DATE_SUB('".$start_date."', INTERVAL 12 MONTH)";
 	}
 
 	$query =	"SELECT
@@ -191,7 +193,8 @@ function query_days($date) {
 		$whereClause = "year(date) = year('".$date."') AND month(date) = month('".$date."')"; 		
 	} else {
 		// if there's no date, then we just scope it to 31 days.
-		$whereClause = "date > DATE_SUB(NOW(), INTERVAL 31 DAY)";
+		$start_date = date('Y-m-d',time());
+		$whereClause = "date >= DATE_SUB('".$start_date."', INTERVAL 31 DAY)";
 	}
 	
 	
