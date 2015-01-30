@@ -358,6 +358,11 @@ function get_formatted_date(date) {
 	return date;
 }
 
+function date_from_ISO8601(isostr) {
+	var parts = isostr.match(/\d+/g);
+	return new Date(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
+}
+
 
 /*
 	Put the items in the pop-up selection menu for the charts 
@@ -444,6 +449,9 @@ function get_current_status() {
 			}
 		});
 	}
+	dateObj = date_from_ISO8601(json_status['time'].server_local_time);
+	var timeStr = (dateObj.getHours() % 12 || 12) + ":" + dateObj.getMinutes() + ":" + dateObj.getSeconds();
+	$("#button-cluster").text("Updated: " + timeStr);
 }
 
 
@@ -463,18 +471,6 @@ function set_status(HTML_id, value) {
 	if (full_day_data.length == 0) {
 		get_dataStream(false, 1); // get 1 hour of data
 	}
-	
-	// i don't think set_status is ever called without a value.	
-//	if (value == "none") {
-//		for (var i in json_status) {
-//			switch (json_status[i].device_id) {
-//				// what's this?
-//				case CC_ID:
-//					value = json_status[i].device_id + ":" + Math.round(json_status[i].address);
-//					break;
-//			}
-//		}
-//	}
 
 	if (value != "summary") {
 		device_id = parseInt(value.split(/[:]/)[0]);
@@ -1076,21 +1072,16 @@ function get_cc_charge_power() {
 		colors: cfg_colorsChargers,
 		series: all_devices_data,
 		tooltip: {
-			formatter: function() {
-				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				tipSeries = '';
-				for (var i = 0; i < this.points.length; i++) {
-					if (this.points[i].series.name == "Total") {
-						string = '<tr class="total"><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts ' + this.points[i].series.name + '</td></tr>';
-					} else {
-						string = '<tr><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')</td></tr>';
-					}
-					tipSeries = tipSeries + string;
-				}
-				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
-				return toolTip;
+			shared: true,
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
 			},
-			useHTML: true
+			valueDecimals: 0,
+			valueSuffix: ' Watts'
 		},
     	yAxis: {
     		min: 0,
@@ -1166,21 +1157,16 @@ function get_cc_charge_current() {
 		colors: cfg_colorsChargers,
 	    series: all_devices_data_amps,
 		tooltip: {
-			formatter: function() {
-				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				tipSeries = '';
-				for (var i = 0; i < this.points.length; i++) {
-					if (this.points[i].series.name == "Total") {
-						string = '<tr class="total"><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Amps ' + this.points[i].series.name + '</td></tr>';
-					} else {
-						string = '<tr><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Amps: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')</td></tr>';
-					}
-					tipSeries = tipSeries + string;
-				}
-				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
-				return toolTip;
+			shared: true,
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
 			},
-			useHTML: true
+			valueDecimals: 0,
+			valueSuffix: ' Amps'
 		},
     	yAxis: {
     		min: 0,
@@ -1235,15 +1221,16 @@ function get_cc_input_volts() {
 		colors: cfg_colorsChargers,
 		series: all_devices_data_array_volts,
 		tooltip: {
-			formatter: function() {
-				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				tipSeries = '';
-				for (var i = 0; i < this.points.length; i++) {
-					string =  this.points[i].y.toFixed(0) + ' Volts: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')';
-					tipSeries = tipSeries + '<br/>' + string;
-				}			
-				return '<strong>' + tipTitle + '</strong>' + tipSeries;
-			}
+			shared: true,
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
+			},
+			valueDecimals: 0,
+			valueSuffix: ' Volts'
 		},
 		yAxis: {
 		    labels: {
@@ -1297,15 +1284,16 @@ function get_cc_input_current() {
 		colors: cfg_colorsChargers,
 	    series: all_devices_data_array_amps,
 		tooltip: {
-			formatter: function() {
-				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				tipSeries = '';
-				for (var i = 0; i < this.points.length; i++) {
-					string =  this.points[i].y.toFixed(0) + ' Amps: ' + this.points[i].series.name + ' (' + this.points[i].point.mode + ')';
-					tipSeries = tipSeries + '<br/>' + string;
-				}			
-				return '<strong>' + tipTitle + '</strong>' + tipSeries;
-			}
+			shared: true,
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
+			},
+			valueDecimals: 0,
+			valueSuffix: ' Amps'
 		},
     	yAxis: {
     		min: 0,
@@ -1642,22 +1630,16 @@ function get_fndc_shunts() {
 		    minRange: 1000
 		},
 		tooltip: {
-			formatter: function() {
-				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				tipSeries = '';
-				for (var i = 0; i < this.points.length; i++) {
-					if (this.points[i].series.name == "Net") {
-						string = '<tr class="total"><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts ' + this.points[i].series.name + '</td></tr>';
-					} else {
-						string = '<tr><td class="figure">' + this.points[i].y.toFixed(0) + '</td><td> Watts: ' + this.points[i].series.name + '</td></tr>';
-					}
-					tipSeries = tipSeries + string;
-				}
-				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
-				return toolTip;				
-			},
 			shared: true,
-			useHTML: true
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color}">&#9679;</td><td>{series.name}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
+			},
+			valueDecimals: 0,
+			valueSuffix: ' Watts'
 		},
 	    series: [{
 	    	name: shuntLabel[1],
@@ -1720,18 +1702,15 @@ function get_fndc_amps_vs_volts() {
 			yAxis: 1
 	    }],
 		tooltip: {
-			formatter: function() {
-				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				tipSeries = '';
-				for (var i = 0; i < this.points.length; i++) {
-					string = '<tr><td class="figure">' + this.points[i].y.toFixed(1) + '</td><td> ' + this.points[i].series.name + '</td></tr>';
-					tipSeries = tipSeries + string;
-				}
-				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
-				return toolTip;				
-			},
 			shared: true,
-			useHTML: true
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color}">&#9679;</td><td>{series.name}</tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
+			},
+			valueDecimals: 1
 		},
     	yAxis: [{ // primary axis
 			endOnTick: true,
@@ -1778,27 +1757,35 @@ function get_fndc_net_ah() {
 	    	enabled: true
 	    },
 	    series: [{
-			name: "Ah Net",
+			name: "Net",
 			color: cfg_colorUsage,
 			data: day_data_netAh,
 	    }, {
-			name: 'Ah Corrected',
+			name: 'Corrected',
 			color: cfg_colorProduction,
 			data: day_data_compensatedAh,
 	    }],
 		tooltip: {
-			formatter: function() {
-				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
-				tipSeries = '';
-				for (var i = 0; i < this.points.length; i++) {
-					string = '<tr><td class="figure">' + this.points[i].y.toFixed(1) + '</td><td> ' + this.points[i].series.name + '</td></tr>';
-					tipSeries = tipSeries + string;
-				}
-				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
-				return toolTip;				
-			},
 			shared: true,
-			useHTML: true
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color}">&#9679;</td><td>{series.name}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
+			},
+			valueDecimals: 1,
+			valueSuffix: ' Ah'
+//			formatter: function() {
+//				tipTitle = Highcharts.dateFormat('%l:%M%P', this.x);
+//				tipSeries = '';
+//				for (var i = 0; i < this.points.length; i++) {
+//					string = '<tr><td class="figure">' + this.points[i].y.toFixed(1) + '</td><td> ' + this.points[i].series.name + '</td></tr>';
+//					tipSeries = tipSeries + string;
+//				}
+//				toolTip =	'<table class="tooltip"><th colspan="2">' + tipTitle + '</th>' + tipSeries + '</table>';
+//				return toolTip;				
+//			}
 		},
     	yAxis: {
 			labels: {
