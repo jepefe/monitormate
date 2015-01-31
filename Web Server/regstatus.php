@@ -56,42 +56,59 @@ if(isset($_POST)){
 
 		// add the server time in UTC	
 		$status_array['time']['server_local_time'] = date(DATE_ISO8601);
-		//$status_array['time']['server_utc_time'] = gmdate(DATE_ISO8601);
 		
 		// TODO: the datetime is no longer posted in the data, there are now a variety of available
 		// strings in the JSON itself. Based on config setting, which one should we use?
-		if (isset($_POST["datetime"])) {
-			// PHP needs date information in a very particular way for the date() function. SQL is more forgiving
-			//$date_time = date('Y-m-d G:i',$_POST["datetime"]); //Date from remote host
-			$date_time = $_POST["datetime"]; 	//Date from remote hos	
-		} else {
-			// otherwise we just use server time
-			$date_time = date('Y-m-d G:i',time()); //Date from localhost
+//		if (isset($_POST["datetime"])) {
+//			// PHP needs date information in a very particular way for the date() function. SQL is more forgiving
+//			//$date_time = date('Y-m-d G:i',$_POST["datetime"]); //Date from remote host
+//			$date_time = $_POST["datetime"]; 	//Date from remote hos	
+//		} else {
+//			// otherwise we just use server time
+//			$date_time = date('Y-m-d G:i',time()); //Date from localhost
+//		}
+		$timestamp = NULL;
+		
+		switch ($reg_time) {
+			// should be set to "mate", "host", or "server" 
+			case "mate":
+				$timestamp = strtotime($status_array['time']['mate_local_time']);
+				break;
+			case "host":
+				$timestamp = strtotime($status_array['time']['host_local_time']);
+				break;
+			default:
+				// this is the fall back in case the field is poorly formatted.
+				$timestamp = strtotime($status_array['time']['server_local_time']);
+				break;
 		}
 
 		// are we at the configured registration interval?
-		if (!(date('i',time()) % $reg_interval)) {
+		if (!(date('i', $timestamp) % $reg_interval)) {
 			// current time matche the reg_interval so we should register data in the database
 			$reg = true;
 		}
 	
-		$fndc_data = null;
+		$date_time = date('Y-m-d G:i', $timestamp); // Date string for passing to register functions
+		
+		$fndc_data = NULL;
+		
 		$cc_total = array(
 			"total_daily_kwh" => 0,
 			"total_daily_ah" => 0,
 		);			
 		
 		$summary = array(
-			"date" => date('Y-m-d', strtotime($date_time)),
-			"kwh_in" => 0,
-			"kwh_out" => 0,
-			"ah_in" => 0,
-			"ah_out" =>  0,
-			"max_temp" => 0,
-			"min_temp" => 0,
-			"min_soc"  => 0,
-			"max_soc"  => 0,
-			"max_pv_voltage" => 0,
+			"date" => date('Y-m-d', $timestamp),
+			"kwh_in" => NULL,
+			"kwh_out" => NULL,
+			"ah_in" => NULL,
+			"ah_out" =>  NULL,
+			"max_temp" => NULL,
+			"min_temp" => NULL,
+			"min_soc"  => NULL,
+			"max_soc"  => NULL,
+			"max_pv_voltage" => NULL
 		);
 		
 		for ($i = 0; $i < count($status_array['devices']); $i++) {
@@ -149,7 +166,7 @@ if(isset($_POST)){
 		}
 	
 		// populate the summary array
-		if ($fndc_data != null) {
+		if ($fndc_data != NULL) {
 			// use the FNDC data if you have one.
 			$summary["kwh_in"]	= $fndc_data["today_net_input_kwh"];
 			$summary["kwh_out"] = $fndc_data["today_net_output_kwh"];

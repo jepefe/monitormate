@@ -16,17 +16,18 @@ for more details.
 */
 
 // DATABASE
-$dbhost="";			//Database host
-$dbuser="";			//Database user
-$dbpass="";			//Database password
-$dbname="";			//Database name
+$dbhost="";			// Database host
+$dbuser="";			// Database user
+$dbpass="";			// Database password
+$dbname="";			// Database name
 
 //UPDATES
-$reg_interval=10;	//Time between each database record in minutes.
-					//NOTE: You should set this to half your "charge params met" time.
-$token="";			//Token
+$token="";				// Token
+$reg_interval=5;		// Time between each database record in minutes.
+						// NOTE: It's recommended to set this to less than your "charge params met" time.
+$reg_time = "server";	// Which date/time information to use when registering the status data into the database
+						// OPTIONS: "server", "host", or "mate"
 
-// GENERAL
 $timezone="America/Los_Angeles";	//See http://www.php.net/manual/en/timezones.php, example for Spain: Europe/Madrid
 
 // SYSTEM
