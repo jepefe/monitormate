@@ -54,8 +54,8 @@ if(isset($_POST)){
 		    mmLog('error', $json_error);
 		}
 
-		// add the server time in UTC	
-		$status_array['time']['server_local_time'] = date(DATE_ISO8601);
+		// add the server time in ISO8601 format (DATE_ISO8601 has improperly formed TZ offset)
+		$status_array['time']['server_local_time'] = date('Y-m-d\TH:i:sP');
 		
 		// TODO: the datetime is no longer posted in the data, there are now a variety of available
 		// strings in the JSON itself. Based on config setting, which one should we use?
