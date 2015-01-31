@@ -24,7 +24,7 @@
 		</ol>
 		<h1 id="navtitle"></h1>
 		<div id="button-cluster">
-			Updated <span id="updateseconds">0</span> ago.
+			Updated: <span id="update_time">?</span>
 		</div>
 	</div>
 	<div id="left-col" class="status">
@@ -94,15 +94,6 @@
 					
 			// update the status regularly
 			setInterval("refresh_data()", 15*1000);
-
-//			it'd be cool to kick off a counter to show how old the data is.
-
-//			var uSec = 0;
-//			
-//			setInterval( function () {
-//			    $("#seconds").text(++uSec % 60);
-//			}, 1000);
-
 		});
 
 		function refresh_data() {

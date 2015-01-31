@@ -450,9 +450,8 @@ function get_current_status() {
 		});
 	}
 	dateObj = date_from_ISO8601(json_status['time'].server_local_time);
-	// horrible time formatting, didn't pad with zeros...
-	var timeStr = (dateObj.getHours() % 12 || 12) + ":" + dateObj.getMinutes() + ":" + dateObj.getSeconds();
-	$("#button-cluster").text("As of " + timeStr);
+	timeStr = dateObj.toLocaleTimeString();
+	$("#update_time").text(timeStr);
 }
 
 
