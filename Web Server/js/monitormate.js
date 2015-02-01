@@ -68,6 +68,9 @@ Highcharts.theme = {
 		}
 	},
 	plotOptions: {
+		series: {
+			turboThreshold: 1750,
+		},
 		column: {
 			borderWidth: 0,
 			pointPadding: 0,		
