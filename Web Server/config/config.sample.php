@@ -92,7 +92,7 @@ var CC_ID = <?php echo CC_ID; ?>;
 var FNDC_ID = <?php echo FNDC_ID; ?>;
 var RAD_ID = <?php echo RAD_ID; ?>;
 
-var cfg_sysName = <?php echo $system_name; ?>;
+var cfg_sysName = "<?php echo $system_name; ?>";
 var cfg_sysVoltage = <?php echo $system_voltage; ?>;
 var cfg_sysAbsorbVoltage = <?php echo $system_absorbVoltage; ?>;
 var cfg_sysEndAmps = <?php echo $system_endAmps; ?>;
