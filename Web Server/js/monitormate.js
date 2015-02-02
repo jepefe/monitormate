@@ -1078,7 +1078,7 @@ function get_cc_charge_power() {
 			shared: true,
 			useHTML: true,
 			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name}</td></tr>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} ({point.mode})</td></tr>',
 			footerFormat: '</table>',
 			dateTimeLabelFormats: {
 				hour: '%l:%M%P'
@@ -1163,7 +1163,7 @@ function get_cc_charge_current() {
 			shared: true,
 			useHTML: true,
 			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name}</td></tr>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} ({point.mode})</td></tr>',
 			footerFormat: '</table>',
 			dateTimeLabelFormats: {
 				hour: '%l:%M%P'
@@ -1227,7 +1227,7 @@ function get_cc_input_volts() {
 			shared: true,
 			useHTML: true,
 			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name}</td></tr>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} ({point.mode})</td></tr>',
 			footerFormat: '</table>',
 			dateTimeLabelFormats: {
 				hour: '%l:%M%P'
@@ -1290,7 +1290,7 @@ function get_cc_input_current() {
 			shared: true,
 			useHTML: true,
 			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name}</td></tr>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} ({point.mode})</td></tr>',
 			footerFormat: '</table>',
 			dateTimeLabelFormats: {
 				hour: '%l:%M%P'
