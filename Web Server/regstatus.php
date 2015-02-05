@@ -135,6 +135,31 @@ if(isset($_POST)){
 				$label = $deviceLabel[$i+1];
 			}
 			$status_array['devices'][$i]['label'] = $label;
+			// if it's a flexnetdc then we also look for shunt labels
+			if ($status_array['devices'][$i]['device_id'] == FNDC_ID) {
+				foreach ($shuntLabel as $key => $shunt_label) {
+					switch ($key) {
+						case "A":
+							if ($shunt_label === "") {
+								$shunt_label = "Shunt A";
+							}
+							$status_array['devices'][$i]['shunt_a_label'] = $shunt_label;
+							break;
+						case "B":
+							if ($shunt_label === "") {
+								$shunt_label = "Shunt B";
+							}
+							$status_array['devices'][$i]['shunt_b_label'] = $shunt_label;
+							break;
+						case "C":
+							if ($shunt_label === "") {
+								$shunt_label = "Shunt C";
+							}
+							$status_array['devices'][$i]['shunt_c_label'] = $shunt_label;
+							break;
+					}
+				}
+			}
 		}
 		
 		foreach ($status_array['devices'] as $i) {
