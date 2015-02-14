@@ -386,10 +386,10 @@ function populate_chart_select(pselect) {
 
 	if (full_day_data[CC_ID]) { /* FM/MX charge controller available */
 		select_items.push('<option value="battery_volts">Battery Voltage</option>');		
-		select_items.push('<option value="charge_current">PV Charging Current</option>');
-		select_items.push('<option value="charge_power">PV Charging Power</option>');
-		select_items.push('<option value="array_volts">PV Input Voltage</option>');
-		select_items.push('<option value="array_current">PV Input Current</option>');
+		select_items.push('<option value="cc_charge_current">PV Charging Current</option>');
+		select_items.push('<option value="cc_charge_power">PV Charging Power</option>');
+		select_items.push('<option value="cc_input_volts">PV Input Voltage</option>');
+		select_items.push('<option value="cc_input_current">PV Input Current</option>');
 	}
 
 	$('#' + pselect).html(select_items.join(''));
@@ -971,41 +971,9 @@ function draw_chart(chart_id, content) {
 //
 //	chart_content[chart_id] = content;
 
-	switch (content) {
-		case "charge_power":
-			chart_data = get_cc_charge_power();
-			break;
-		case "charge_current":
-			chart_data = get_cc_charge_current();
-			break;
-		case "array_volts":
-			chart_data = get_cc_input_volts();
-			break;
-		case "array_current":
-			chart_data = get_cc_input_current();
-			break;
-		case "battery_volts":
-			chart_data = get_battery_volts();
-			break;
-		case "fndc_amps_vs_volts":
-			chart_data = get_fndc_amps_vs_volts();
-			break;
-		case "fndc_net_ah":
-			chart_data = get_fndc_net_ah();
-			break;
-		case "fndc_shunts":
-			chart_data = get_fndc_shunts();
-			break;
-		case "fndc_soc":
-			chart_data = get_fndc_soc();
-			break;
-		case "fndc_soc_gauge":
-			chart_data = get_fndc_soc_gauge();
-			break;
-		default:
-			chart_data = null;
-			break;
-	}
+	// make a function name out of the content request
+	func_call = "get_" + content + "()";
+	chart_data = eval(func_call);
 
 	// chart the data!
 	$('#' + chart_id).highcharts(chart_data);
