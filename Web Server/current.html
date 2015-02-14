@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<link rel="icon" href="./images/favicon16.png" type="image/png">
+	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/highcharts-more.js"></script>
+	<script src="./config/config.php"></script>
+	<script src="./js/monitormate.js"></script>
+	<script src="./js/gauges.js"></script>
+	<title>MonitorMate — Gauges!</title>
+</head>
+<body>
+	<div id="navbar">
+		<ol id="toc">
+			<li><a href="monitormate.html">Current Conditions</a></li>
+			<li><a href="historical.html">Historical</a></li>
+			<li><a href="status.html">Status</a></li>
+			<li class="current"><a href="current.html">Gauges</a></li>
+		</ol>
+		<h1 id="navtitle"></h1>
+	</div>
+
+	<div id="soc_gauge" class="gauge-chart"></div>
+	<div id="cc_output_gauge" class="gauge-chart"></div>
+	<div id="fx_inverting_gauge" class="gauge-chart"></div>
+	
+	<script>
+
+		$(document).ready(function() {
+			get_dataStream(false, 1);
+			get_current_status();
+			
+			// Apply the common gauge theme 
+			Highcharts.setOptions(Highcharts.gaugeTheme);
+
+			draw_chart("soc_gauge", "fndc_soc_nuGauge");
+			draw_chart("cc_output_gauge", "cc_output_gauge");
+			draw_chart("fx_inverting_gauge", "fx_inverting_gauge");
+			setInterval("refresh_data()", 15*1000);
+		});
+
+		function refresh_data() {
+			get_current_status();
+		}	
+
+	</script>
+	
+</body>
+</html>
