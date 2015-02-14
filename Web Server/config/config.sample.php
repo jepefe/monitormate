@@ -33,9 +33,13 @@ $timezone="America/Los_Angeles";	//See http://www.php.net/manual/en/timezones.ph
 // SYSTEM
 $system_name = "My System";		// System Name
 $system_voltage = 48;			// Nominal system voltage
+$system_batt_capacity = 800;	// Total Ah capacity of your battery bank
 $system_absorbVoltage = 58.8;	// Absorb voltage for your chargers
 $system_endAmps = 12.5;			// The FNDC configured return amps setting
 $pv_wattage = 1500;				// Total wattage of your photo voltaic arrays
+$gen_rating = 6000;				// Total wattage of your generator (or AC IN)
+$inverter_max = 3800;			// Total ouput of your inverters (cumulative)
+$charger_max = 2400;			// Total charger output of your chargers (cumulative)
 $ags_port = FALSE;				// Port used for AGS. Leave "FALSE" if you don't use AGS.
 
 // Labels to use for the devices on your HUB ports.
@@ -94,9 +98,14 @@ var RAD_ID = <?php echo RAD_ID; ?>;
 
 var cfg_sysName = "<?php echo $system_name; ?>";
 var cfg_sysVoltage = <?php echo $system_voltage; ?>;
+var cfg_sysBattCapacity = <?php echo $system_batt_capacity; ?>;
 var cfg_sysAbsorbVoltage = <?php echo $system_absorbVoltage; ?>;
 var cfg_sysEndAmps = <?php echo $system_endAmps; ?>;
 var cfg_pvWattage = <?php echo $pv_wattage; ?>;
+var cfg_genRating = <?php echo $gen_rating; ?>;
+var cfg_inverterMax = <?php echo $inverter_max; ?>;
+var cfg_chargerMax = <?php echo $charger_max; ?>;
+var cfg_agsPort = <?php echo $ags_port; ?>;
 
 var cfg_deviceLabel = new Array();
 	cfg_deviceLabel[1] = "<?php echo $deviceLabel[1]; ?>";

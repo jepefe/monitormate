@@ -216,7 +216,7 @@ function get_cc_output_gauge() {
 		},
 		yAxis: {
 			min: 0,
-			max: 3510,
+			max: cfg_pvWattage,
 
 			tickInterval: 200,
 
@@ -229,14 +229,19 @@ function get_cc_output_gauge() {
 			
 			plotBands: [{
 				from: 0,
-				to: 3510,
+				to: (cfg_pvWattage*0.20),
 				thickness: 40,
-				color: '#55BF3B' // green
-//			}, {
-//				from: (7200*0.8),
-//				to: 7200,
-//				thickness: 40,
-//				color: '#DF5353' // red
+				color: 'rgba(89,189,68,0.25)' // green
+			}, {
+				from: (cfg_pvWattage*0.20),
+				to: (cfg_pvWattage*0.80),
+				thickness: 40,
+				color: 'rgba(89,189,68,0.50)' // green
+			}, {
+				from: (cfg_pvWattage*0.80),
+				to: cfg_pvWattage,
+				thickness: 40,
+				color: 'rgba(89,189,68,1.0)' // green
 			}]
 		},
 
@@ -249,24 +254,36 @@ function get_cc_output_gauge() {
 
 }
 
-
-function get_fx_inverting_gauge() {
+// TODO: make this gauge toggle between inverting or charging, since the outback inverters
+// can only do one at a time anyway.
+function get_fx_inv_chrg_gauge() {
 
 	/*global full_day_data, json_status */
 	var total_watts = 0;
+	var chart_mode = null;
+	var chart_max = null; 
 	
 	for (var i = 0; i < json_status['devices'].length; i++) {	
 		if (json_status['devices'][i]['device_id'] == FX_ID) {
 			var device = json_status['devices'][i];
-			var inverting_watts = device.inverter_current * device.ac_output_voltage;
-			total_watts = total_watts + inverting_watts;
+			if (device.operational_mode == "Charge") {
+				chart_mode = "Charging";
+				chart_max = cfg_chargerMax;
+				var charging_watts = device.charge_current * device.ac_input_voltage;
+				total_watts = total_watts + charging_watts;
+			} else {
+				chart_mode = "Inverting";
+				chart_max = cfg_inverterMax;
+				var inverting_watts = device.inverter_current * device.ac_output_voltage;
+				total_watts = total_watts + inverting_watts;
+			}
 		}
 	}
 	total_watts = Math.round(total_watts / 100) * 100;
 
 	chart_options = {
 		title: {
-			text: 'Inverting'
+			text: chart_mode
 		},
 		legend: {
 			enabled: false
@@ -280,7 +297,7 @@ function get_fx_inverting_gauge() {
 		},
 		yAxis: {
 			min: 0,
-			max: 7200,
+			max: chart_max,
 
 			tickInterval: 200,
 
@@ -293,12 +310,17 @@ function get_fx_inverting_gauge() {
 			
 			plotBands: [{
 				from: 0,
-				to: (7200*0.8),
+				to: (chart_max*0.8),
 				thickness: 40,
 				color: '#55BF3B' // green
 			}, {
-				from: (7200*0.8),
-				to: 7200,
+				from: (chart_max*0.8),
+				to: (chart_max*0.95),
+				thickness: 40,
+				color: '#DDDF0D' // yellow
+			}, {
+				from: (chart_max*0.95),
+				to: chart_max,
 				thickness: 40,
 				color: '#DF5353' // red
 			}]

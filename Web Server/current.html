@@ -25,7 +25,7 @@
 
 	<div id="soc_gauge" class="gauge-chart"></div>
 	<div id="cc_output_gauge" class="gauge-chart"></div>
-	<div id="fx_inverting_gauge" class="gauge-chart"></div>
+	<div id="fx_inv_chrg_gauge" class="gauge-chart"></div>
 	
 	<script>
 
@@ -38,7 +38,7 @@
 
 			draw_chart("soc_gauge", "fndc_soc_nuGauge");
 			draw_chart("cc_output_gauge", "cc_output_gauge");
-			draw_chart("fx_inverting_gauge", "fx_inverting_gauge");
+			draw_chart("fx_inv_chrg_gauge", "fx_inv_chrg_gauge");
 			setInterval("refresh_data()", 15*1000);
 		});
 
