@@ -960,16 +960,10 @@ function set_chart(chart_id, content) {
 function draw_chart(chart_id, content) {
 	var chart_data = 0;
 
-// i have no idea what this crap is for...
-// this function should require both arguments... 
-// it's kinda messed up to set one variable to the element of the array
-// then set the element of that same array to the variable.
-
-//	if (!content) {
-//		content = chart_content[chart_id];
-//	}
-//
-//	chart_content[chart_id] = content;
+	// if only one thing was passed in, assume the ID and the chart are the same name
+	if (content == null) {
+		content = chart_id;
+	}
 
 	// make a function name out of the content request
 	func_call = "get_" + content + "()";

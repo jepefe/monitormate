@@ -67,6 +67,14 @@ $shuntLabel = array(
 	"C"  => ""
 );
 
+// Max power that will flow in or out of each shunt. This is only to
+// inform the charts for reasonable min/max values on gauges etc.
+$shuntMax = array(
+	"A"  => 3600,
+	"B"  => 3600,
+	"C"  => 3600
+);
+
 // Colors
 $colorProduction	= "#F2B807";
 $colorUsage			= "#0396A6";
@@ -90,6 +98,7 @@ define("RAD_ID", 6);	// 6 is a Radian-series inverter
 
 // Platform detection, looks for Apple platforms both OS X and iOS.
 var cfg_isApple = navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)?true:false;
+// FIXME: should also detect specifically "touch" devices
 
 var FX_ID = <?php echo FX_ID; ?>;	
 var CC_ID = <?php echo CC_ID; ?>;
@@ -123,6 +132,11 @@ var cfg_shuntLabel = new Array();
 	cfg_shuntLabel[1] = "<?php echo $shuntLabel['A']; ?>";
 	cfg_shuntLabel[2] = "<?php echo $shuntLabel['B']; ?>";
 	cfg_shuntLabel[3] = "<?php echo $shuntLabel['C']; ?>";
+
+var cfg_shuntMax = new Array();
+	cfg_shuntMax[1] = <?php echo $shuntMax['A']; ?>;
+	cfg_shuntMax[2] = <?php echo $shuntMax['B']; ?>;
+	cfg_shuntMax[3] = <?php echo $shuntMax['C']; ?>;
 
 var cfg_colorProduction = "<?php echo $colorProduction; ?>";
 var cfg_colorUsage = "<?php echo $colorUsage; ?>";

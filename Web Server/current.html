@@ -23,9 +23,14 @@
 		<h1 id="navtitle"></h1>
 	</div>
 
-	<div id="soc_gauge" class="gauge"></div>
+	<div id="fndc_soc_gauge" class="gauge"></div>
+	<div id="batt_volts_gauge" class="gauge"></div>
 	<div id="cc_output_gauge" class="gauge"></div>
 	<div id="fx_inv_chrg_gauge" class="gauge"></div>
+	<div id="fndc_shuntA_gauge" class="gauge"></div>
+	<div id="fndc_shuntB_gauge" class="gauge"></div>
+	<div id="fndc_shuntC_gauge" class="gauge"></div>
+	<!--<div id="fndc_shunt_gauge" class="gauge"></div>-->
 	
 	<script>
 
@@ -36,9 +41,14 @@
 			// Apply the common gauge theme 
 			Highcharts.setOptions(Highcharts.gaugeTheme);
 
-			draw_chart("soc_gauge", "fndc_soc_nuGauge");
-			draw_chart("cc_output_gauge", "cc_output_gauge");
-			draw_chart("fx_inv_chrg_gauge", "fx_inv_chrg_gauge");
+			draw_chart("fndc_soc_gauge", "fndc_soc_nuGauge");
+			draw_chart("batt_volts_gauge");
+			draw_chart("cc_output_gauge");
+			draw_chart("fx_inv_chrg_gauge");
+			draw_chart("fndc_shuntA_gauge");
+			draw_chart("fndc_shuntB_gauge");
+			draw_chart("fndc_shuntC_gauge");
+//			draw_chart("fndc_shunt_gauge");
 			setInterval("refresh_data()", 15*1000);
 		});
 
