@@ -642,12 +642,10 @@ function get_fndc_shuntA_gauge() {
 
 			if (device.shunt_a_amps >= 0) {
 				chart_color = chart_chgColor;
-			} else if (device.shunt_a_amps >= -0.1) {
-				 // solar and wind generation systems sometimes show as a slight power draw during the night
-				device.shunt_a_amps = 0;
-				chart_color = chart_chgColor;
+				chart_mode = " Charging";
 			} else {
 				chart_color = chart_disColor;
+				chart_mode = " Discharging";
 			}
 			shunt_watts = Math.abs(device.shunt_a_amps * device.battery_volt);			
 
@@ -658,7 +656,7 @@ function get_fndc_shuntA_gauge() {
 	chart_options = {
 
 		title: {
-			text: cfg_shuntLabel[1] + " Shunt"
+			text: cfg_shuntLabel[1] + chart_mode
 		},
 
 		yAxis: {
@@ -733,12 +731,10 @@ function get_fndc_shuntB_gauge() {
 
 			if (device.shunt_b_amps >= 0) {
 				chart_color = chart_chgColor;
-			} else if (device.shunt_b_amps >= -0.1) {
-				 // solar and wind generation systems sometimes show as a slight power draw during the night
-				device.shunt_b_amps = 0;
-				chart_color = chart_chgColor;
+				chart_mode = " Charging";
 			} else {
 				chart_color = chart_disColor;
+				chart_mode = " Discharging";
 			}
 			shunt_watts = Math.abs(device.shunt_b_amps * device.battery_volt);			
 
@@ -749,7 +745,7 @@ function get_fndc_shuntB_gauge() {
 	chart_options = {
 
 		title: {
-			text: cfg_shuntLabel[2] + " Shunt"
+			text: cfg_shuntLabel[2] + chart_mode
 		},
 
 		yAxis: {
@@ -802,6 +798,7 @@ function get_fndc_shuntC_gauge() {
 
 	/*global json_status */
 	var chart_color = null;
+	var chart_mode = null;
 	var shunt_watts = null;
 
 	var chart_chgColor = [];
@@ -824,12 +821,10 @@ function get_fndc_shuntC_gauge() {
 
 			if (device.shunt_c_amps >= 0) {
 				chart_color = chart_chgColor;
-			} else if (device.shunt_c_amps >= -0.1) {
-				 // solar and wind generation systems sometimes show as a slight power draw during the night
-				device.shunt_c_amps = 0;
-				chart_color = chart_chgColor;
+				chart_mode = " Charging";
 			} else {
 				chart_color = chart_disColor;
+				chart_mode = " Discharging";
 			}
 			shunt_watts = Math.abs(device.shunt_c_amps * device.battery_volt);			
 
@@ -840,7 +835,7 @@ function get_fndc_shuntC_gauge() {
 	chart_options = {
 
 		title: {
-			text: cfg_shuntLabel[3] + " Shunt"
+			text: cfg_shuntLabel[3] + chart_mode
 		},
 
 		yAxis: {
