@@ -883,3 +883,95 @@ function get_fndc_shuntC_gauge() {
 	return chart_options;
 
 }
+
+function get_fndc_shuntNet_gauge() {
+
+	/*global json_status */
+	var chart_color = null;
+	var net_amps = null;
+	var net_watts = null;
+	var net_max = cfg_shuntMax[1] + cfg_shuntMax[2] + cfg_shuntMax[3];
+	var chart_chgColor = [];
+	var chart_disColor = [];
+	
+	chart_chgColor[0] = "rgba(57,194,29,0.25)"; // green
+	chart_chgColor[1] = "rgba(57,194,29,0.50)"; // green
+	chart_chgColor[2] = "rgba(57,194,29,1.00)"; // green
+
+	chart_disColor[0] = "rgba(250,221,0,0.25)"; // yellow
+	chart_disColor[1] = "rgba(250,221,0,0.50)"; // yellow
+	chart_disColor[2] = "rgba(250,221,0,1.00)"; // yellow
+//	chart_disColor[0] = "rgba(229,46,49,0.25)"; // red
+//	chart_disColor[1] = "rgba(229,46,49,0.50)"; // red
+//	chart_disColor[2] = "rgba(229,46,49,1.00)"; // red
+	
+	for (var i = 0; i < json_status['devices'].length; i++) {	
+		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
+			var device = json_status['devices'][i];
+
+			net_amps = device.shunt_a_amps + device.shunt_b_amps + device.shunt_c_amps;
+
+			if (net_amps >= 0) {
+				chart_color = chart_chgColor;
+				chart_mode = "Battery Charging";
+			} else {
+				chart_color = chart_disColor;
+				chart_mode = "Battery Discharging";
+			}
+			net_watts = Math.abs(net_amps * device.battery_volt);			
+
+			break; // only one FNDC!
+		}
+	}
+	
+	chart_options = {
+
+		title: {
+			text: chart_mode
+		},
+
+		yAxis: {
+			min: 0,
+			max: net_max,
+
+			tickInterval: 500,
+			minorTickInterval: 100,
+
+			labels: {
+				step: 4,
+			},
+
+			plotBands: [{
+				from: 0,
+				to: (net_max*0.20),
+				thickness: 40,
+				color: chart_color[0]
+			}, {
+				from: (net_max*0.20),
+				to: (net_max*0.80),
+				thickness: 40,
+				color: chart_color[1]
+			}, {
+				from: (net_max*0.80),
+				to: net_max,
+				thickness: 40,
+				color: chart_color[2]
+			}],
+		},
+
+		plotOptions: {
+			gauge: {
+				dataLabels: {
+					format: '{point.y:,.0f} Watts'
+				}
+			}
+		},
+
+		series: [{
+			data: [net_watts]
+		}]
+	};
+
+	return chart_options;
+
+}

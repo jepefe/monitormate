@@ -5,8 +5,8 @@
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script src="http://code.highcharts.com/highcharts.js"></script>
-	<script src="http://code.highcharts.com/highcharts-more.js"></script>
+	<script src="http://code.highcharts.com/4.0.4/highcharts.js"></script>
+	<script src="http://code.highcharts.com/4.0.4/highcharts-more.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<script src="./js/gauges.js"></script>
@@ -24,13 +24,13 @@
 	</div>
 
 	<div id="fndc_soc_gauge" class="gauge"></div>
-	<div id="batt_volts_gauge" class="gauge"></div>
-	<div id="cc_output_gauge" class="gauge"></div>
-	<div id="fx_inv_chrg_gauge" class="gauge"></div>
 	<div id="fndc_shuntA_gauge" class="gauge"></div>
 	<div id="fndc_shuntB_gauge" class="gauge"></div>
 	<div id="fndc_shuntC_gauge" class="gauge"></div>
-	<!--<div id="fndc_shunt_gauge" class="gauge"></div>-->
+	<div id="fndc_shuntNet_gauge" class="gauge"></div>
+	<div id="batt_volts_gauge" class="gauge"></div>
+	<div id="cc_output_gauge" class="gauge"></div>
+	<div id="fx_inv_chrg_gauge" class="gauge"></div>
 	
 	<script>
 
@@ -48,7 +48,7 @@
 			draw_chart("fndc_shuntA_gauge");
 			draw_chart("fndc_shuntB_gauge");
 			draw_chart("fndc_shuntC_gauge");
-//			draw_chart("fndc_shunt_gauge");
+			draw_chart("fndc_shuntNet_gauge");
 			setInterval("refresh_data()", 15*1000);
 		});
 
