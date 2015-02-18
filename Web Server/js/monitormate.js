@@ -41,6 +41,10 @@ var status_content = {
 
 // Common theme for all the charts.
 Highcharts.theme = {
+	lang: {
+		thousandsSep: ","
+	},
+
 	chart: {
 		animation: {
 			duration: 500
@@ -103,7 +107,8 @@ Highcharts.theme = {
 						opacity: 1,
 						size: 5
 					},
-					lineWidth: 1.5
+					lineWidth: 1.5,
+					lineWidthPlus: 0
 				}
 			}
 		},

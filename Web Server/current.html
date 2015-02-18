@@ -4,9 +4,10 @@
 	<meta charset="utf-8">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script src="http://code.highcharts.com/4.0.4/highcharts.js"></script>
-	<script src="http://code.highcharts.com/4.0.4/highcharts-more.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script src="http://code.highcharts.com/4.1.1/highcharts.js"></script>
+	<script src="http://code.highcharts.com/4.1.1/highcharts-more.js"></script>
+	<script src="./js/jquery.cookie-1.4.1.min.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<script src="./js/gauges.js"></script>
@@ -21,6 +22,9 @@
 			<li><a href="details.html">Details</a></li>
 		</ol>
 		<h1 id="navtitle"></h1>
+		<div id="button-cluster">
+			Updated: <span id="update_time">?</span>
+		</div>
 	</div>
 
 	<div id="fndc_soc_gauge" class="gauge"></div>
@@ -35,6 +39,7 @@
 	<script>
 
 		$(document).ready(function() {
+
 			get_dataStream(false, 1);
 			get_current_status();
 			

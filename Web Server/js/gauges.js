@@ -13,6 +13,10 @@ for more details.
 */
 
 Highcharts.gaugeTheme = {
+	lang: {
+		thousandsSep: ","
+	},
+	
 	chart: {
 		type: 'gauge',
 		plotBackgroundColor: null,
@@ -938,7 +942,7 @@ function get_fndc_shuntNet_gauge() {
 			minorTickInterval: 100,
 
 			labels: {
-				step: 4,
+				step: 2,
 			},
 
 			plotBands: [{
