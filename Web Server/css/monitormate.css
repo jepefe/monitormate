@@ -261,6 +261,15 @@ input.datepicker {
 	margin-left: 20px;
 }
 
+.gauge {
+	display: inline;
+	float: left;
+	width: 275px;
+	height: 225px;
+	border: 1px solid #ccc;
+	margin: 4px;
+}
+
 .file {
 	width: 480pt;
 	height: 280pt;
