@@ -1,6 +1,7 @@
 <?php
 /*
 Copyright (C) 2012-2014 Jesus Perez, Timothy Martin
+Branch Contributions (C) 2014-2015 Jay C. Heil (jcheil67@gmail.com)
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
@@ -18,25 +19,76 @@ for more details.
 // SAMPLE: http://finleyridge.com/power/getstatus.php?q=months&date=2013-12-02
 //
 
+error_reporting(E_ALL);
+ini_set("display_errors", "On");
+
+require_once './config/timezone.php';
+
+$cc_array = array();
+$fx_array = array();
+$rad_array = array();
+
+// $debugGetStatus - may be set to "Y" in config.php to enable detailed query logging to getstatus.log
+
+if ($debugGetStatus = "Y") {
+	mmLog('debug', "************************************************************\nGetStatus.php CALLED: ".date('Y-m-d H:i:s'));
+}
 
 if (isset($_GET) && isset($_GET["q"])) {
 	ob_start(); //Redirect output to internal buffer
     require_once './config/config.php';
 	ob_end_clean(); 
 
+	buildDeviceArrays();
+
 	$date = NULL;
-	$scope = NULL;
-		
+	$scope = NULL;		// aka WIDTH in monitormate.html
+	$increment = 5;		// default to 5 minute data increments
+	
 	if (isset($_GET["date"])) {
 		// TODO: I should verify that the date is properly formatted.
 		$date = $_GET["date"];
+
+		if ($debugGetStatus = "Y") {
+			mmLog('debug', "DATE Passed: ".$date);
+		}
+
+	} else {
+		if ($debugGetStatus = "Y") {
+			mmLog('debug', "NO DATE Passed");
+		}
 	}
 	
 	if (isset($_GET["scope"])) {
 		// TODO: I should verify that it's an integer in a valid range.
 		$scope = $_GET["scope"];
+
+		if ($debugGetStatus = "Y") {
+			mmLog('debug', "SCOPE Passed: ".$scope);
+		}
+	} else {
+		if ($debugGetStatus = "Y") {
+			mmLog('debug', "NO SCOPE Passed");
+		}
 	}
-	
+
+	if (isset($_GET["increment"])) {
+		// TODO: I should verify that it's an integer in a valid range.
+		$increment = $_GET["increment"];
+
+		if ($debugGetStatus = "Y") {
+			mmLog('debug', "INCREMENT Passed: ".$increment);
+		}
+	} else {
+		if ($debugGetStatus = "Y") {
+			mmLog('debug', "NO INCREMENT Passed");
+		}
+	}
+
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "Q Passed: ".$_GET["q"]);
+	}
+
 	switch ($_GET["q"]) {
 		case 'years':
 			query_years($date);
@@ -55,7 +107,41 @@ if (isset($_GET) && isset($_GET["q"])) {
 			break;
 	}
 } else {
+
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "Invalid Parameters Passed");
+	}
+
 	echo("ERROR: no (or incorrect) parameters set.");
+}
+
+
+function buildDeviceArrays() {
+	global $cc_array;
+	global $fx_array;
+	global $rad_array;
+
+	$status_array = json_decode( file_get_contents("./data/status.json"), true);
+
+	foreach ($status_array['devices'] as $i) {
+		switch ($i["device_id"]) {
+
+			case CC_ID:
+				array_push($cc_array,$i["address"]);
+				break;
+
+			case FX_ID:
+				array_push($fx_array,$i["address"]);
+				break;
+
+			case RAD_ID:
+				array_push($rad_array,$i["address"]);
+				break;
+
+			default:
+				break;
+		}
+	}
 }
 
 
@@ -82,6 +168,10 @@ function query_years($date) {
 				WHERE ".$whereClause."				
 				GROUP BY year(date)
 				ORDER BY year";
+
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "function query_years: ".$query);
+	}
 
 	$query_result = mysql_query($query,$connection);
 	$result = NULL;
@@ -136,6 +226,10 @@ function query_months($date) {
 				WHERE ".$whereClause."
 				GROUP BY month
 				ORDER BY month";
+
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "function query_months: ".$query);
+	}
 
 	$query_result = mysql_query($query, $connection);
 	$result=NULL;
@@ -207,6 +301,10 @@ function query_days($date) {
 				FROM monitormate_summary
 				WHERE ".$whereClause."
 				ORDER BY date";
+
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "function query_days: ".$query);
+	}
 				
 	$query_result = mysql_query($query, $connection);
 	$result=NULL;
@@ -223,22 +321,41 @@ function query_days($date) {
 
 
 function query_full_day($date, $scope){
+	global $increment;
+	global $cc_array;
+	global $fx_array;
+	global $rad_array;
+
 	//
 	// Used to generate all three of the "current" charts that shows daily activity.
 	//	
 	$connection = db_connection();
 
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "Using Increment: ".$increment);
+		mmLog('debug', "#FX: ".count($fx_array));
+		mmLog('debug', "#CC: ".count($cc_array));
+		mmLog('debug', "#RAD: ".count($rad_array));
+	}
+
 	// should always a date, and should always be formatted YYYY-MM-DD
 	// not always a scope, but always an int if there is one.
 
+	// store the current date and time as on the local server
+	// that every query below will use the exact same date and time (up to the second)
+	// and will also return proper data if the hosting server is in a different timezone and 
+	// the mySQL server timezone cannot be changed due to the hosting priovider's policy
+	// (i.e. shared hosting at godaddy)  
+	$now_dt = date('Y-m-d H:i:s');
+	
 	if ($date == date("Y-m-d")) {
 		// if the date is today...
 		if (isset($scope)) {
 			// ...and it's scoped.
-			$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
+			$whereClause = "date > DATE_SUB('".$now_dt."', INTERVAL ".$scope." HOUR)";
 		} else {
 			// ...with no scope.
-			$whereClause = "date(date) = date(NOW())";
+			$whereClause = "date(date) = date('".$now_dt."')";
 		}		
 	} else {
 		// It's not today...
@@ -252,39 +369,189 @@ function query_full_day($date, $scope){
 		}
 	}
 
+	// build the queries based on the increment
+	// haven't been able to figure out a better way to do this without the UNION
+	// when multiple devices exist
+
+	// TODO: Maybe someday it would be better to take the AVERAGE of all the values BETWEEN the
+	// increments rather than just taking each increment point value?
+
+	// no need to increment scope this query, it only returns 1 record every time
 	$query_summary =	"SELECT *
 						FROM monitormate_summary
 						WHERE date(date) = date('".$date."')
 						ORDER BY date";
-						// WHERE ".$whereClause."
 
-	$query_cc = 		"SELECT *
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "function query_full_day (query_summary): ".$query_summary);
+	}
+						
+	// if there's more than one charge controller (fm/mx) we should get the cc totals.
+	if ((count($cc_array) == 1) or ($increment == 1) or ($increment == 0)) {
+		$query_cc_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts 
+							FROM monitormate_cc
+							WHERE ".$whereClause."
+							GROUP BY date
+							ORDER BY date";
+	} else {
+
+
+		$query_cc_totals = "";
+		$query_cc_totals = $query_cc_totals . "SELECT rdg.date, SUM(rdg.charge_current) AS total_current, rdg.battery_volts  
+													FROM  
+													("; 
+	
+		for ($i = 1; $i <= count($cc_array); $i = $i + 1) {
+			$query_cc_totals = $query_cc_totals . "(SELECT 
+										t.*, @row".$i." := @row".$i." + 1 as RowNumber  
+									FROM 
+										monitormate_cc t
+										, (select @row".$i." := 0) r
+									WHERE ".$whereClause."
+										AND address = ". $cc_array[$i-1] ."
+									ORDER BY 
+										date";
+			$query_cc_totals = $query_cc_totals . ") union ";
+		}						
+		// remove the last union
+		$query_cc_totals = substr($query_cc_totals,0,strlen($query_cc_totals)-8);
+
+		$query_cc_totals = $query_cc_totals .	"	) 
+									) rdg 
+									WHERE RowNumber % ".strval($increment)." = 0
+									GROUP BY date
+									ORDER BY date ";
+	}
+
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "function query_full_day (query_cc_totals): ".$query_cc_totals);
+	}
+
+	
+	$query_fndc = "select rd.* FROM
+								((SELECT 
+									t.*, @row := @row + 1 as RowNumber  
+								FROM 
+									monitormate_fndc t
+									, (select @row := 0) r
+								WHERE ".$whereClause."
+								ORDER BY 
+									date)
+								) rd
+								WHERE rd.RowNumber % ".strval($increment)." = 0
+								ORDER BY date";	
+	
+
+		if ($debugGetStatus = "Y") {
+		mmLog('debug', "function query_full_day (query_fndc): ".$query_fndc);
+	}
+
+
+	if ((count($cc_array) == 0) or ($increment == 1) or ($increment == 0)) {	
+		$query_cc = 		"SELECT *
 						FROM monitormate_cc
 						WHERE ".$whereClause."
 						ORDER BY date";
+	} else {
+
+		$query_cc = "";
+		$query_cc = $query_cc . "SELECT rd.* FROM
+									(";
 	
-	// if there's more than one charge controller (fm/mx) we should get the cc totals.
-	$query_cc_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts 
-						FROM `monitormate_cc`
-						WHERE ".$whereClause."
-						GROUP BY date
-						ORDER BY date";
-	 
-	$query_fndc =		"SELECT *
-						FROM monitormate_fndc
-						WHERE ".$whereClause."
-						ORDER BY date";
+		for ($i = 1; $i <= count($cc_array); $i = $i + 1) {
+			$query_cc = $query_cc . "(SELECT 
+										t.*, @row".$i." := @row".$i." + 1 as RowNumber  
+									FROM 
+										monitormate_cc t
+										, (select @row".$i." := 0) r
+									WHERE ".$whereClause."
+										AND address = ". $cc_array[$i-1] ."
+									ORDER BY 
+										date";
+			$query_cc = $query_cc . ") union ";
+		}						
+		// remove the last union
+		$query_cc = substr($query_cc,0,strlen($query_cc)-8);
+		$query_cc = $query_cc .	"	)) rd
+									WHERE rd.RowNumber % ".strval($increment)." = 0
+									ORDER BY date, address";
+	}
+	
 
-	$query_fx =			"SELECT *
-						FROM monitormate_fx
-						WHERE ".$whereClause."
-						ORDER BY date";
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "function query_full_day (query_cc): ".$query_cc);
+	}
 
-	$query_radian =		"SELECT *
-						FROM monitormate_radian
-						WHERE ".$whereClause."
-						ORDER BY date";
+
+	if ((count($fx_array) == 0) or ($increment == 1) or ($increment == 0)) {	
+		$query_fx =			"SELECT *
+							FROM monitormate_fx
+							WHERE ".$whereClause."
+							ORDER BY date";
+	} else {
 		
+		$query_fx = "";
+		$query_fx = $query_fx . "SELECT rd.* FROM
+									(";
+	
+		for ($i = 1; $i <= count($fx_array); $i = $i + 1) {
+			$query_fx = $query_fx . "(SELECT 
+										t.*, @row".$i." := @row".$i." + 1 as RowNumber  
+									FROM 
+										monitormate_fx t
+										, (select @row".$i." := 0) r
+									WHERE ".$whereClause."
+										AND address = ". $fx_array[$i-1] ."
+									ORDER BY 
+										date";
+			$query_fx = $query_fx . ") union ";
+		}						
+		// remove the last union
+		$query_fx = substr($query_fx,0,strlen($query_fx)-8);
+		$query_fx = $query_fx .	"	)) rd
+									WHERE rd.RowNumber % ".strval($increment)." = 0
+									ORDER BY date";
+	}
+
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "function query_full_day (query_fx): ".$query_fx);
+	}
+
+
+	if ((count($rad_array) == 0) or ($increment == 1) or ($increment == 0)) {
+		$query_radian =		"SELECT *
+							FROM monitormate_radian
+							WHERE ".$whereClause."
+							ORDER BY date";
+		
+	} else {	
+		$query_radian = "";
+		$query_radian = $query_radian . "SELECT rd.* FROM
+									(";
+	
+		for ($i = 1; $i <= count($rad_array); $i = $i + 1) {
+			$query_radian = $query_radian . "(SELECT 
+										t.*, @row".$i." := @row".$i." + 1 as RowNumber  
+									FROM 
+										monitormate_radian t
+										, (select @row".$i." := 0) r
+									WHERE ".$whereClause."
+										AND address = ". $rad_array[$i-1] ."
+									ORDER BY 
+										date";
+			$query_radian = $query_radian . ") union ";
+		}						
+		// remove the last union
+		$query_radian = substr($query_radian,0,strlen($query_radian)-8);
+		$query_radian = $query_radian .	"	)) rd
+									WHERE rd.RowNumber % ".strval($increment)." = 0
+									ORDER BY date";
+	}
+
+	if ($debugGetStatus = "Y") {
+		mmLog('debug', "function query_full_day (query_radian): ".$query_radian);
+	}
+
 	$result_summary	= mysql_query($query_summary, $connection);
 	$result_cc = mysql_query($query_cc, $connection);
 	$result_fndc = mysql_query($query_fndc, $connection);
@@ -363,6 +630,13 @@ function set_elementTypes(&$row) {
 		$row[$key] = $value;
 	}
 	return;
+}
+
+function mmLog($type, $msg) {
+
+	$data = $msg."\r\n";
+	file_put_contents('./data/getstatus.log', $data, FILE_APPEND);
+
 }
 
 ?>
