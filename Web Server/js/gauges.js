@@ -219,7 +219,7 @@ function get_batt_volts_gauge() {
 		},
 		yAxis: {
 			min: cfg_sysVoltage - (cfg_sysVoltage/12),
-			max: cfg_sysVoltage + (cfg_sysVoltage*3.5/12),
+			max: cfg_sysVoltage + (cfg_sysVoltage*4/12),
 
 			tickInterval: 2,
 			minorTickInterval: 0.5,
@@ -246,7 +246,7 @@ function get_batt_volts_gauge() {
 				color: '#39c21d' // green
 			}, {
 				from: cfg_sysVoltage + (cfg_sysVoltage/4),
-				to: cfg_sysVoltage + (cfg_sysVoltage*3.5/12),
+				to: cfg_sysVoltage + (cfg_sysVoltage*4/12),
 				thickness: 40,
 				color: '#fadd00' // yellow
 			}]
