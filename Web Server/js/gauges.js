@@ -236,6 +236,11 @@ function get_batt_volts_gauge() {
 				color: '#fadd00' // yellow
 			}, {
 				from: cfg_sysVoltage,
+				to: cfg_sysAbsorbVoltage * 0.98,
+				thickness: 40,
+				color: 'rgba(57,194,29,0.50)' // green
+			}, {
+				from: cfg_sysAbsorbVoltage * 0.98,
 				to: cfg_sysVoltage + (cfg_sysVoltage/4),
 				thickness: 40,
 				color: '#39c21d' // green
@@ -396,14 +401,18 @@ function get_fx_inv_chrg_gauge() {
 }
 
 
-function get_fndc_shunt_gauge() {
+function get_fndc_shunt_gauge(shunt) {
 
 	/*global json_status */
-	var chart_color = [];
-	var shunt_watts = [];
+	var chart_color = null;
+	var shunt_amps = null;
+	var shunt_watts = null;
+	var shunt_label = null;
 
 	var chart_chgColor = [];
 	var chart_disColor = [];
+	var chart_max = null;
+	var chart_mode = null;
 	
 	chart_chgColor[0] = "rgba(57,194,29,0.25)"; // green
 	chart_chgColor[1] = "rgba(57,194,29,0.50)"; // green
@@ -412,189 +421,117 @@ function get_fndc_shunt_gauge() {
 	chart_disColor[0] = "rgba(250,221,0,0.25)"; // yellow
 	chart_disColor[1] = "rgba(250,221,0,0.50)"; // yellow
 	chart_disColor[2] = "rgba(250,221,0,1.00)"; // yellow
-//	chart_disColor[0] = "rgba(229,46,49,0.25)"; // red
-//	chart_disColor[1] = "rgba(229,46,49,0.50)"; // red
-//	chart_disColor[2] = "rgba(229,46,49,1.00)"; // red
 	
 	for (var i = 0; i < json_status['devices'].length; i++) {	
 		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
 			var device = json_status['devices'][i];
-			var shuntAmps = []
-			shuntAmps[1] = device.shunt_a_amps;
-			shuntAmps[2] = device.shunt_b_amps;
-			shuntAmps[3] = device.shunt_c_amps;
-
-			for (var i = 1; i <= 3; i++) {
-				if (shuntAmps[i] >= 0) {
-					chart_color[i] = chart_chgColor;
-				} else {
-					chart_color[i] = chart_disColor;
-				}
-				shunt_watts[i] = Math.abs(shuntAmps[i] * device.battery_volt);
+			
+			switch (shunt) {
+				case "A":
+					shunt_label = cfg_shuntLabel[1];
+					shunt_amps = device.shunt_a_amps;
+					break;
+				case "B":
+					shunt_label = cfg_shuntLabel[2];
+					shunt_amps = device.shunt_b_amps;
+					break;
+				case "C":
+					shunt_label = cfg_shuntLabel[3];
+					shunt_amps = device.shunt_c_amps;
+					break;
 			}
+
+			if (shunt_amps >= 0) {
+				chart_color = chart_chgColor;
+				if (shunt_amps == 0) {
+					chart_mode = "";
+				} else {
+					chart_mode = " (charging)";		
+				}
+				switch (shunt) {
+					case "A":
+						chart_max = cfg_shuntMax[1];
+						break;
+					case "B":
+						chart_max = cfg_shuntMax[3];
+						break;
+					case "C":
+						chart_max = cfg_shuntMax[5];
+						break;
+				}
+			} else {
+				chart_color = chart_disColor;
+				chart_mode = " (discharging)";
+				switch (shunt) {
+					case "A":
+						chart_max = cfg_shuntMax[0];
+						break;
+					case "B":
+						chart_max = cfg_shuntMax[2];
+						break;
+					case "C":
+						chart_max = cfg_shuntMax[4];
+						break;
+				}
+			}
+
+			if (chart_max == 0) {
+				chart_color = chart_chgColor;
+				chart_mode = "";
+				switch (shunt) {
+					case "A":
+						chart_max = cfg_shuntMax[1];
+						break;
+					case "B":
+						chart_max = cfg_shuntMax[3];
+						break;
+					case "C":
+						chart_max = cfg_shuntMax[5];
+						break;
+				}
+				shunt_watts = shunt_amps * device.battery_volt;
+			} else {
+				shunt_watts = Math.abs(shunt_amps * device.battery_volt);
+			}
+
 			break; // only one FNDC!
 		}
 	}
 	
 	chart_options = {
-		chart: {
-			width: 275 * 3,
-			height: 225
-		},
 
 		title: {
-			text: "Shunts"
+			text: shunt_label + chart_mode
 		},
 
-		pane: [{
-			startAngle: -90,
-			endAngle: 90,
-			background: null,
-			size: 200,
-			center: ['15%', 125]
-		}, {
-			startAngle: -90,
-			endAngle: 90,
-			background: null,
-			size: 200,
-			center: ['50%', 125]
-		}, {
-			startAngle: -90,
-			endAngle: 90,
-			background: null,
-			size: 200,
-			center: ['85%', 125]
-		}],
+		yAxis: {
+			min: 0,
+			max: chart_max,
 
-		yAxis: [{
-			min: 0,
-			max: cfg_shuntMax[1],
-			endOnTick: false,
 //			tickInterval: 500,
-			tickWidth: 1,
-			tickPosition: 'inside',
-			tickLength: 8,
-			tickColor: 'rgba(0,0,0,0.5)',
 //			minorTickInterval: 100,
-			minorTickWidth: 1,
-			minorTickPosition: 'inside',
-			minorTickLength: 4,
-			minorTickColor: 'rgba(0,0,0,0.25)',
-			lineWidth: 1,
-			lineColor: 'rgba(0,0,0,0.375)',
-			labels: {
-				enabled: true,
-				step: 2,
-				distance: 8,
-				rotation: 'auto',
-				zIndex: -10
-			},
+//
+//			labels: {
+//				step: 2,
+//			},
+
 			plotBands: [{
 				from: 0,
-				to: (cfg_shuntMax[1]*0.20),
+				to: (chart_max*0.20),
 				thickness: 40,
-				color: chart_color[1][0]
+				color: chart_color[0]
 			}, {
-				from: (cfg_shuntMax[1]*0.20),
-				to: (cfg_shuntMax[1]*0.80),
+				from: (chart_max*0.20),
+				to: (chart_max*0.80),
 				thickness: 40,
-				color: chart_color[1][1]
+				color: chart_color[1]
 			}, {
-				from: (cfg_shuntMax[1]*0.80),
-				to: cfg_shuntMax[1],
+				from: (chart_max*0.80),
+				to: chart_max,
 				thickness: 40,
-				color: chart_color[1][2]
+				color: chart_color[2]
 			}],
-			pane: 0,
-			title: {
-				text: cfg_shuntLabel[1],
-				y: 25
-			}
-		}, {
-			min: 0,
-			max: cfg_shuntMax[2],
-//			tickInterval: 500,
-			tickWidth: 1,
-			tickPosition: 'inside',
-			tickLength: 8,
-			tickColor: 'rgba(0,0,0,0.5)',
-//			minorTickInterval: 100,
-			minorTickWidth: 1,
-			minorTickPosition: 'inside',
-			minorTickLength: 4,
-			minorTickColor: 'rgba(0,0,0,0.25)',
-			lineWidth: 1,
-			lineColor: 'rgba(0,0,0,0.375)',
-			labels: {
-				enabled: true,
-				step: 2,
-				distance: 8,
-				rotation: 'auto',
-				zIndex: -10
-			},
-			plotBands: [{
-				from: 0,
-				to: (cfg_shuntMax[2]*0.20),
-				thickness: 40,
-				color: chart_color[2][0]
-			}, {
-				from: (cfg_shuntMax[2]*0.20),
-				to: (cfg_shuntMax[2]*0.80),
-				thickness: 40,
-				color: chart_color[2][1]
-			}, {
-				from: (cfg_shuntMax[2]*0.80),
-				to: cfg_shuntMax[2],
-				thickness: 40,
-				color: chart_color[2][2]
-			}],
-			pane: 1,
-			title: {
-				text: cfg_shuntLabel[2],
-				y: 25
-			}
-		}, {
-			min: 0,
-			max: cfg_shuntMax[3],
-			tickWidth: 1,
-			tickPosition: 'inside',
-			tickLength: 8,
-			tickColor: 'rgba(0,0,0,0.5)',
-			minorTickWidth: 1,
-			minorTickPosition: 'inside',
-			minorTickLength: 4,
-			minorTickColor: 'rgba(0,0,0,0.25)',
-			lineWidth: 1,
-			lineColor: 'rgba(0,0,0,0.375)',
-			labels: {
-				enabled: true,
-				step: 2,
-				distance: 8,
-				rotation: 'auto',
-				zIndex: -10
-			},
-			plotBands: [{
-				from: 0,
-				to: (cfg_shuntMax[3]*0.20),
-				thickness: 40,
-				color: chart_color[3][0]
-			}, {
-				from: (cfg_shuntMax[3]*0.20),
-				to: (cfg_shuntMax[3]*0.80),
-				thickness: 40,
-				color: chart_color[3][1]
-			}, {
-				from: (cfg_shuntMax[3]*0.80),
-				to: cfg_shuntMax[3],
-				thickness: 40,
-				color: chart_color[3][2]
-			}],
-			pane: 2,
-			title: {
-				text: cfg_shuntLabel[3],
-				y: 25
-			}
-		}],
+		},
 
 		plotOptions: {
 			gauge: {
@@ -605,288 +542,29 @@ function get_fndc_shunt_gauge() {
 		},
 
 		series: [{
-			data: [shunt_watts[1]],
-			yAxis: 0
-		}, {
-			data: [shunt_watts[2]],
-			yAxis: 1
-		}, {
-			data: [shunt_watts[3]],
-			yAxis: 2
+			data: [shunt_watts]
 		}]
 	};
 
 	return chart_options;
 
 }
+
 
 function get_fndc_shuntA_gauge() {
-
-	/*global json_status */
-	var chart_color = null;
-	var shunt_watts = null;
-
-	var chart_chgColor = [];
-	var chart_disColor = [];
-	
-	chart_chgColor[0] = "rgba(57,194,29,0.25)"; // green
-	chart_chgColor[1] = "rgba(57,194,29,0.50)"; // green
-	chart_chgColor[2] = "rgba(57,194,29,1.00)"; // green
-
-	chart_disColor[0] = "rgba(250,221,0,0.25)"; // yellow
-	chart_disColor[1] = "rgba(250,221,0,0.50)"; // yellow
-	chart_disColor[2] = "rgba(250,221,0,1.00)"; // yellow
-//	chart_disColor[0] = "rgba(229,46,49,0.25)"; // red
-//	chart_disColor[1] = "rgba(229,46,49,0.50)"; // red
-//	chart_disColor[2] = "rgba(229,46,49,1.00)"; // red
-	
-	for (var i = 0; i < json_status['devices'].length; i++) {	
-		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
-			var device = json_status['devices'][i];
-
-			if (device.shunt_a_amps >= 0) {
-				chart_color = chart_chgColor;
-				chart_mode = " Charging";
-			} else {
-				chart_color = chart_disColor;
-				chart_mode = " Discharging";
-			}
-			shunt_watts = Math.abs(device.shunt_a_amps * device.battery_volt);			
-
-			break; // only one FNDC!
-		}
-	}
-	
-	chart_options = {
-
-		title: {
-			text: cfg_shuntLabel[1] + chart_mode
-		},
-
-		yAxis: {
-			min: 0,
-			max: cfg_shuntMax[1],
-
-			tickInterval: 500,
-			minorTickInterval: 100,
-
-			labels: {
-				step: 2,
-			},
-
-			plotBands: [{
-				from: 0,
-				to: (cfg_shuntMax[1]*0.20),
-				thickness: 40,
-				color: chart_color[0]
-			}, {
-				from: (cfg_shuntMax[1]*0.20),
-				to: (cfg_shuntMax[1]*0.80),
-				thickness: 40,
-				color: chart_color[1]
-			}, {
-				from: (cfg_shuntMax[1]*0.80),
-				to: cfg_shuntMax[1],
-				thickness: 40,
-				color: chart_color[2]
-			}],
-		},
-
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					format: '{point.y:,.0f} Watts'
-				}
-			}
-		},
-
-		series: [{
-			data: [shunt_watts]
-		}]
-	};
-
-	return chart_options;
-
+	return get_fndc_shunt_gauge("A");
 }
+
 
 function get_fndc_shuntB_gauge() {
-
-	/*global json_status */
-	var chart_color = null;
-	var shunt_watts = null;
-
-	var chart_chgColor = [];
-	var chart_disColor = [];
-	
-	chart_chgColor[0] = "rgba(57,194,29,0.25)"; // green
-	chart_chgColor[1] = "rgba(57,194,29,0.50)"; // green
-	chart_chgColor[2] = "rgba(57,194,29,1.00)"; // green
-
-	chart_disColor[0] = "rgba(250,221,0,0.25)"; // yellow
-	chart_disColor[1] = "rgba(250,221,0,0.50)"; // yellow
-	chart_disColor[2] = "rgba(250,221,0,1.00)"; // yellow
-//	chart_disColor[0] = "rgba(229,46,49,0.25)"; // red
-//	chart_disColor[1] = "rgba(229,46,49,0.50)"; // red
-//	chart_disColor[2] = "rgba(229,46,49,1.00)"; // red
-	
-	for (var i = 0; i < json_status['devices'].length; i++) {	
-		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
-			var device = json_status['devices'][i];
-
-			if (device.shunt_b_amps >= 0) {
-				chart_color = chart_chgColor;
-				chart_mode = " Charging";
-			} else {
-				chart_color = chart_disColor;
-				chart_mode = " Discharging";
-			}
-			shunt_watts = Math.abs(device.shunt_b_amps * device.battery_volt);			
-
-			break; // only one FNDC!
-		}
-	}
-	
-	chart_options = {
-
-		title: {
-			text: cfg_shuntLabel[2] + chart_mode
-		},
-
-		yAxis: {
-			min: 0,
-			max: cfg_shuntMax[2],
-
-			tickInterval: 500,
-			minorTickInterval: 100,
-
-			labels: {
-				step: 2,
-			},
-
-			plotBands: [{
-				from: 0,
-				to: (cfg_shuntMax[2]*0.20),
-				thickness: 40,
-				color: chart_color[0]
-			}, {
-				from: (cfg_shuntMax[2]*0.20),
-				to: (cfg_shuntMax[2]*0.80),
-				thickness: 40,
-				color: chart_color[1]
-			}, {
-				from: (cfg_shuntMax[2]*0.80),
-				to: cfg_shuntMax[2],
-				thickness: 40,
-				color: chart_color[2]
-			}],
-		},
-
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					format: '{point.y:,.0f} Watts'
-				}
-			}
-		},
-
-		series: [{
-			data: [shunt_watts]
-		}]
-	};
-
-	return chart_options;
-
+	return get_fndc_shunt_gauge("B");
 }
+
 
 function get_fndc_shuntC_gauge() {
-
-	/*global json_status */
-	var chart_color = null;
-	var chart_mode = null;
-	var shunt_watts = null;
-
-	var chart_chgColor = [];
-	var chart_disColor = [];
-	
-	chart_chgColor[0] = "rgba(57,194,29,0.25)"; // green
-	chart_chgColor[1] = "rgba(57,194,29,0.50)"; // green
-	chart_chgColor[2] = "rgba(57,194,29,1.00)"; // green
-
-	chart_disColor[0] = "rgba(250,221,0,0.25)"; // yellow
-	chart_disColor[1] = "rgba(250,221,0,0.50)"; // yellow
-	chart_disColor[2] = "rgba(250,221,0,1.00)"; // yellow
-//	chart_disColor[0] = "rgba(229,46,49,0.25)"; // red
-//	chart_disColor[1] = "rgba(229,46,49,0.50)"; // red
-//	chart_disColor[2] = "rgba(229,46,49,1.00)"; // red
-	
-	for (var i = 0; i < json_status['devices'].length; i++) {	
-		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
-			var device = json_status['devices'][i];
-
-			if (device.shunt_c_amps >= 0) {
-				chart_color = chart_chgColor;
-				chart_mode = " Charging";
-			} else {
-				chart_color = chart_disColor;
-				chart_mode = " Discharging";
-			}
-			shunt_watts = Math.abs(device.shunt_c_amps * device.battery_volt);			
-
-			break; // only one FNDC!
-		}
-	}
-	
-	chart_options = {
-
-		title: {
-			text: cfg_shuntLabel[3] + chart_mode
-		},
-
-		yAxis: {
-			min: 0,
-			max: cfg_shuntMax[3],
-
-			tickInterval: 500,
-			minorTickInterval: 100,
-
-			labels: {
-				step: 2,
-			},
-
-			plotBands: [{
-				from: 0,
-				to: (cfg_shuntMax[3]*0.20),
-				thickness: 40,
-				color: chart_color[0]
-			}, {
-				from: (cfg_shuntMax[3]*0.20),
-				to: (cfg_shuntMax[3]*0.80),
-				thickness: 40,
-				color: chart_color[1]
-			}, {
-				from: (cfg_shuntMax[3]*0.80),
-				to: cfg_shuntMax[3],
-				thickness: 40,
-				color: chart_color[2]
-			}],
-		},
-
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					format: '{point.y:,.0f} Watts'
-				}
-			}
-		},
-
-		series: [{
-			data: [shunt_watts]
-		}]
-	};
-
-	return chart_options;
-
+	return get_fndc_shunt_gauge("C");
 }
+
 
 function get_fndc_shuntNet_gauge() {
 
@@ -894,7 +572,8 @@ function get_fndc_shuntNet_gauge() {
 	var chart_color = null;
 	var net_amps = null;
 	var net_watts = null;
-	var net_max = cfg_shuntMax[1] + cfg_shuntMax[2] + cfg_shuntMax[3];
+	var net_max = null;
+	
 	var chart_chgColor = [];
 	var chart_disColor = [];
 	
@@ -917,10 +596,12 @@ function get_fndc_shuntNet_gauge() {
 
 			if (net_amps >= 0) {
 				chart_color = chart_chgColor;
-				chart_mode = "Battery Charging";
+				chart_mode = "Battery (charging)";
+				net_max = cfg_shuntMax[1] + cfg_shuntMax[3] + cfg_shuntMax[5];
 			} else {
 				chart_color = chart_disColor;
-				chart_mode = "Battery Discharging";
+				chart_mode = "Battery (discharging)";
+				net_max = cfg_shuntMax[0] + cfg_shuntMax[2] + cfg_shuntMax[4];
 			}
 			net_watts = Math.abs(net_amps * device.battery_volt);			
 
@@ -938,12 +619,12 @@ function get_fndc_shuntNet_gauge() {
 			min: 0,
 			max: net_max,
 
-			tickInterval: 500,
-			minorTickInterval: 100,
-
-			labels: {
-				step: 2,
-			},
+//			tickInterval: 500,
+//			minorTickInterval: 100,
+//
+//			labels: {
+//				step: 2,
+//			},
 
 			plotBands: [{
 				from: 0,

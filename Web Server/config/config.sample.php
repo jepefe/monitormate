@@ -70,9 +70,9 @@ $shuntLabel = array(
 // Max power that will flow in or out of each shunt. This is only to
 // inform the charts for reasonable min/max values on gauges etc.
 $shuntMax = array(
-	"A"  => 3600,
-	"B"  => 3600,
-	"C"  => 3600
+	"A_Neg"  => 4000,	"A_Pos"  => 2400,
+	"B_Neg"  => 0,		"B_Pos"  => 1500,
+	"C_Neg"  => 0,		"C_Pos"  => 1000
 );
 
 // Colors
@@ -134,9 +134,12 @@ var cfg_shuntLabel = new Array();
 	cfg_shuntLabel[3] = "<?php echo $shuntLabel['C']; ?>";
 
 var cfg_shuntMax = new Array();
-	cfg_shuntMax[1] = <?php echo $shuntMax['A']; ?>;
-	cfg_shuntMax[2] = <?php echo $shuntMax['B']; ?>;
-	cfg_shuntMax[3] = <?php echo $shuntMax['C']; ?>;
+	cfg_shuntMax[0] = <?php echo $shuntMax['A_Neg']; ?>;
+	cfg_shuntMax[1] = <?php echo $shuntMax['A_Pos']; ?>;
+	cfg_shuntMax[2] = <?php echo $shuntMax['B_Neg']; ?>;
+	cfg_shuntMax[3] = <?php echo $shuntMax['B_Pos']; ?>;
+	cfg_shuntMax[4] = <?php echo $shuntMax['C_Neg']; ?>;
+	cfg_shuntMax[5] = <?php echo $shuntMax['C_Pos']; ?>;
 
 var cfg_colorProduction = "<?php echo $colorProduction; ?>";
 var cfg_colorUsage = "<?php echo $colorUsage; ?>";
