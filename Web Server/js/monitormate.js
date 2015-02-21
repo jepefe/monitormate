@@ -191,6 +191,22 @@ Highcharts.theme = {
 };
 
 
+// Make a copy of the defaults, call this line before any other setOptions call
+var HCDefaults = $.extend(true, {}, Highcharts.getOptions(), {});
+
+function apply_highchart_theme(theme) {
+	// Fortunately, Highcharts returns the reference to defaultOptions itself
+	// We can manipulate this and delete all the properties
+	var defaultOptions = Highcharts.getOptions();
+	for (var prop in defaultOptions) {
+		if (typeof defaultOptions[prop] !== 'function') delete defaultOptions[prop];
+	}
+	// Fall back to the defaults that we captured initially, this resets the theme
+	Highcharts.setOptions(HCDefaults);
+	Highcharts.setOptions(theme);
+}
+
+
 function get_URLvars() {
 	var vars = {};
 	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
@@ -963,19 +979,25 @@ function set_chart(chart_id, content) {
 }
 
 function draw_chart(chart_id, content) {
-	var chart_data = 0;
 
+	var chart = null;
+	var chart_data = null;
+		
 	// if only one thing was passed in, assume the ID and the chart are the same name
 	if (content == null) {
 		content = chart_id;
 	}
 
-	// make a function name out of the content request
-	func_call = "get_" + content + "()";
-	chart_data = eval(func_call);
+	chart = $('#' + chart_id).highcharts();
 
-	// chart the data!
-	$('#' + chart_id).highcharts(chart_data);
+	func_call = "get_" + content + "(chart)";
+	chart_data = eval(func_call);	
+
+	if (chart) {
+		chart.series[0].setData(chart_data); // update the data	
+	} else {
+		$('#' + chart_id).highcharts(chart_data); // chart the data!		
+	}
 
 }
 

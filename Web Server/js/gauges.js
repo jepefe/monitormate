@@ -23,12 +23,15 @@ Highcharts.gaugeTheme = {
 		plotBackgroundImage: null,
 		plotBorderWidth: 0,
 		plotShadow: false,
-		width: 275,
+		width: 260,
 		height: 225
 	},
 
 	title: {
-		text: 'State of Charge'
+		text: null,
+		style: {
+			fontSize: '16px'
+		}
 	},
 
 	credits: {
@@ -114,10 +117,11 @@ Highcharts.gaugeTheme = {
 };
 
 
-function get_fndc_soc_nuGauge() {
+function get_fndc_soc_nuGauge(chart) {
 
 	/*global full_day_data, json_status */
-
+	var chart = chart || false;
+	
 	if (full_day_data["summary"]) {
 		var min_soc = full_day_data["summary"].min_soc;
 		var max_soc = full_day_data["summary"].max_soc;		
@@ -143,55 +147,62 @@ function get_fndc_soc_nuGauge() {
 		}
 	}
 
-	chart_options = {
-		title: {
-			text: 'State of Charge'
-		},
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					format: '{point.y:,.0f}%'
+	if (chart) {
+
+		return [current_soc];
+
+	} else {
+
+		chart_options = {
+			title: {
+				text: 'State of Charge'
+			},
+			plotOptions: {
+				gauge: {
+					dataLabels: {
+						format: '{point.y:,.0f}%'
+					}
 				}
-			}
-		},
-		yAxis: {
-			min: 50,
-			max: 100,
-
-			tickInterval: 5,			
-			minorTickInterval: 1,
-			
-			plotBands: [{
-				from: 50,
-				to: 60,
-				thickness: 40,
-				color: '#e52e31' // red
-			}, {
-				from: 60,
-				to: 80,
-				thickness: 40,
-				color: '#fadd00' // yellow
-			}, {
-				from: 80,
-				to: 100,
-				thickness: 40,
-				color: '#39c21d' // green
+			},
+			yAxis: {
+				min: 50,
+				max: 100,
+	
+				tickInterval: 5,			
+				minorTickInterval: 1,
+				
+				plotBands: [{
+					from: 50,
+					to: 60,
+					thickness: 40,
+					color: '#e52e31' // red
+				}, {
+					from: 60,
+					to: 80,
+					thickness: 40,
+					color: '#fadd00' // yellow
+				}, {
+					from: 80,
+					to: 100,
+					thickness: 40,
+					color: '#39c21d' // green
+				}]
+			},
+	
+			series: [{
+				data: [current_soc],
 			}]
-		},
-
-		series: [{
-			data: [current_soc],
-		}]
-	};
-
-	return chart_options;
-
+		};
+	
+		return chart_options;
+	}
 }
 
 
-function get_batt_volts_gauge() {
+function get_batt_volts_gauge(chart) {
 
 	/*global json_status */
+	var chart = chart || false;
 	var current_batt = null;
 
 	for (var i = 0; i < json_status['devices'].length; i++) {
@@ -206,65 +217,72 @@ function get_batt_volts_gauge() {
 
 	}
 
-	chart_options = {
-		title: {
-			text: 'Battery Voltage'
-		},
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					format: '{point.y:,.1f} Volts'
+	if (chart) {
+
+		return [current_batt];
+
+	} else {
+
+		chart_options = {
+			title: {
+				text: 'Battery Voltage'
+			},
+			plotOptions: {
+				gauge: {
+					dataLabels: {
+						format: '{point.y:,.1f} Volts'
+					}
 				}
-			}
-		},
-		yAxis: {
-			min: cfg_sysVoltage - (cfg_sysVoltage/12),
-			max: cfg_sysVoltage + (cfg_sysVoltage*4/12),
-
-			tickInterval: 2,
-			minorTickInterval: 0.5,
-
-			plotBands: [{
-				from: cfg_sysVoltage - (cfg_sysVoltage/12),
-				to: cfg_sysVoltage - (cfg_sysVoltage/24),
-				thickness: 40,
-				color: '#e52e31' // red
-			}, {
-				from: cfg_sysVoltage - (cfg_sysVoltage/24),
-				to: cfg_sysVoltage,
-				thickness: 40,
-				color: '#fadd00' // yellow
-			}, {
-				from: cfg_sysVoltage,
-				to: cfg_sysAbsorbVoltage * 0.98,
-				thickness: 40,
-				color: 'rgba(57,194,29,0.50)' // green
-			}, {
-				from: cfg_sysAbsorbVoltage * 0.98,
-				to: cfg_sysVoltage + (cfg_sysVoltage/4),
-				thickness: 40,
-				color: '#39c21d' // green
-			}, {
-				from: cfg_sysVoltage + (cfg_sysVoltage/4),
-				to: cfg_sysVoltage + (cfg_sysVoltage*4/12),
-				thickness: 40,
-				color: '#fadd00' // yellow
+			},
+			yAxis: {
+				min: cfg_sysVoltage - (cfg_sysVoltage/12),
+				max: cfg_sysVoltage + (cfg_sysVoltage*4/12),
+	
+				tickInterval: 2,
+				minorTickInterval: 0.5,
+	
+				plotBands: [{
+					from: cfg_sysVoltage - (cfg_sysVoltage/12),
+					to: cfg_sysVoltage - (cfg_sysVoltage/24),
+					thickness: 40,
+					color: '#e52e31' // red
+				}, {
+					from: cfg_sysVoltage - (cfg_sysVoltage/24),
+					to: cfg_sysVoltage,
+					thickness: 40,
+					color: '#fadd00' // yellow
+				}, {
+					from: cfg_sysVoltage,
+					to: cfg_sysAbsorbVoltage * 0.98,
+					thickness: 40,
+					color: 'rgba(57,194,29,0.50)' // green
+				}, {
+					from: cfg_sysAbsorbVoltage * 0.98,
+					to: cfg_sysVoltage + (cfg_sysVoltage/4),
+					thickness: 40,
+					color: '#39c21d' // green
+				}, {
+					from: cfg_sysVoltage + (cfg_sysVoltage/4),
+					to: cfg_sysVoltage + (cfg_sysVoltage*4/12),
+					thickness: 40,
+					color: '#fadd00' // yellow
+				}]
+			},
+	
+			series: [{
+				data: [current_batt],
 			}]
-		},
-
-		series: [{
-			data: [current_batt],
-		}]
-	};
-
-	return chart_options;
-
+		};
+	
+		return chart_options;
+	}
 }
 
 
-function get_cc_output_gauge() {
+function get_cc_output_gauge(chart) {
 
 	/*global json_status */
+	var chart = chart || false;
 	var total_watts = 0;
 	
 	for (var i = 0; i < json_status['devices'].length; i++) {	
@@ -275,58 +293,65 @@ function get_cc_output_gauge() {
 		}
 	}
 
-	chart_options = {
-		title: {
-			text: 'Solar'
-		},
-		legend: {
-			enabled: false
-		},
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					format: '{point.y:,.0f} Watts'
+	if (chart) {
+
+		return [total_watts];
+
+	} else {
+
+		chart_options = {
+			title: {
+				text: 'Charge Controllers'
+			},
+			legend: {
+				enabled: false
+			},
+			plotOptions: {
+				gauge: {
+					dataLabels: {
+						format: '{point.y:,.0f} Watts'
+					}
 				}
-			}
-		},
-		yAxis: {
-			min: 0,
-			max: cfg_pvWattage,
-
-			tickInterval: 500,
-			minorTickInterval: 100,
-			
-			plotBands: [{
-				from: 0,
-				to: (cfg_pvWattage*0.20),
-				thickness: 40,
-				color: 'rgba(57,194,29,0.25)' // green
-			}, {
-				from: (cfg_pvWattage*0.20),
-				to: (cfg_pvWattage*0.80),
-				thickness: 40,
-				color: 'rgba(57,194,29,0.50)' // green
-			}, {
-				from: (cfg_pvWattage*0.80),
-				to: cfg_pvWattage,
-				thickness: 40,
-				color: 'rgba(57,194,29,1.0)' // green
+			},
+			yAxis: {
+				min: 0,
+				max: cfg_pvWattage,
+	
+				tickInterval: 500,
+				minorTickInterval: 100,
+				
+				plotBands: [{
+					from: 0,
+					to: (cfg_pvWattage*0.20),
+					thickness: 40,
+					color: 'rgba(57,194,29,0.25)' // green
+				}, {
+					from: (cfg_pvWattage*0.20),
+					to: (cfg_pvWattage*0.80),
+					thickness: 40,
+					color: 'rgba(57,194,29,0.50)' // green
+				}, {
+					from: (cfg_pvWattage*0.80),
+					to: cfg_pvWattage,
+					thickness: 40,
+					color: 'rgba(57,194,29,1.0)' // green
+				}]
+			},
+	
+			series: [{
+				data: [total_watts],
 			}]
-		},
-
-		series: [{
-			data: [total_watts],
-		}]
-	};
-
-	return chart_options;
-
+		};
+	
+		return chart_options;
+	}
 }
 
 
-function get_fx_inv_chrg_gauge() {
+function get_fx_inv_chrg_gauge(chart) {
 
 	/*global json_status */
+	var chart = chart || false;
 	var total_watts = 0;
 	var chart_mode = null;
 	var chart_max = null; 
@@ -335,12 +360,12 @@ function get_fx_inv_chrg_gauge() {
 		if (json_status['devices'][i]['device_id'] == FX_ID) {
 			var device = json_status['devices'][i];
 			if (device.operational_mode == "Charge") {
-				chart_mode = "Charger";
+				chart_mode = "Chargers";
 				chart_max = cfg_chargerMax;
 				var charging_watts = device.charge_current * device.ac_input_voltage;
 				total_watts = total_watts + charging_watts;
 			} else {
-				chart_mode = "Inverter";
+				chart_mode = "Inverters";
 				chart_max = cfg_inverterMax;
 				var inverting_watts = device.inverter_current * device.ac_output_voltage;
 				total_watts = total_watts + inverting_watts;
@@ -349,59 +374,65 @@ function get_fx_inv_chrg_gauge() {
 	}
 	total_watts = Math.round(total_watts / 100) * 100;
 
-	chart_options = {
-		title: {
-			text: chart_mode
-		},
+	if (chart) {
 
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					format: '{point.y:,.0f} Watts'
-				}
-			}
-		},
+		return [total_watts];
 
-		yAxis: {
-			min: 0,
-			max: chart_max,
-
-			tickInterval: 500,
-			minorTickInterval: 100,
-			
-			labels: {
-				step: 2
+	} else {
+	
+		chart_options = {
+			title: {
+				text: chart_mode
 			},
-			
-			plotBands: [{
-				from: 0,
-				to: (chart_max*0.8),
-				thickness: 40,
-				color: '#39c21d' // green
-			}, {
-				from: (chart_max*0.8),
-				to: (chart_max*0.95),
-				thickness: 40,
-				color: '#fadd00' // yellow
-			}, {
-				from: (chart_max*0.95),
-				to: chart_max,
-				thickness: 40,
-				color: '#e52e31' // red
+	
+			plotOptions: {
+				gauge: {
+					dataLabels: {
+						format: '{point.y:,.0f} Watts'
+					}
+				}
+			},
+	
+			yAxis: {
+				min: 0,
+				max: chart_max,
+	
+				tickInterval: 500,
+				minorTickInterval: 100,
+				
+				labels: {
+					step: 2
+				},
+				
+				plotBands: [{
+					from: 0,
+					to: (chart_max*0.8),
+					thickness: 40,
+					color: '#39c21d' // green
+				}, {
+					from: (chart_max*0.8),
+					to: (chart_max*0.95),
+					thickness: 40,
+					color: '#fadd00' // yellow
+				}, {
+					from: (chart_max*0.95),
+					to: chart_max,
+					thickness: 40,
+					color: '#e52e31' // red
+				}]
+			},
+	
+			series: [{
+				data: [total_watts],
 			}]
-		},
-
-		series: [{
-			data: [total_watts],
-		}]
-	};
-
-	return chart_options;
-
+		};
+	
+		return chart_options;
+	}
 }
 
 
-function get_fndc_shunt_gauge(shunt) {
+function get_fndc_shunt_gauge(shunt, chart) {
 
 	/*global json_status */
 	var chart_color = null;
@@ -497,78 +528,88 @@ function get_fndc_shunt_gauge(shunt) {
 			break; // only one FNDC!
 		}
 	}
+
+	if (chart) {
+
+		return [shunt_watts];
+
+	} else {
 	
-	chart_options = {
-
-		title: {
-			text: shunt_label + chart_mode
-		},
-
-		yAxis: {
-			min: 0,
-			max: chart_max,
-
-//			tickInterval: 500,
-//			minorTickInterval: 100,
-//
-//			labels: {
-//				step: 2,
-//			},
-
-			plotBands: [{
-				from: 0,
-				to: (chart_max*0.20),
-				thickness: 40,
-				color: chart_color[0]
-			}, {
-				from: (chart_max*0.20),
-				to: (chart_max*0.80),
-				thickness: 40,
-				color: chart_color[1]
-			}, {
-				from: (chart_max*0.80),
-				to: chart_max,
-				thickness: 40,
-				color: chart_color[2]
-			}],
-		},
-
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					format: '{point.y:,.0f} Watts'
+		chart_options = {
+	
+			title: {
+				text: shunt_label + chart_mode
+			},
+	
+			yAxis: {
+				min: 0,
+				max: chart_max,
+	
+	//			tickInterval: 500,
+	//			minorTickInterval: 100,
+	//
+	//			labels: {
+	//				step: 2,
+	//			},
+	
+				plotBands: [{
+					from: 0,
+					to: (chart_max*0.20),
+					thickness: 40,
+					color: chart_color[0]
+				}, {
+					from: (chart_max*0.20),
+					to: (chart_max*0.80),
+					thickness: 40,
+					color: chart_color[1]
+				}, {
+					from: (chart_max*0.80),
+					to: chart_max,
+					thickness: 40,
+					color: chart_color[2]
+				}],
+			},
+	
+			plotOptions: {
+				gauge: {
+					dataLabels: {
+						format: '{point.y:,.0f} Watts'
+					}
 				}
-			}
-		},
-
-		series: [{
-			data: [shunt_watts]
-		}]
-	};
-
-	return chart_options;
-
+			},
+	
+			series: [{
+				data: [shunt_watts]
+			}]
+		};
+	
+		return chart_options;
+	}
 }
 
 
-function get_fndc_shuntA_gauge() {
-	return get_fndc_shunt_gauge("A");
+function get_fndc_shuntA_gauge(chart) {
+	var chart = chart || false;
+	return get_fndc_shunt_gauge("A", chart);
 }
 
 
-function get_fndc_shuntB_gauge() {
-	return get_fndc_shunt_gauge("B");
+function get_fndc_shuntB_gauge(chart) {
+	var chart = chart || false;
+	return get_fndc_shunt_gauge("B", chart);
 }
 
 
-function get_fndc_shuntC_gauge() {
-	return get_fndc_shunt_gauge("C");
+function get_fndc_shuntC_gauge(chart) {
+	var chart = chart || false;
+	return get_fndc_shunt_gauge("C", chart);
 }
 
 
-function get_fndc_shuntNet_gauge() {
+function get_fndc_shuntNet_gauge(chart) {
 
 	/*global json_status */
+	var chart = chart || false;
 	var chart_color = null;
 	var net_amps = null;
 	var net_watts = null;
@@ -608,55 +649,61 @@ function get_fndc_shuntNet_gauge() {
 			break; // only one FNDC!
 		}
 	}
+
+	if (chart) {
+
+		return [net_watts];
+
+	} else {
+
+		chart_options = {
 	
-	chart_options = {
-
-		title: {
-			text: chart_mode
-		},
-
-		yAxis: {
-			min: 0,
-			max: net_max,
-
-//			tickInterval: 500,
-//			minorTickInterval: 100,
-//
-//			labels: {
-//				step: 2,
-//			},
-
-			plotBands: [{
-				from: 0,
-				to: (net_max*0.20),
-				thickness: 40,
-				color: chart_color[0]
-			}, {
-				from: (net_max*0.20),
-				to: (net_max*0.80),
-				thickness: 40,
-				color: chart_color[1]
-			}, {
-				from: (net_max*0.80),
-				to: net_max,
-				thickness: 40,
-				color: chart_color[2]
-			}],
-		},
-
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					format: '{point.y:,.0f} Watts'
+			title: {
+				text: chart_mode
+			},
+	
+			yAxis: {
+				min: 0,
+				max: net_max,
+	
+	//			tickInterval: 500,
+	//			minorTickInterval: 100,
+	//
+	//			labels: {
+	//				step: 2,
+	//			},
+	
+				plotBands: [{
+					from: 0,
+					to: (net_max*0.20),
+					thickness: 40,
+					color: chart_color[0]
+				}, {
+					from: (net_max*0.20),
+					to: (net_max*0.80),
+					thickness: 40,
+					color: chart_color[1]
+				}, {
+					from: (net_max*0.80),
+					to: net_max,
+					thickness: 40,
+					color: chart_color[2]
+				}],
+			},
+	
+			plotOptions: {
+				gauge: {
+					dataLabels: {
+						format: '{point.y:,.0f} Watts'
+					}
 				}
-			}
-		},
-
-		series: [{
-			data: [net_watts]
-		}]
-	};
-
-	return chart_options;
-
+			},
+	
+			series: [{
+				data: [net_watts]
+			}]
+		};
+	
+		return chart_options;
+	}
 }

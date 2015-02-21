@@ -40,12 +40,16 @@
 
 		$(document).ready(function() {
 
-			get_dataStream(false, 1);
-			get_current_status();
-			
 			// Apply the common gauge theme 
-			Highcharts.setOptions(Highcharts.gaugeTheme);
+			apply_highchart_theme(Highcharts.gaugeTheme);
 
+			get_dataStream(false, 1);
+			refresh_data();
+			setInterval("refresh_data()", 2*1000);
+		});
+
+		function refresh_data() {
+			get_current_status();
 			draw_chart("fndc_soc_gauge", "fndc_soc_nuGauge");
 			draw_chart("batt_volts_gauge");
 			draw_chart("cc_output_gauge");
@@ -54,11 +58,6 @@
 			draw_chart("fndc_shuntB_gauge");
 			draw_chart("fndc_shuntC_gauge");
 			draw_chart("fndc_shuntNet_gauge");
-			setInterval("refresh_data()", 15*1000);
-		});
-
-		function refresh_data() {
-			get_current_status();
 		}	
 
 	</script>

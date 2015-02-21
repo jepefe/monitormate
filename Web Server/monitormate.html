@@ -13,6 +13,7 @@
 	<script src="http://code.highcharts.com/4.1.1/highcharts-more.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
+	<script src="./js/gauges.js"></script>
 	<title>MonitorMate</title>
 </head>
 <body>
@@ -77,13 +78,16 @@
 			populate_chart_select("multichart2_select");
 			populate_chart_select("multichart3_select");
 
-			// Apply the common theme 
-			Highcharts.setOptions(Highcharts.theme);
+			// Apply the common gauge theme
+			apply_highchart_theme(Highcharts.gaugeTheme);
+			draw_chart("soc_gauge", "fndc_soc_nuGauge");
 
 			// set and draw everything in the status column on the left
-			draw_chart("soc_gauge", "fndc_soc_gauge");			
 			set_status("status_top", status_content["status_top"]);
 			set_status("status_bottom", status_content["status_bottom"]);
+
+			// Apply the common theme 
+			apply_highchart_theme(Highcharts.theme);
 
 			// set and draw all the charts on the right
 			set_chart("multichart1", chart_content["multichart1"]);
@@ -94,7 +98,7 @@
 			chart_days();
 					
 			// update the status regularly
-			setInterval("refresh_data()", 15*1000);
+			setInterval("refresh_data()", 2*1000);
 		});
 
 		function refresh_data() {
