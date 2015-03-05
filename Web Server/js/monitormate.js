@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2011-2014 Jesus Perez, Timothy Martin
+Copyright (C) 2011-2014 Jesus Perez,
+Copyright (C) 2014-2015 Timothy Martin & GitHub Contributors,
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
@@ -975,30 +976,29 @@ function set_chart(chart_id, content) {
 	$('#' + chart_id + '_select').val(content);
 	set_cookies(chart_id, content);
 
-	draw_chart(chart_id, content);
+	draw_chart(chart_id, false, content);
 }
 
-function draw_chart(chart_id, content) {
+function draw_chart(chart_id, update, content) {
 
+	var update = update || false;
 	var chart = null;
 	var chart_data = null;
-		
+
 	// if only one thing was passed in, assume the ID and the chart are the same name
 	if (content == null) {
 		content = chart_id;
 	}
 
 	chart = $('#' + chart_id).highcharts();
-
 	func_call = "get_" + content + "(chart)";
-	chart_data = eval(func_call);	
+	chart_data = eval(func_call);
 
-	if (chart) {
+	if (update) {
 		chart.series[0].setData(chart_data); // update the data	
 	} else {
-		$('#' + chart_id).highcharts(chart_data); // chart the data!		
+		$('#' + chart_id).highcharts(chart_data); // chart the data!
 	}
-
 }
 
 
@@ -1437,146 +1437,6 @@ function get_fndc_soc() {
 				to: 100
             }]
 		},
-	};
-
-	return chart_options;
-
-}
-
-
-function get_fndc_soc_gauge() {
-
-	/*global full_day_data, json_status */
-
-	if (full_day_data["summary"]) {
-		var min_soc = full_day_data["summary"].min_soc;
-		var max_soc = full_day_data["summary"].max_soc;		
-	}
-
-	for (var i = 0; i < json_status['devices'].length; i++) {
-		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
-			var device = json_status['devices'][i];
-			var current_soc = device.soc;
-			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
-			if (cfg_isApple) {
-				var upArrow = "&#11014;";
-				var downArrow = "&#11015;";
-			} else {
-				var upArrow = "&#8593;";
-				var downArrow = "&#8595;";
-			}
-			var chargeDirection = downArrow; // assume charge is falling
-			if (total_shunt_amps > 0) {
-				chargeDirection = upArrow; // if the amps are positive, then charging is going up!
-			}
-			break; // only one FNDC!
-		}
-	}
-
-	chart_options = {
-		chart: {
-			type: 'gauge',
-	        plotBackgroundColor: 'white',
-	        plotBackgroundImage: null,
-            plotBorderWidth: 0,
-	        height: 100,
-            width: 300,
-            marginTop: 1, // bug in highcharts makes me specify these separately instead of in an array.
-            marginRight: 1,
-            marginBottom: 1,
-            marginLeft: 1,
-            spacing: [0, 0, 0, 0]
-		},
-		title: {
-	        text: null
-	    },
-		legend: {
-			enabled: false  
-		},
-		pane: {
-			startAngle: -18,
-			endAngle: 18,
-			background: null,
-			size: 800,
-            center: ['50%', '430%'],
-		},
-		plotOptions: {
-			gauge: {
-				dataLabels: {
-					enabled: true,
-					borderWidth: 0,
-					zIndex: 10,
-					y: -355,
-					useHTML: true,
-					formatter: function() {
-						var string1 = this.series.name + ': <emphasis>' + this.y + '%</emphasis> ' + chargeDirection;
-						return string1;
-					}
-				},
-				dial: {
-					radius: '98%',
-                    baseWidth: 4,
-                    baseLength: '98%'
-				},
-                pivot: {
-					radius: 360,
-					borderWidth: 0,
-					borderColor: 'gray',
-					backgroundColor: 'white'	
-				}
-			}
-		},
-    	yAxis: {
-		    labels: {
-		        format: '{value}%',
-				rotation: 'auto',
-				distance: 6
-		    },
-    		lineColor: '#888',
-    		max: 100,
-    		min: 50, 
-            minorTickColor: '#888',
-            minorTickWidth: 1,
-    		minorTickLength: 5,
-		    opposite: false,
-		    plotBands: [{
-		    	// red from 0 to 59
-                color: '#f88',
-                from: 0,
-                to: 60,
-                thickness: '18'
-            }, {
-            	// yellow from 60 to 79
-				color: '#ffff44',
-				from: 60,
-				to: 80,
-                thickness: '18'
-            }, {
-				// green from 80 to 100
-				color: '#6f6',
-				from: 80,
-				to: 100,
-                thickness: '18'
-            }, {
-                // show the range of SOC for today
-                color: 'rgba(24,150,160,0.25)',
-                from: min_soc,
-                to: max_soc,
-                outerRadius: '378',
-                thickness: '18'
-            }],
-            tickInterval: 10,
-            tickColor: '#888',
-    		tickWidth: 1,
-            tickLength: 18
-		},
-		tooltip: {
-			enabled: false
-		},
-	    series: [{
-			name: 'Charge',
-			data: [current_soc]
-	    }]
 	};
 
 	return chart_options;

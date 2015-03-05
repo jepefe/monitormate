@@ -117,7 +117,7 @@ Highcharts.gaugeTheme = {
 };
 
 
-function get_fndc_soc_nuGauge(chart) {
+function get_fndc_soc_gauge(chart) {
 
 	/*global full_day_data, json_status */
 	var chart = chart || false;

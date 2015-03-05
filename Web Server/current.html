@@ -44,20 +44,23 @@
 			apply_highchart_theme(Highcharts.gaugeTheme);
 
 			get_dataStream(false, 1);
-			refresh_data();
+			refresh_data(false);
 			setInterval("refresh_data()", 2*1000);
 		});
 
-		function refresh_data() {
+		function refresh_data(update) {
+
+			var update = (update != false)? true : false;
+
 			get_current_status();
-			draw_chart("fndc_soc_gauge", "fndc_soc_nuGauge");
-			draw_chart("batt_volts_gauge");
-			draw_chart("cc_output_gauge");
-			draw_chart("fx_inv_chrg_gauge");
-			draw_chart("fndc_shuntA_gauge");
-			draw_chart("fndc_shuntB_gauge");
-			draw_chart("fndc_shuntC_gauge");
-			draw_chart("fndc_shuntNet_gauge");
+			draw_chart("fndc_soc_gauge", update);
+			draw_chart("batt_volts_gauge", update);
+			draw_chart("cc_output_gauge", update);
+			draw_chart("fx_inv_chrg_gauge", update);
+			draw_chart("fndc_shuntA_gauge", update);
+			draw_chart("fndc_shuntB_gauge", update);
+			draw_chart("fndc_shuntC_gauge", update);
+			draw_chart("fndc_shuntNet_gauge", update);
 		}	
 
 	</script>
