@@ -74,7 +74,7 @@ Highcharts.theme = {
 	},
 	plotOptions: {
 		series: {
-			turboThreshold: 1750,
+			turboThreshold: 1750
 		},
 		column: {
 			borderWidth: 0,
@@ -124,6 +124,11 @@ Highcharts.theme = {
 					}
 				}				
 			},
+			states: {
+				hover: {
+					lineWidthPlus: 0
+				}
+			},
 			showInLegend: true,
 			zIndex: -1
 		},
@@ -166,6 +171,12 @@ Highcharts.theme = {
 			fontSize: '10px',
 			padding: '6px'
 		},
+		dateTimeLabelFormats: {
+			minute: "%l:%M%P",
+			hour: "%l:%M%P",
+			day: "%l:%M%P"
+		}
+
 	},
 	xAxis: {
 		dateTimeLabelFormats: {
@@ -1031,7 +1042,7 @@ function get_cc_charge_power() {
 				day_data_watts[port][y] = {
 					x: full_day_data[CC_ID][port][y].timestamp,
 					y: (full_day_data[CC_ID][port][y].charge_current * full_day_data[CC_ID][port][y].battery_volts),
-					mode: full_day_data[CC_ID][port][y].charge_mode
+					mode: "(" + full_day_data[CC_ID][port][y].charge_mode + ")"
 				};
 			}
 		}
@@ -1067,7 +1078,7 @@ function get_cc_charge_power() {
 			shared: true,
 			useHTML: true,
 			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} ({point.mode})</td></tr>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} {point.mode}</td></tr>',
 			footerFormat: '</table>',
 			dateTimeLabelFormats: {
 				hour: '%l:%M%P'
@@ -1118,7 +1129,7 @@ function get_cc_charge_current() {
 				day_data_amps[port][y] = {
 					x: full_day_data[CC_ID][port][y].timestamp,
 					y: parseInt(full_day_data[CC_ID][port][y].charge_current),
-					mode: full_day_data[CC_ID][port][y].charge_mode
+					mode: "(" + full_day_data[CC_ID][port][y].charge_mode + ")"
 				};
 			}
 		}
@@ -1152,7 +1163,7 @@ function get_cc_charge_current() {
 			shared: true,
 			useHTML: true,
 			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} ({point.mode})</td></tr>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} {point.mode}</td></tr>',
 			footerFormat: '</table>',
 			dateTimeLabelFormats: {
 				hour: '%l:%M%P'
@@ -1193,7 +1204,7 @@ function get_cc_input_volts() {
 				day_data_array_volts[port][y] = {
 					x: full_day_data[CC_ID][port][y].timestamp,
 					y: parseFloat(full_day_data[CC_ID][port][y].pv_voltage),
-					mode: full_day_data[CC_ID][port][y].charge_mode
+					mode: "(" + full_day_data[CC_ID][port][y].charge_mode + ")"
 				};
 			}
 		}
@@ -1216,7 +1227,7 @@ function get_cc_input_volts() {
 			shared: true,
 			useHTML: true,
 			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} ({point.mode})</td></tr>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} {point.mode}</td></tr>',
 			footerFormat: '</table>',
 			dateTimeLabelFormats: {
 				hour: '%l:%M%P'
@@ -1256,7 +1267,7 @@ function get_cc_input_current() {
 				day_data_array_amps[port][y] = {
 					x: full_day_data[CC_ID][port][y].timestamp,
 					y: parseFloat(full_day_data[CC_ID][port][y].pv_current),
-					mode: full_day_data[CC_ID][port][y].charge_mode
+					mode: "(" + full_day_data[CC_ID][port][y].charge_mode + ")"
 				};
 			}
 		}
@@ -1279,7 +1290,7 @@ function get_cc_input_current() {
 			shared: true,
 			useHTML: true,
 			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} ({point.mode})</td></tr>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} {point.mode}</td></tr>',
 			footerFormat: '</table>',
 			dateTimeLabelFormats: {
 				hour: '%l:%M%P'
