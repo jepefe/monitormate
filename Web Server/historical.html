@@ -75,9 +75,10 @@
 
 	<script>
 		
-		function refresh_data() {
+		function refresh_data(update) {
 
 			/*global display_date */
+			var update = (update != false)? true : false;
 			
 			if (display_date == get_formatted_date()) { // if it's today.
 				update_URL('historical.html');
@@ -104,15 +105,15 @@
 			get_dataStream(display_date);
 
 //			set_status("status", "summary");
-			draw_chart('fndc_soc','fndc_soc');
-			draw_chart('fndc_shunts','fndc_shunts');
-			draw_chart('fndc_amps_vs_volts','fndc_amps_vs_volts');
-			draw_chart('battery_volts','battery_volts');
-			draw_chart('fndc_net_ah','fndc_net_ah');
-			draw_chart('cc_charge_power','cc_charge_power');
-			draw_chart('cc_charge_current','cc_charge_current');
-			draw_chart('cc_input_volts','cc_input_volts');
-			draw_chart('cc_input_current','cc_input_current');
+			draw_chart('fndc_soc', update);
+			draw_chart('fndc_shunts', update);
+			draw_chart('fndc_amps_vs_volts', update);
+			draw_chart('battery_volts', update);
+			draw_chart('fndc_net_ah', update);
+			draw_chart('cc_charge_power', update);
+			draw_chart('cc_charge_current', update);
+			draw_chart('cc_input_volts', update);
+			draw_chart('cc_input_current', update);
 		}		
 
 
@@ -163,7 +164,7 @@
 			chart_months();
 			chart_days();
 												
-			refresh_data();
+			refresh_data(false);
 			//setInterval("refresh_data()", 15*1000);		
 		});
 
