@@ -236,8 +236,8 @@ function get_batt_volts_gauge(chart) {
 			},
 			yAxis: {
 				min: cfg_sysVoltage - (cfg_sysVoltage/12),
-				max: cfg_sysVoltage + (cfg_sysVoltage*4/12),
-	
+				max: cfg_sysVoltage + (cfg_sysVoltage*(3/8)),
+
 				tickInterval: 2,
 				minorTickInterval: 0.5,
 	
@@ -263,9 +263,14 @@ function get_batt_volts_gauge(chart) {
 					color: '#39c21d' // green
 				}, {
 					from: cfg_sysVoltage + (cfg_sysVoltage/4),
-					to: cfg_sysVoltage + (cfg_sysVoltage*4/12),
+					to: cfg_sysVoltage + (cfg_sysVoltage*(1/3)),
 					thickness: 40,
 					color: '#fadd00' // yellow
+				}, {
+					from: cfg_sysVoltage + (cfg_sysVoltage*(1/3)),
+					to: cfg_sysVoltage + (cfg_sysVoltage*(3/8)),
+					thickness: 40,
+					color: '#e52e31' // red
 				}]
 			},
 	
@@ -411,11 +416,11 @@ function get_fx_inv_chrg_gauge(chart) {
 					color: '#39c21d' // green
 				}, {
 					from: (chart_max*0.8),
-					to: (chart_max*0.95),
+					to: (chart_max*0.90),
 					thickness: 40,
 					color: '#fadd00' // yellow
 				}, {
-					from: (chart_max*0.95),
+					from: (chart_max*0.90),
 					to: chart_max,
 					thickness: 40,
 					color: '#e52e31' // red
