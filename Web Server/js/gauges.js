@@ -222,7 +222,8 @@ function get_batt_volts_gauge(chart) {
 		return [current_batt];
 
 	} else {
-
+		var chartMin = cfg_sysVoltage - (cfg_sysVoltage/12);
+		var chartMax = cfg_sysVoltage + (cfg_sysVoltage*(3/8));
 		chart_options = {
 			title: {
 				text: 'Battery Voltage'
@@ -235,14 +236,14 @@ function get_batt_volts_gauge(chart) {
 				}
 			},
 			yAxis: {
-				min: cfg_sysVoltage - (cfg_sysVoltage/12),
-				max: cfg_sysVoltage + (cfg_sysVoltage*(3/8)),
+				min: chartMin,
+				max: chartMax,
 
 				tickInterval: 2,
 				minorTickInterval: 0.5,
 	
 				plotBands: [{
-					from: cfg_sysVoltage - (cfg_sysVoltage/12),
+					from: chartMin,
 					to: cfg_sysVoltage - (cfg_sysVoltage/24),
 					thickness: 40,
 					color: '#e52e31' // red
@@ -253,22 +254,22 @@ function get_batt_volts_gauge(chart) {
 					color: '#fadd00' // yellow
 				}, {
 					from: cfg_sysVoltage,
-					to: cfg_sysAbsorbVoltage * 0.98,
+					to: cfg_sysAbsorbVoltage * 0.97,
 					thickness: 40,
 					color: 'rgba(57,194,29,0.50)' // green
 				}, {
-					from: cfg_sysAbsorbVoltage * 0.98,
-					to: cfg_sysVoltage + (cfg_sysVoltage/4),
+					from: cfg_sysAbsorbVoltage * 0.97,
+					to: cfg_sysAbsorbVoltage * 1.03,
 					thickness: 40,
 					color: '#39c21d' // green
 				}, {
-					from: cfg_sysVoltage + (cfg_sysVoltage/4),
-					to: cfg_sysVoltage + (cfg_sysVoltage*(1/3)),
+					from: cfg_sysAbsorbVoltage * 1.03,
+					to: chartMax - (cfg_sysVoltage/24),
 					thickness: 40,
 					color: '#fadd00' // yellow
 				}, {
-					from: cfg_sysVoltage + (cfg_sysVoltage*(1/3)),
-					to: cfg_sysVoltage + (cfg_sysVoltage*(3/8)),
+					from: chartMax - (cfg_sysVoltage/24),
+					to: chartMax,
 					thickness: 40,
 					color: '#e52e31' // red
 				}]
