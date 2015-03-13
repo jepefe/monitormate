@@ -39,172 +39,177 @@ var status_content = {
 	status_bottom: "none",
 };
 
+// Cookie configuration
+//$.cookie.json = true;
+$.cookie.defaults = { expires: 3650 };
 
 // Common theme for all the charts.
-Highcharts.theme = {
-	lang: {
-		thousandsSep: ","
-	},
-
-	chart: {
-		animation: {
-			duration: 500
-        },
-        plotBorderWidth: 0,
-		marginRight: 65,
-		// FIXME: only set the zoomType if we're not touch
-		zoomType: 'none'
-	},
-	colors: ['black'],
-	credits: {
-		enabled: false
-	},
-	global: {
-		// the datastream is stored in local timezone in the database,
-		// so turn off the UTC default for highcharts.
-		useUTC: false
-	},
-	legend: {
-		borderColor: '#BBB',
-		borderWidth: 0.5,
-		borderRadius: 4,
-		itemStyle: {
-			fontSize: '11px'
-		}
-	},
-	plotOptions: {
-		series: {
-			turboThreshold: 1750
+if (typeof Highcharts !== 'undefined') {
+	Highcharts.theme = {
+		lang: {
+			thousandsSep: ","
 		},
-		column: {
-			borderWidth: 0,
-			pointPadding: 0,		
-			groupPadding: 0.25,	
-			shadow: false,
-			cursor: 'pointer',
-			stickyTracking: false,
-			stacking: 'normal'
+	
+		chart: {
+			animation: {
+				duration: 500
+	        },
+	        plotBorderWidth: 0,
+			marginRight: 65,
+			// FIXME: only set the zoomType if we're not touch
+			zoomType: 'none'
 		},
-		line: {
-			stickyTracking: true,
-			lineWidth: 1.5,
-			marker: {
-				enabled: false,
-				symbol: 'circle',
-				lineColor: null, // inherit from series color
-				fillColor: null, // inherit from series color
+		colors: ['black'],
+		credits: {
+			enabled: false
+		},
+		global: {
+			// the datastream is stored in local timezone in the database,
+			// so turn off the UTC default for highcharts.
+			useUTC: false
+		},
+		legend: {
+			borderColor: '#BBB',
+			borderWidth: 0.5,
+			borderRadius: 4,
+			itemStyle: {
+				fontSize: '11px'
+			}
+		},
+		plotOptions: {
+			series: {
+				turboThreshold: 1750
+			},
+			column: {
+				borderWidth: 0,
+				pointPadding: 0,		
+				groupPadding: 0.25,	
+				shadow: false,
+				cursor: 'pointer',
+				stickyTracking: false,
+				stacking: 'normal'
+			},
+			line: {
+				stickyTracking: true,
+				lineWidth: 1.5,
+				marker: {
+					enabled: false,
+					symbol: 'circle',
+					lineColor: null, // inherit from series color
+					fillColor: null, // inherit from series color
+					states: {
+						hover: {
+							enabled: true,
+							radius: 3,
+							lineWidth: 2,
+							lineColor: '#FFFFFF'
+						}
+					}
+				},
 				states: {
 					hover: {
-						enabled: true,
-						radius: 3,
-						lineWidth: 2,
-						lineColor: '#FFFFFF'
+						halo: {
+							opacity: 1,
+							size: 5
+						},
+						lineWidth: 1.5,
+						lineWidthPlus: 0
 					}
 				}
 			},
-			states: {
-				hover: {
-					halo: {
-						opacity: 1,
-						size: 5
-					},
-					lineWidth: 1.5,
-					lineWidthPlus: 0
-				}
-			}
-		},
-		areaspline: {
-			fillOpacity: 0.25,
-			lineWidth: 0,
-			marker: {
-				enabled: false,
+			areaspline: {
+				fillOpacity: 0.25,
+				lineWidth: 0,
+				marker: {
+					enabled: false,
+					states: {
+						hover: {
+							enabled: false
+						}
+					}				
+				},
+				states: {
+					hover: {
+						lineWidthPlus: 0
+					}
+				},
+				showInLegend: true,
+				zIndex: -1
+			},
+			spline: {
+				cursor: 'pointer',
+				lineWidth: 1.5,
+				dashStyle: 'shortdot',
+				marker: {
+					enabled: true,
+					fillColor: 'black',
+					lineColor: 'rgba(255,255,255,0.5)',
+					lineWidth: 0,
+					radius: 2,
+					symbol: 'circle',
+					states: {
+						hover: {
+							enabled: true,
+							radius: 3,
+							lineWidth: 1,
+							lineColor: '#FFFFFF',
+						}
+					}
+				},
 				states: {
 					hover: {
 						enabled: false
 					}
-				}				
-			},
-			states: {
-				hover: {
-					lineWidthPlus: 0
-				}
-			},
-			showInLegend: true,
-			zIndex: -1
-		},
-		spline: {
-			cursor: 'pointer',
-			lineWidth: 1.5,
-			dashStyle: 'shortdot',
-			marker: {
-				enabled: true,
-				fillColor: 'black',
-				lineColor: 'rgba(255,255,255,0.5)',
-				lineWidth: 0,
-				radius: 2,
-				symbol: 'circle',
-				states: {
-					hover: {
-						enabled: true,
-						radius: 3,
-						lineWidth: 1,
-						lineColor: '#FFFFFF',
-					}
-				}
-			},
-			states: {
-				hover: {
-					enabled: false
 				}
 			}
-		}
-	},
-	title: {
-	   text: null
-	},
-	tooltip: {
-		shared: true,
-		borderColor: '#333333',
-		crosshairs: true,
-		style: {
-			color: '#333333',
-			fontSize: '10px',
-			padding: '6px'
 		},
-		dateTimeLabelFormats: {
-			minute: "%l:%M%P",
-			hour: "%l:%M%P",
-			day: "%l:%M%P"
-		}
-
-	},
-	xAxis: {
-		dateTimeLabelFormats: {
-			minute: '%l:%M%P',
-			hour: '%l%P',
-			day: '%m/%d'
-		},
-		minorTickInterval: 1000 * 60 * 60,
-		minorTickWidth: 1,
-		minorGridLineWidth: 0,
 		title: {
-			text: null
+		   text: null
 		},
-		type: 'datetime'
-	},
-	yAxis: {
-		endOnTick: true,
-		maxPadding: 0.01,
-		opposite: true,
-		title: {
-			text: null
+		tooltip: {
+			shared: true,
+			borderColor: '#333333',
+			crosshairs: true,
+			style: {
+				color: '#333333',
+				fontSize: '10px',
+				padding: '6px'
+			},
+			dateTimeLabelFormats: {
+				minute: "%l:%M%P",
+				hour: "%l:%M%P",
+				day: "%l:%M%P"
+			}
+	
+		},
+		xAxis: {
+			dateTimeLabelFormats: {
+				minute: '%l:%M%P',
+				hour: '%l%P',
+				day: '%m/%d'
+			},
+			minorTickInterval: 1000 * 60 * 60,
+			minorTickWidth: 1,
+			minorGridLineWidth: 0,
+			title: {
+				text: null
+			},
+			type: 'datetime'
+		},
+		yAxis: {
+			endOnTick: true,
+			maxPadding: 0.01,
+			opposite: true,
+			title: {
+				text: null
+			}
 		}
-	}
-};
+	};	
 
+	// Make a copy of the defaults, call this line before any other setOptions call
+	var HCDefaults = $.extend(true, {}, Highcharts.getOptions(), {});
+}
 
-// Make a copy of the defaults, call this line before any other setOptions call
-var HCDefaults = $.extend(true, {}, Highcharts.getOptions(), {});
 
 function apply_highchart_theme(theme) {
 	// Fortunately, Highcharts returns the reference to defaultOptions itself
@@ -239,18 +244,24 @@ function update_URL(page, dateString) {
 
 
 function set_cookies(name, value) {
-	expire_date = (new Date(new Date().getFullYear() + 1, new Date().getMonth() + 1, new Date().getDate())).toGMTString();
-	document.cookie = name + "=" + value + "; expires=" + expire_date;
+//	expire_date = (new Date(new Date().getFullYear() + 1, new Date().getMonth() + 1, new Date().getDate())).toGMTString();
+//	document.cookie = name + "=" + value + "; expires=" + expire_date;
+	$.cookie(name, value);
 }
 
 
 function get_cookies() {
 	/*global chart_content, status_content */
-	if (document.cookie.match('(^|;) ?' + "multichart1" + '=([^;]*)(;|$)')) chart_content["multichart1"] = unescape(document.cookie.match('(^|;) ?' + "multichart1" + '=([^;]*)(;|$)')[2]);
-	if (document.cookie.match('(^|;) ?' + "multichart2" + '=([^;]*)(;|$)')) chart_content["multichart2"] = unescape(document.cookie.match('(^|;) ?' + "multichart2" + '=([^;]*)(;|$)')[2]);
-	if (document.cookie.match('(^|;) ?' + "multichart3" + '=([^;]*)(;|$)')) chart_content["multichart3"] = unescape(document.cookie.match('(^|;) ?' + "multichart3" + '=([^;]*)(;|$)')[2]);
-	if (document.cookie.match('(^|;) ?' + "status_top" + '=([^;]*)(;|$)')) status_content["status_top"] = unescape(document.cookie.match('(^|;) ?' + "status_top" + '=([^;]*)(;|$)')[2]);
-	if (document.cookie.match('(^|;) ?' + "status_bottom" + '=([^;]*)(;|$)')) status_content["status_bottom"] = unescape(document.cookie.match('(^|;) ?' + "status_bottom" + '=([^;]*)(;|$)')[2]);
+//	if (document.cookie.match('(^|;) ?' + "multichart1" + '=([^;]*)(;|$)')) chart_content["multichart1"] = unescape(document.cookie.match('(^|;) ?' + "multichart1" + '=([^;]*)(;|$)')[2]);
+//	if (document.cookie.match('(^|;) ?' + "multichart2" + '=([^;]*)(;|$)')) chart_content["multichart2"] = unescape(document.cookie.match('(^|;) ?' + "multichart2" + '=([^;]*)(;|$)')[2]);
+//	if (document.cookie.match('(^|;) ?' + "multichart3" + '=([^;]*)(;|$)')) chart_content["multichart3"] = unescape(document.cookie.match('(^|;) ?' + "multichart3" + '=([^;]*)(;|$)')[2]);
+//	if (document.cookie.match('(^|;) ?' + "status_top" + '=([^;]*)(;|$)')) status_content["status_top"] = unescape(document.cookie.match('(^|;) ?' + "status_top" + '=([^;]*)(;|$)')[2]);
+//	if (document.cookie.match('(^|;) ?' + "status_bottom" + '=([^;]*)(;|$)')) status_content["status_bottom"] = unescape(document.cookie.match('(^|;) ?' + "status_bottom" + '=([^;]*)(;|$)')[2]);
+	chart_content["multichart1"] = $.cookie("multichart1");
+	chart_content["multichart2"] = $.cookie("multichart2");
+	chart_content["multichart3"] = $.cookie("multichart3");
+	status_content["status_top"] = $.cookie("status_top");
+	status_content["status_bottom"] = $.cookie("status_bottom");
 }
 
 
