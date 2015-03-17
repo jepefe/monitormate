@@ -204,7 +204,7 @@ if(isset($_POST)){
 			$summary["ah_in"]	=  $cc_total["total_daily_ah"]; 
 		}
 	
-		$reg ? register_summary($summary):false;
+		$reg ? register_summary($summary, $status_array):false;
 		
 		// add the summary data
 		$status_array['summary'] = $summary;
@@ -423,7 +423,7 @@ function register_radian($device_array,$date_time){
 }
 
 
-function register_summary($summary) {
+function register_summary($summary, &$status_array) {
 	
 	$connection = db_connection();
 	
@@ -530,7 +530,11 @@ function register_summary($summary) {
 				// the values that lead to not inserting new values
 				$msgLog = "EXISTING VALUES (PREVIOUS DAY):\n".print_r($row, TRUE)."\n";
 				// the query we decided not to use.
-				$msgLog .= "\n".$insert_query."\n";
+				$msgLog .= "kWh in: ".floatval($summary['kwh_in'])."\n";
+				$msgLog .= "kWh out: ".floatval($summary['kwh_out'])."\n";
+				$msgLog .= "\nProbable clock mis-synchronization. Values not inserted/updated.\n";
+				$msgLog .= "MATE3 Local Time: ".$status_array['time']['mate_local_time']."\n";
+				$msgLog .= "Server Local Time: ".$status_array['time']['server_local_time']."\n";
 			}
 			break; // there should only be one record, but break just in case.
 		}
@@ -544,7 +548,6 @@ function register_summary($summary) {
 		mmLog('query', $msgLog."QUERY: ".$query);
 		mysql_query($query, $connection);
 	} else {
-		$msgLog .= "\nProbable clock mis-synchronization. Values not inserted/updated.\n";
 		mmLog('error', $msgLog);
 	}
 
