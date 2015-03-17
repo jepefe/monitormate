@@ -12,110 +12,111 @@ GNU General Public License at <http://www.gnu.org/licenses/>
 for more details.
 */
 
-Highcharts.gaugeTheme = {
-	lang: {
-		thousandsSep: ","
-	},
-	
-	chart: {
-		type: 'gauge',
-		plotBackgroundColor: null,
-		plotBackgroundImage: null,
-		plotBorderWidth: 0,
-		plotShadow: false,
-		width: 260,
-		height: 225
-	},
-
-	title: {
-		text: null,
-		style: {
-			fontSize: '16px'
-		}
-	},
-
-	credits: {
-		enabled: false
-	},
-
-	pane: {
-		startAngle: -90,
-		endAngle: 90,
-		background: null,
-		size: 200,
-		center: ['50%', 125]
-	},
-
-	plotOptions: {
-		gauge: {
-			dataLabels: {
-				borderWidth: 0
-			},
-			dial: {
-				radius: '90%',
-				backgroundColor: {
-					linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
-					stops: [
-						[0, 'white'],
-						[1, 'gray']
-					]
-				},
-				borderColor: 'gray',
-				borderWidth: 1,
-				baseWidth: 10,
-				topWidth: 0,
-				baseLength: 0, // of radius
-				rearLength: 0,
-				zIndex: 10
-			},
-			pivot: {
-				radius: 8,
-				borderWidth: 1,
-				borderColor: 'gray',
-				backgroundColor: {
-					linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
-					stops: [
-						[0, 'white'],
-						[1, 'gray']
-					]
-				},
-				zIndex: 10
-			}
-		}
-	},
-	
-	tooltip: {
-		enabled: false
-	},       	
-
-	// the value axis
-	yAxis: {
-		tickWidth: 1,
-		tickPosition: 'inside',
-		tickLength: 8,
-		tickColor: 'rgba(0,0,0,0.5)',
-
-		minorTickWidth: 1,
-		minorTickPosition: 'inside',
-		minorTickLength: 4,
-		minorTickColor: 'rgba(0,0,0,0.25)',
-		
-		lineWidth: 1,
-		lineColor: 'rgba(0,0,0,0.375)',
-		
-		labels: {
-			enabled: true,
-			distance: 8,
-			rotation: 'auto',
-			zIndex: -10
+if (typeof Highcharts !== 'undefined') {
+	Highcharts.gaugeTheme = {
+		lang: {
+			thousandsSep: ","
 		},
 		
+		chart: {
+			type: 'gauge',
+			plotBackgroundColor: null,
+			plotBackgroundImage: null,
+			plotBorderWidth: 0,
+			plotShadow: false,
+			width: 260,
+			height: 225
+		},
+	
 		title: {
-			text: null
+			text: null,
+			style: {
+				fontSize: '16px'
+			}
+		},
+	
+		credits: {
+			enabled: false
+		},
+	
+		pane: {
+			startAngle: -90,
+			endAngle: 90,
+			background: null,
+			size: 200,
+			center: ['50%', 125]
+		},
+	
+		plotOptions: {
+			gauge: {
+				dataLabels: {
+					borderWidth: 0
+				},
+				dial: {
+					radius: '90%',
+					backgroundColor: {
+						linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+						stops: [
+							[0, 'white'],
+							[1, 'gray']
+						]
+					},
+					borderColor: 'gray',
+					borderWidth: 1,
+					baseWidth: 10,
+					topWidth: 0,
+					baseLength: 0, // of radius
+					rearLength: 0,
+					zIndex: 10
+				},
+				pivot: {
+					radius: 8,
+					borderWidth: 1,
+					borderColor: 'gray',
+					backgroundColor: {
+						linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+						stops: [
+							[0, 'white'],
+							[1, 'gray']
+						]
+					},
+					zIndex: 10
+				}
+			}
+		},
+		
+		tooltip: {
+			enabled: false
+		},       	
+	
+		// the value axis
+		yAxis: {
+			tickWidth: 1,
+			tickPosition: 'inside',
+			tickLength: 8,
+			tickColor: 'rgba(0,0,0,0.5)',
+	
+			minorTickWidth: 1,
+			minorTickPosition: 'inside',
+			minorTickLength: 4,
+			minorTickColor: 'rgba(0,0,0,0.25)',
+			
+			lineWidth: 1,
+			lineColor: 'rgba(0,0,0,0.375)',
+			
+			labels: {
+				enabled: true,
+				distance: 8,
+				rotation: 'auto',
+				zIndex: -10
+			},
+			
+			title: {
+				text: null
+			}
 		}
-	}
-};
-
+	};
+}
 
 function get_fndc_soc_gauge(chart) {
 
