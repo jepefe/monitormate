@@ -10,7 +10,7 @@
 # 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License at <http://www.gnu.org/licenses/>
 # for more details.
 
@@ -41,17 +41,17 @@ class cc:
 	# Names of all formatted data values
 	valuenames_formatted = [
 		'address',			#  [0] Port Address
-		'device_id',        #  [1] Device Type
-		'charge_current',   #  [2] Charger Current (tenths added)
-		'pv_current',       #  [3] PV Current
-		'pv_voltage',       #  [4] PV Voltage
-		'daily_kwh',        #  [5] Daily kWh
-		'aux_mode',         #  [6] AUX Mode
-		'error_modes',      #  [7] Error Codes
-		'charge_mode',      #  [8] Charger Mode
-		'battery_volts',    #  [9] Battery Voltage
-		'daily_ah'          # [10] Daily Ah
-	]                       
+		'device_id',		#  [1] Device Type
+		'charge_current',	#  [2] Charger Current (tenths added)
+		'pv_current',		#  [3] PV Current
+		'pv_voltage',		#  [4] PV Voltage
+		'daily_kwh',		#  [5] Daily kWh
+		'aux_mode',			#  [6] AUX Mode
+		'error_modes',		#  [7] Error Codes
+		'charge_mode',		#  [8] Charger Mode
+		'battery_volts',	#  [9] Battery Voltage
+		'daily_ah'			# [10] Daily Ah
+	]
 
 
 	def __init__(self):
@@ -69,7 +69,7 @@ class cc:
 
 
 	#------------------------------#
-	# Get and format datastream	   #
+	# Get and format datastream	    #
 	#------------------------------#
 	def set_status(self,datastream):
 
@@ -94,12 +94,12 @@ class cc:
 		self.status_formatted[5] = float(datastream[6]) / 10
 
 		# AUX modes 
-		aux_mode= {'00':'Disabled','01':'Diversion','02':'Remote','03':'Manual',\
-				   '04':'Vent Fan','05':'PV Trigger','06':'Float','07':'ERROR Output',\
-					'08':'Night Light', '09':'PWM Diversion', '10':'Low Battery'}
+		aux_mode = {'00':'Disabled','01':'Diversion','02':'Remote','03':'Manual',\
+			'04':'Vent Fan','05':'PV Trigger','06':'Float','07':'ERROR Output',\
+			'08':'Night Light', '09':'PWM Diversion', '10':'Low Battery'}
 		aux_mode_active = {'64':'Disabled','65':'Diversion','66':'Remote','67':'Manual',\
-				   '68':'Vent Fan','69':'PV Trigger','70':'Float','71':'ERROR Output',\
-					'72':'Night Light', '73':'PWM Diversion', '74':'Low Battery'}
+			'68':'Vent Fan','69':'PV Trigger','70':'Float','71':'ERROR Output',\
+			'72':'Night Light', '73':'PWM Diversion', '74':'Low Battery'}
 
 		if int(datastream[8]) <= 10:
 			self.status_formatted[6] = aux_mode[datastream[8]]			# Gets one AUX mode from aux_mode dictionary
@@ -139,7 +139,7 @@ class cc:
 	def get_values_with_names(self):
  
 		values = {}
-		for idx, i in enumerate(self.valuenames_formatted):		  
+		for idx, i in enumerate(self.valuenames_formatted):
 			values.update({i:self.status_formatted[idx]})
 		# print values
 		return values
