@@ -35,9 +35,6 @@
 	<div class="fullwidth-chart">
 		<div id="days_chart" class="multichart"></div>
 	</div>
-<!--	<div id="left-col" style="height: 240px;">
-		<div id="status" class="status_content"></div>
-	</div>-->
 	<div class="fullwidth-chart">
 		<h2>State of Charge</h2>
 		<div id="fndc_soc" class="multichart"></div>
@@ -158,7 +155,7 @@
 			}
 
 			// Apply the common theme 
-			Highcharts.setOptions(Highcharts.theme);
+			Highcharts.setOptions(Highcharts.chartTheme);
 			
 			// these should move into refresh_data()
 			chart_years(display_date);

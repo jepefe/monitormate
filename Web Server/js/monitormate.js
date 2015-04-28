@@ -26,7 +26,7 @@ var years_data    = [];
 var months_data   = [];
 var days_data     = [];
 
-// default charts for the monitormate.html page. 
+// default charts for the monitormate.html page.
 // this can/will get overwritten by the cookies.
 var chart_content = {
 	multichart1: "fndc_shunts",
@@ -107,13 +107,13 @@ function set_labels() {
 	/*global deviceLabel, shuntLabel, full_day_data */
 
 	for (var type in full_day_data) {
-		// look through the data and apply names to all the devices we found				
+		// look through the data and apply names to all the devices we found
 		if (type !== "summary") {
 			// not the summary data, only the numberical entries
 			for (var port in full_day_data[type]) {
 
-				if (cfg_deviceLabel[port] === "") { 
-					// If there's not a label in the config, then assign default name based on ID type 
+				if (cfg_deviceLabel[port] === "") {
+					// If there's not a label in the config, then assign default name based on ID type
 					switch (parseInt(type)) {
 						case FX_ID:
 							deviceLabel[port] = "FX Inverter";
@@ -129,7 +129,7 @@ function set_labels() {
 							break;
 						default:
 							deviceLabel[port] = "Unknown Device";
-						break;	
+						break;
 					}
 				} else {
 					deviceLabel[port] = cfg_deviceLabel[port];
@@ -151,12 +151,12 @@ function set_labels() {
 				case "3":
 					shuntLabel[channel] = "Shunt C";
 					break;
-				default: 
+				default:
 					shuntLabel[channel] = "Unknown Shunt";
 					break;
 			}
 		} else {
-			shuntLabel[channel] = cfg_shuntLabel[channel]; 
+			shuntLabel[channel] = cfg_shuntLabel[channel];
 		}
 	}
 }
@@ -176,7 +176,7 @@ function get_dataStream(date, scope) {
 	/*global full_day_data */
 	var chart_data;
 	
-	// FIXME: this otherwise assumes date is well formatted. Which is not necessarily true.	
+	// FIXME: this otherwise assumes date is well formatted. Which is not necessarily true.
 	if (!date || date == "today") {
 		// if there's no date, set it to today
 		date = get_formatted_date();
@@ -205,9 +205,12 @@ function get_dataStream(date, scope) {
 			full_day_data = data;
 		}
 	});
-	// once we have the datastream, we should set
-	// the labels per the user configuration.
-	set_labels();
+
+	if (full_day_data !== null) {
+		// once we have the datastream, we should set
+		// the labels per the user configuration.
+		set_labels();
+	}
 }
 
 function get_days_in_month(year, month) {
@@ -248,7 +251,7 @@ function date_from_ISO8601(isostr) {
 
 
 /*
-	Put the items in the pop-up selection menu for the charts 
+	Put the items in the pop-up selection menu for the charts
 */
 function populate_chart_select(pselect) {
 	
@@ -265,7 +268,7 @@ function populate_chart_select(pselect) {
 	}
 
 	if (full_day_data[CC_ID]) { /* FM/MX charge controller available */
-		select_items.push('<option value="battery_volts">Battery Voltage</option>');		
+		select_items.push('<option value="battery_volts">Battery Voltage</option>');
 		select_items.push('<option value="cc_charge_current">PV Charging Current</option>');
 		select_items.push('<option value="cc_charge_power">PV Charging Power</option>');
 		select_items.push('<option value="cc_input_volts">PV Input Voltage</option>');
@@ -277,7 +280,7 @@ function populate_chart_select(pselect) {
 
 
 /*
-	Put the items in the pop-up selection menu for the status sidebar 
+	Put the items in the pop-up selection menu for the status sidebar
 */
 function populate_status_select() {
 
@@ -508,7 +511,7 @@ function draw_chart(chart_id, update, content) {
 	chart_data = eval(func_call);
 
 	if (update) {
-		chart.series[0].setData(chart_data); // update the data	
+		chart.series[0].setData(chart_data); // update the data
 	} else {
 		$('#' + chart_id).highcharts(chart_data); // chart the data!
 	}

@@ -16,7 +16,7 @@ for more details.
 // Common theme for all the charts.
 if (typeof Highcharts !== 'undefined') {
 
-	Highcharts.theme = {
+	Highcharts.chartTheme = {
 		lang: {
 			thousandsSep: ","
 		},

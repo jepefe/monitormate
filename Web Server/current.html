@@ -10,6 +10,7 @@
 	<script src="./js/jquery.cookie-1.4.1.min.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
+	<script src="./js/charts.js"></script>
 	<script src="./js/gauges.js"></script>
 	<title>MonitorMate — Gauges!</title>
 </head>
@@ -27,6 +28,11 @@
 		</div>
 	</div>
 
+	<div id="test" class="fullwidth-chart">
+		<h2>State of Charge</h2>
+		<div id="fndc_soc" class="multichart"></div>
+	</div>
+
 	<div id="fndc_soc_gauge" class="gauge"></div>
 	<div id="fndc_shuntA_gauge" class="gauge"></div>
 	<div id="fndc_shuntB_gauge" class="gauge"></div>
@@ -39,13 +45,35 @@
 	<script>
 
 		$(document).ready(function() {
+			get_dataStream(false, 12);
 
-			// Apply the common gauge theme 
-			apply_highchart_theme(Highcharts.gaugeTheme);
+			if (full_day_data !== null) {
+				// Apply the common chart theme 
+				apply_highchart_theme(Highcharts.chartTheme);
+				draw_chart('fndc_soc', false);
+	
+				// Apply the common gauge theme 
+				apply_highchart_theme(Highcharts.gaugeTheme);
+	
+				refresh_data(false);
+				setInterval("refresh_data()", 2*1000);
+			} else {
+				// must not be anything in full_day_data
+				$("#navbar").after("<p>No data exists for this day.</p>");
+				$("#update_time").text('N/A');
 
-			get_dataStream(false, 1);
-			refresh_data(false);
-			setInterval("refresh_data()", 2*1000);
+				// instead of removing all this stuff, really i should add it as per cookie data.
+				$("#test").remove();
+				$("#fndc_soc_gauge").remove();
+				$("#fndc_shuntA_gauge").remove();
+				$("#fndc_shuntB_gauge").remove();
+				$("#fndc_shuntC_gauge").remove();
+				$("#fndc_shuntNet_gauge").remove();
+				$("#batt_volts_gauge").remove();
+				$("#cc_output_gauge").remove();
+				$("#fx_inv_chrg_gauge").remove();
+			}
+
 		});
 
 		function refresh_data(update) {
@@ -53,6 +81,7 @@
 			var update = (update != false)? true : false;
 
 			get_current_status();
+
 			draw_chart("fndc_soc_gauge", update);
 			draw_chart("batt_volts_gauge", update);
 			draw_chart("cc_output_gauge", update);
