@@ -38,7 +38,11 @@ if (typeof Highcharts !== 'undefined') {
 		credits: {
 			enabled: false
 		},
-	
+		global: {
+			// the datastream is stored in local timezone in the database,
+			// so turn off the UTC default for highcharts.
+			useUTC: false
+		},
 		pane: {
 			startAngle: -90,
 			endAngle: 90,
