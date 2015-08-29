@@ -488,7 +488,7 @@ function get_fndc_shunt_gauge(shunt, chart) {
 				if (shunt_amps == 0) {
 					chart_mode = "";
 				} else {
-					chart_mode = " (charging)";		
+					chart_mode = " ↑";		
 				}
 				switch (shunt) {
 					case "A":
@@ -503,7 +503,7 @@ function get_fndc_shunt_gauge(shunt, chart) {
 				}
 			} else {
 				chart_color = chart_disColor;
-				chart_mode = " (discharging)";
+				chart_mode = " ↓";
 				switch (shunt) {
 					case "A":
 						chart_max = cfg_shuntMax[0];
@@ -648,11 +648,11 @@ function get_fndc_shuntNet_gauge(chart) {
 
 			if (net_amps >= 0) {
 				chart_color = chart_chgColor;
-				chart_mode = "Battery (charging)";
+				chart_mode = "Charging Battery";
 				net_max = cfg_shuntMax[1] + cfg_shuntMax[3] + cfg_shuntMax[5];
 			} else {
 				chart_color = chart_disColor;
-				chart_mode = "Battery (discharging)";
+				chart_mode = "Discharging Battery";
 				net_max = cfg_shuntMax[0] + cfg_shuntMax[2] + cfg_shuntMax[4];
 			}
 			net_watts = Math.abs(net_amps * device.battery_volt);			

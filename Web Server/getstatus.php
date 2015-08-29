@@ -18,11 +18,10 @@ for more details.
 // SAMPLE: http://finleyridge.com/power/getstatus.php?q=months&date=2013-12-02
 //
 
-
 if (isset($_GET) && isset($_GET["q"])) {
 	ob_start(); //Redirect output to internal buffer
     require_once './config/config.php';
-	ob_end_clean(); 
+	ob_end_clean();
 
 	$date = NULL;
 	$scope = NULL;
@@ -30,6 +29,9 @@ if (isset($_GET) && isset($_GET["q"])) {
 	if (isset($_GET["date"])) {
 		// TODO: I should verify that the date is properly formatted.
 		$date = $_GET["date"];
+	} else if (DEBUG) {
+		// DEBUG: just always use the same date as today.
+		$date = "2015-05-05";
 	}
 	
 	if (isset($_GET["scope"])) {
@@ -38,14 +40,18 @@ if (isset($_GET) && isset($_GET["q"])) {
 	}
 	
 	switch ($_GET["q"]) {
+		// FIXME: most if not all of these don't work if a date is actually passed in!!
 		case 'years':
-			query_years($date);
+			// query_years($date);
+			query_years();
 			break;
 		case 'months':
-			query_months($date);
+			// query_months($date);
+			query_months();
 			break;
 		case 'days':
-			query_days($date);
+			// query_days($date);
+			query_days();
 			break;
 		case 'full_day':
 			query_full_day($date, $scope);
@@ -67,7 +73,7 @@ function query_years($date) {
 
 	if (!empty($date)) {
 		// if there's a date, use that to define the range.
-		$whereClause = "date > DATE_SUB(year(date('".$date."')), INTERVAL 5 YEAR)";		
+		$whereClause = "date > DATE_SUB(year(date('".$date."')), INTERVAL 5 YEAR)";
 	} else {
 		// if there's no date, then we just scope it from jan 1st of this year.
 		$start_date = date('Y',time())."-01-01";
@@ -79,7 +85,7 @@ function query_years($date) {
 					sum(kwh_in) AS kwh_in,
 					sum(kwh_out) AS kwh_out
 				FROM monitormate_summary
-				WHERE ".$whereClause."				
+				WHERE ".$whereClause."
 				GROUP BY year(date)
 				ORDER BY year";
 
@@ -109,7 +115,7 @@ function query_years($date) {
 		}
 	]
 
-	*/	
+	*/
 }
 
 
@@ -190,7 +196,7 @@ function query_days($date) {
 	
 	if (!empty($date)) {
 		// if there's a date, use that to define the range.
-		$whereClause = "year(date) = year('".$date."') AND month(date) = month('".$date."')"; 		
+		$whereClause = "year(date) = year('".$date."') AND month(date) = month('".$date."')";
 	} else {
 		// if there's no date, then we just scope it to 31 days.
 		$start_date = date('Y-m-d',time());
@@ -225,7 +231,7 @@ function query_days($date) {
 function query_full_day($date, $scope){
 	//
 	// Used to generate all three of the "current" charts that shows daily activity.
-	//	
+	//
 	$connection = db_connection();
 
 	// should always a date, and should always be formatted YYYY-MM-DD
@@ -239,13 +245,13 @@ function query_full_day($date, $scope){
 		} else {
 			// ...with no scope.
 			$whereClause = "date(date) = date(NOW())";
-		}		
+		}
 	} else {
 		// It's not today...
 		if (isset($scope)) {
 			// ...but it is scoped.
 			$whereClause = "date > DATE_SUB(DATE_ADD(date('".$date."'), INTERVAL 1 DAY), INTERVAL ".$scope." HOUR) AND
-							date < DATE_ADD(date('".$date."'), INTERVAL 1 DAY)";			
+							date < DATE_ADD(date('".$date."'), INTERVAL 1 DAY)";
 		} else {
 			// ...with no scope.
 			$whereClause = "date(date) = date('".$date."')";
@@ -264,7 +270,7 @@ function query_full_day($date, $scope){
 						ORDER BY date";
 	
 	// if there's more than one charge controller (fm/mx) we should get the cc totals.
-	$query_cc_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts 
+	$query_cc_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts
 						FROM `monitormate_cc`
 						WHERE ".$whereClause."
 						GROUP BY date

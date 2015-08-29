@@ -4,9 +4,10 @@
 	<meta charset="utf-8">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
+	<link rel="stylesheet" href="./css/flex.css" type="text/css">
 	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
-	<script src="http://code.highcharts.com/4.1.1/highcharts.js"></script>
-	<script src="http://code.highcharts.com/4.1.1/highcharts-more.js"></script>
+	<script src="http://code.highcharts.com/4.1.7/highcharts.js"></script>
+	<script src="http://code.highcharts.com/4.1.7/highcharts-more.js"></script>
 	<script src="./js/jquery.cookie-1.4.1.min.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
@@ -28,30 +29,63 @@
 		</div>
 	</div>
 
-	<div id="test" class="fullwidth-chart">
-		<h2>State of Charge</h2>
-		<div id="fndc_soc" class="multichart"></div>
+	<div class="flex-container">
+		<div id="fndc_soc_gauge" class="flex-item flex-gauge"></div>
+		<div id="fndc_soc" class="flex-item"></div>
 	</div>
 
-	<div id="fndc_soc_gauge" class="gauge"></div>
-	<div id="fndc_shuntA_gauge" class="gauge"></div>
-	<div id="fndc_shuntB_gauge" class="gauge"></div>
-	<div id="fndc_shuntC_gauge" class="gauge"></div>
-	<div id="fndc_shuntNet_gauge" class="gauge"></div>
-	<div id="batt_volts_gauge" class="gauge"></div>
-	<div id="cc_output_gauge" class="gauge"></div>
-	<div id="fx_inv_chrg_gauge" class="gauge"></div>
+	<div class="flex-container">
+		<div id="batt_volts_gauge" class="flex-item flex-gauge"></div>
+		<div id="battery_volts" class="flex-item"></div>
+	</div>
+
+	<div class="flex-container">
+		<div id="fndc_shuntNet_gauge" class="flex-item flex-gauge"></div>
+		<div id="fndc_shunts" class="flex-item"></div>
+	</div>
+
+	<div class="flex-container">
+		<div class="flex-item"></div>
+		<div id="fx_inv_chrg_gauge" class="flex-item flex-gauge"></div>
+	</div>
+
+	<div class="flex-container">
+		<div id="cc_output_gauge" class="flex-item flex-gauge"></div>
+		<div id="cc_charge_power" class="flex-item"></div>
+	</div>
+
+	<div class="flex-container">
+		<div id="fndc_shuntA_gauge" class="flex-item flex-gauge"></div>
+		<div id="fndc_shuntA" class="flex-item"></div>
+	</div>
+
+	<div class="flex-container">
+		<div id="fndc_shuntB_gauge" class="flex-item flex-gauge"></div>
+		<div id="fndc_shuntB" class="flex-item"></div>
+	</div>
+
+	<div class="flex-container">
+		<div id="fndc_shuntC_gauge" class="flex-item flex-gauge"></div>
+		<div id="fndc_shuntC" class="flex-item"></div>
+	</div>
+
 	
 	<script>
 
 		$(document).ready(function() {
-			get_dataStream(false, 12);
+			get_dataStream(false, 4);
 
 			if (full_day_data !== null) {
 				// Apply the common chart theme 
 				apply_highchart_theme(Highcharts.chartTheme);
 				draw_chart('fndc_soc', false);
-	
+				draw_chart('battery_volts', false);
+				draw_chart('fndc_shunts', false);
+				draw_chart('cc_charge_power', false);
+				draw_chart('fndc_shuntA', false);
+				draw_chart('fndc_shuntB', false);
+				draw_chart('fndc_shuntC', false);
+				
 				// Apply the common gauge theme 
 				apply_highchart_theme(Highcharts.gaugeTheme);
 	
@@ -61,17 +95,6 @@
 				// must not be anything in full_day_data
 				$("#navbar").after("<p>No data exists for this day.</p>");
 				$("#update_time").text('N/A');
-
-				// instead of removing all this stuff, really i should add it as per cookie data.
-				$("#test").remove();
-				$("#fndc_soc_gauge").remove();
-				$("#fndc_shuntA_gauge").remove();
-				$("#fndc_shuntB_gauge").remove();
-				$("#fndc_shuntC_gauge").remove();
-				$("#fndc_shuntNet_gauge").remove();
-				$("#batt_volts_gauge").remove();
-				$("#cc_output_gauge").remove();
-				$("#fx_inv_chrg_gauge").remove();
 			}
 
 		});

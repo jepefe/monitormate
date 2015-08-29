@@ -25,8 +25,10 @@ if (typeof Highcharts !== 'undefined') {
 			animation: {
 				duration: 500
 	        },
+	        borderWidth: 0,
 	        plotBorderWidth: 0,
 			marginRight: 65,
+			spacingBottom: 10,
 			// FIXME: only set the zoomType if we're not touch
 			zoomType: 'none'
 		},
@@ -40,6 +42,8 @@ if (typeof Highcharts !== 'undefined') {
 			useUTC: false
 		},
 		legend: {
+			align: 'center',
+			verticalAlign: 'top',
 			borderColor: '#BBB',
 			borderWidth: 0.5,
 			borderRadius: 4,
@@ -492,7 +496,7 @@ function get_battery_volts() {
 				day_data_volts[j] = [full_day_data[FNDC_ID][port][j].timestamp, parseFloat(full_day_data[FNDC_ID][port][j].battery_volt)];
 				// 0.005 V per 2 V cell, per 1 degree C above or below 25° -- target voltage goes up when cold and down when hot
 				temp_compensation = (0.005) * (cfg_sysVoltage/2) * (parseInt(full_day_data[FNDC_ID][port][j].battery_temp) - 25);
-				voltage_target = cfg_sysAbsorbVoltage - temp_compensation - 0.25; //fudge factor
+				voltage_target = cfg_sysAbsorbVoltage - temp_compensation;
 				day_data_target[j] = [full_day_data[FNDC_ID][port][j].timestamp, voltage_target];
 			}
 
@@ -689,6 +693,166 @@ function get_fndc_shunts() {
 			negativeColor: cfg_colorUsage,
 			data: day_data_net
 	    }]
+	};
+
+	return chart_options;
+}
+
+
+function get_fndc_shuntA() {
+
+	/*global full_day_data, shuntLabel */
+	var day_data_shunt_a = [];
+
+	for (var port in full_day_data[FNDC_ID]) {
+		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+			// each "i" is an object with all data for a given timestamp
+
+			shunt_a_watts = full_day_data[FNDC_ID][port][i].shunt_a_amps * full_day_data[FNDC_ID][port][i].battery_volt;
+			
+			day_data_shunt_a[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_a_watts];
+		}
+		break; // Only one iteration. there should be only one FNDC.
+	}
+
+	chart_options = {
+		chart: {
+			type: 'areaspline'
+		},
+	    legend: {
+	    	enabled: false  
+	    },
+    	yAxis: {
+		    labels: {
+				formatter: function () {
+					return (this.value/1000).toFixed(1) + ' kW'
+				}
+		    },
+		    minRange: 1000
+		},
+		tooltip: {
+			shared: true,
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color}">&#9679;</td><td>{series.name}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
+			},
+			valueDecimals: 0,
+			valueSuffix: ' Watts'
+		},
+	    series: [{
+	    	name: shuntLabel[1],
+	    	color: cfg_colorShuntA,
+			data: day_data_shunt_a
+		}]
+	};
+
+	return chart_options;
+}
+
+function get_fndc_shuntB() {
+
+	/*global full_day_data, shuntLabel */
+	var day_data_shunt_b = [];
+
+	for (var port in full_day_data[FNDC_ID]) {
+		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+			// each "i" is an object with all data for a given timestamp
+
+			shunt_b_watts = full_day_data[FNDC_ID][port][i].shunt_b_amps * full_day_data[FNDC_ID][port][i].battery_volt;
+			
+			day_data_shunt_b[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_b_watts];
+		}
+		break; // Only one iteration. there should be only one FNDC.
+	}
+
+	chart_options = {
+		chart: {
+			type: 'areaspline'
+		},
+	    legend: {
+	    	enabled: false  
+	    },
+    	yAxis: {
+		    labels: {
+				formatter: function () {
+					return (this.value/1000).toFixed(1) + ' kW'
+				}
+		    },
+		    minRange: 1000
+		},
+		tooltip: {
+			shared: true,
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color}">&#9679;</td><td>{series.name}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
+			},
+			valueDecimals: 0,
+			valueSuffix: ' Watts'
+		},
+	    series: [{
+	    	name: shuntLabel[1],
+	    	color: cfg_colorShuntB,
+			data: day_data_shunt_b
+		}]
+	};
+
+	return chart_options;
+}
+
+function get_fndc_shuntC() {
+
+	/*global full_day_data, shuntLabel */
+	var day_data_shunt_c = [];
+
+	for (var port in full_day_data[FNDC_ID]) {
+		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+			// each "i" is an object with all data for a given timestamp
+
+			shunt_c_watts = full_day_data[FNDC_ID][port][i].shunt_c_amps * full_day_data[FNDC_ID][port][i].battery_volt;
+			
+			day_data_shunt_c[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_c_watts];
+		}
+		break; // Only one iteration. there should be only one FNDC.
+	}
+
+	chart_options = {
+		chart: {
+			type: 'areaspline'
+		},
+	    legend: {
+	    	enabled: false  
+	    },
+    	yAxis: {
+		    labels: {
+				formatter: function () {
+					return (this.value/1000).toFixed(1) + ' kW'
+				}
+		    },
+		    minRange: 1000
+		},
+		tooltip: {
+			shared: true,
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color}">&#9679;</td><td>{series.name}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
+			},
+			valueDecimals: 0,
+			valueSuffix: ' Watts'
+		},
+	    series: [{
+	    	name: shuntLabel[1],
+	    	color: cfg_colorShuntC,
+			data: day_data_shunt_c
+		}]
 	};
 
 	return chart_options;

@@ -501,8 +501,9 @@ function register_summary($summary, &$status_array) {
 	// we look at the last record from today
 	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$summary['date']."'",$connection);
 	
-	if (mysql_num_rows($todaysRecordq) > 0) { // successful query for today, with more than zero results.
-
+	if (mysql_num_rows($todaysRecordq) > 0) {
+		// successful query for today, with at least 1 result.
+		
 		while ($row = mysql_fetch_assoc($todaysRecordq)) {
 			
 			// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
@@ -518,21 +519,19 @@ function register_summary($summary, &$status_array) {
 			break; // there should only be one record, but break just in case.
 		}
 
-	} else if (mysql_num_rows($prevdayRecordq) > 0) { // successful query for previous day, with more than zero results. 
-		// let's do a summary table anti-clobber check if it's near the end of a day
-		// for the first 1.5 hours of the day, the data needs to be less than the last
-		// data point from the previous day. Seems mostly reasonable.
+	} else if (mysql_num_rows($prevdayRecordq) > 0) {
+		// there wasn't a summary record for today.
+		// successful query for previous day with at least 1 result.
+
 		while ($row = mysql_fetch_assoc($prevdayRecordq)) {
 			
 			if (!(floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && !(floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
 				$query = $insert_query;
 			} else {
 				// the values that lead to not inserting new values
-				$msgLog = "EXISTING VALUES (PREVIOUS DAY):\n".print_r($row, TRUE)."\n";
-				// the query we decided not to use.
-				$msgLog .= "kWh in: ".floatval($summary['kwh_in'])."\n";
-				$msgLog .= "kWh out: ".floatval($summary['kwh_out'])."\n";
-				$msgLog .= "\nProbable clock mis-synchronization. Values not inserted/updated.\n";
+				$msgLog = "Summary data for today not inserted.\n";
+				$msgLog .= "Current status values: ".floatval($summary['kwh_in'])." kWh in, ".floatval($summary['kwh_out'])." kWh out are greater than or equal to...\n";
+				$msgLog .= "Yesterday's values: ".$row['kwh_in']." kWh in, ".$row['kwh_out']." kWh out.\n";
 				$msgLog .= "MATE3 Local Time: ".$status_array['time']['mate_local_time']."\n";
 				$msgLog .= "Server Local Time: ".$status_array['time']['server_local_time']."\n";
 			}
