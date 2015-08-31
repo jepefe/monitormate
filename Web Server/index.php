@@ -1,3 +1,3 @@
 <?php 
-	header('Location: monitormate.html');
+	header('Location: current.php');
 ?>

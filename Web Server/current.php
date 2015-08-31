@@ -18,8 +18,7 @@
 <body>
 	<div id="navbar">
 		<ol id="toc">
-			<li class="current"><a href="current.html">Current Status</a></li>
-			<li><a href="monitormate.html">Old Current</a></li>
+			<li class="current"><a href="current.php">Current Status</a></li>
 			<li><a href="historical.html">Historical</a></li>
 			<li><a href="details.html">Details</a></li>
 		</ol>
@@ -28,48 +27,32 @@
 			Updated: <span id="update_time">?</span>
 		</div>
 	</div>
+<?php 
 
-	<div class="flex-container">
-		<div id="fndc_soc_gauge" class="flex-item flex-gauge"></div>
-		<div id="fndc_soc" class="flex-item"></div>
-	</div>
-
-	<div class="flex-container">
-		<div id="batt_volts_gauge" class="flex-item flex-gauge"></div>
-		<div id="battery_volts" class="flex-item"></div>
-	</div>
-
-	<div class="flex-container">
-		<div id="fndc_shuntNet_gauge" class="flex-item flex-gauge"></div>
-		<div id="fndc_shunts" class="flex-item"></div>
-	</div>
-
-	<div class="flex-container">
-		<div class="flex-item"></div>
-		<div id="fx_inv_chrg_gauge" class="flex-item flex-gauge"></div>
-	</div>
-
-	<div class="flex-container">
-		<div id="cc_output_gauge" class="flex-item flex-gauge"></div>
-		<div id="cc_charge_power" class="flex-item"></div>
-	</div>
-
-	<div class="flex-container">
-		<div id="fndc_shuntA_gauge" class="flex-item flex-gauge"></div>
-		<div id="fndc_shuntA" class="flex-item"></div>
-	</div>
-
-	<div class="flex-container">
-		<div id="fndc_shuntB_gauge" class="flex-item flex-gauge"></div>
-		<div id="fndc_shuntB" class="flex-item"></div>
-	</div>
-
-	<div class="flex-container">
-		<div id="fndc_shuntC_gauge" class="flex-item flex-gauge"></div>
-		<div id="fndc_shuntC" class="flex-item"></div>
-	</div>
-
+	$charts_array = array(
+		array("fndc_soc_gauge", "fndc_soc"),
+		array("batt_volts_gauge", "battery_volts"),
+		array("fndc_shuntNet_gauge", "fndc_shunts"),
+		array("fx_inv_chrg_gauge", "fx_inv_power"),
+		array("cc_output_gauge", "cc_charge_power"),
+		array("fndc_shuntA_gauge", "fndc_shuntA"),
+		array("fndc_shuntB_gauge", "fndc_shuntB"),
+		array("fndc_shuntC_gauge", "fndc_shuntC")
+	);
+//	print("<pre>");
+//	print_r($charts_array);
+//	print("</pre>");
+	foreach ($charts_array as $chart) {
+		print("
+			<div class='flex-container'>
+				<div id='{$chart[0]}' class='flex-item flex-gauge'></div>
+				<div id='{$chart[1]}' class='flex-item'></div>
+			</div>\n
+		");	
+	}
 	
+?>
+
 	<script>
 
 		$(document).ready(function() {
