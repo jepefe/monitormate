@@ -698,26 +698,36 @@ function get_fndc_shunts() {
 	return chart_options;
 }
 
-
-function get_fndc_shuntA() {
+function get_fndc_shunt(shunt) {
 
 	/*global full_day_data, shuntLabel */
-	var day_data_shunt_a = [];
+	var day_data_shunt = [];
 
 	for (var port in full_day_data[FNDC_ID]) {
 		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
 			// each "i" is an object with all data for a given timestamp
-
-			shunt_a_watts = full_day_data[FNDC_ID][port][i].shunt_a_amps * full_day_data[FNDC_ID][port][i].battery_volt;
 			
-			day_data_shunt_a[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_a_watts];
+			switch (shunt) {
+				case "A":
+					shunt_amps = full_day_data[FNDC_ID][port][i].shunt_a_amps;
+					break;	
+				case "B":
+					shunt_amps = full_day_data[FNDC_ID][port][i].shunt_b_amps;
+					break;	
+				case "C":
+					shunt_amps = full_day_data[FNDC_ID][port][i].shunt_c_amps;
+					break;	
+			}
+			
+			shunt_watts = shunt_amps * full_day_data[FNDC_ID][port][i].battery_volt;
+			day_data_shunt[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_watts];
 		}
 		break; // Only one iteration. there should be only one FNDC.
 	}
 
 	chart_options = {
 		chart: {
-			type: 'areaspline'
+			type: 'line'
 		},
 	    legend: {
 	    	enabled: false  
@@ -745,117 +755,23 @@ function get_fndc_shuntA() {
 	    series: [{
 	    	name: shuntLabel[1],
 	    	color: cfg_colorShuntA,
-			data: day_data_shunt_a
+			data: day_data_shunt
 		}]
 	};
 
 	return chart_options;
+}
+
+function get_fndc_shuntA() {
+	return get_fndc_shunt("A");
 }
 
 function get_fndc_shuntB() {
-
-	/*global full_day_data, shuntLabel */
-	var day_data_shunt_b = [];
-
-	for (var port in full_day_data[FNDC_ID]) {
-		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
-			// each "i" is an object with all data for a given timestamp
-
-			shunt_b_watts = full_day_data[FNDC_ID][port][i].shunt_b_amps * full_day_data[FNDC_ID][port][i].battery_volt;
-			
-			day_data_shunt_b[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_b_watts];
-		}
-		break; // Only one iteration. there should be only one FNDC.
-	}
-
-	chart_options = {
-		chart: {
-			type: 'areaspline'
-		},
-	    legend: {
-	    	enabled: false  
-	    },
-    	yAxis: {
-		    labels: {
-				formatter: function () {
-					return (this.value/1000).toFixed(1) + ' kW'
-				}
-		    },
-		    minRange: 1000
-		},
-		tooltip: {
-			shared: true,
-			useHTML: true,
-			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color}">&#9679;</td><td>{series.name}</td></tr>',
-			footerFormat: '</table>',
-			dateTimeLabelFormats: {
-				hour: '%l:%M%P'
-			},
-			valueDecimals: 0,
-			valueSuffix: ' Watts'
-		},
-	    series: [{
-	    	name: shuntLabel[1],
-	    	color: cfg_colorShuntB,
-			data: day_data_shunt_b
-		}]
-	};
-
-	return chart_options;
+	return get_fndc_shunt("B");
 }
 
 function get_fndc_shuntC() {
-
-	/*global full_day_data, shuntLabel */
-	var day_data_shunt_c = [];
-
-	for (var port in full_day_data[FNDC_ID]) {
-		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
-			// each "i" is an object with all data for a given timestamp
-
-			shunt_c_watts = full_day_data[FNDC_ID][port][i].shunt_c_amps * full_day_data[FNDC_ID][port][i].battery_volt;
-			
-			day_data_shunt_c[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_c_watts];
-		}
-		break; // Only one iteration. there should be only one FNDC.
-	}
-
-	chart_options = {
-		chart: {
-			type: 'areaspline'
-		},
-	    legend: {
-	    	enabled: false  
-	    },
-    	yAxis: {
-		    labels: {
-				formatter: function () {
-					return (this.value/1000).toFixed(1) + ' kW'
-				}
-		    },
-		    minRange: 1000
-		},
-		tooltip: {
-			shared: true,
-			useHTML: true,
-			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
-			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color}">&#9679;</td><td>{series.name}</td></tr>',
-			footerFormat: '</table>',
-			dateTimeLabelFormats: {
-				hour: '%l:%M%P'
-			},
-			valueDecimals: 0,
-			valueSuffix: ' Watts'
-		},
-	    series: [{
-	    	name: shuntLabel[1],
-	    	color: cfg_colorShuntC,
-			data: day_data_shunt_c
-		}]
-	};
-
-	return chart_options;
+	return get_fndc_shunt("C");
 }
 
 
