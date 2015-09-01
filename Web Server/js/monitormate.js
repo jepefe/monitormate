@@ -26,23 +26,6 @@ var years_data    = [];
 var months_data   = [];
 var days_data     = [];
 
-// default charts for the monitormate.html page.
-// this can/will get overwritten by the cookies.
-var chart_content = {
-	multichart1: "fndc_shunts",
-	multichart2: "charge_current",
-	multichart3: "battery_volts",
-};
-
-var status_content = {
-	status_top: "summary",
-	status_bottom: "none",
-};
-
-// Cookie configuration
-$.cookie.defaults = { expires: 3650 };
-//$.cookie.json = true; //caution, this escapes/unescapes EVERYTHING going in/out of the cookie
-
 if (typeof Highcharts !== 'undefined') {
 	// Make a copy of the defaults, call this line before any other setOptions call
 	var HCDefaults = $.extend(true, {}, Highcharts.getOptions(), {});
@@ -80,24 +63,18 @@ function update_URL(page, dateString) {
 
 
 function set_cookies(name, value) {
-//	expire_date = (new Date(new Date().getFullYear() + 1, new Date().getMonth() + 1, new Date().getDate())).toGMTString();
-//	document.cookie = name + "=" + value + "; expires=" + expire_date;
-	$.cookie(name, value);
+//	$.cookie(name, value);
 }
 
 
 function get_cookies() {
 	/*global chart_content, status_content */
-//	if (document.cookie.match('(^|;) ?' + "multichart1" + '=([^;]*)(;|$)')) chart_content["multichart1"] = unescape(document.cookie.match('(^|;) ?' + "multichart1" + '=([^;]*)(;|$)')[2]);
-//	if (document.cookie.match('(^|;) ?' + "multichart2" + '=([^;]*)(;|$)')) chart_content["multichart2"] = unescape(document.cookie.match('(^|;) ?' + "multichart2" + '=([^;]*)(;|$)')[2]);
-//	if (document.cookie.match('(^|;) ?' + "multichart3" + '=([^;]*)(;|$)')) chart_content["multichart3"] = unescape(document.cookie.match('(^|;) ?' + "multichart3" + '=([^;]*)(;|$)')[2]);
-//	if (document.cookie.match('(^|;) ?' + "status_top" + '=([^;]*)(;|$)')) status_content["status_top"] = unescape(document.cookie.match('(^|;) ?' + "status_top" + '=([^;]*)(;|$)')[2]);
-//	if (document.cookie.match('(^|;) ?' + "status_bottom" + '=([^;]*)(;|$)')) status_content["status_bottom"] = unescape(document.cookie.match('(^|;) ?' + "status_bottom" + '=([^;]*)(;|$)')[2]);
-	chart_content["multichart1"] = $.cookie("multichart1");
-	chart_content["multichart2"] = $.cookie("multichart2");
-	chart_content["multichart3"] = $.cookie("multichart3");
-	status_content["status_top"] = $.cookie("status_top");
-	status_content["status_bottom"] = $.cookie("status_bottom");
+
+//	chart_content["multichart1"] = $.cookie("multichart1");
+//	chart_content["multichart2"] = $.cookie("multichart2");
+//	chart_content["multichart3"] = $.cookie("multichart3");
+//	status_content["status_top"] = $.cookie("status_top");
+//	status_content["status_bottom"] = $.cookie("status_bottom");
 }
 
 
@@ -483,15 +460,10 @@ function set_status(HTML_id, value) {
 	status_content[HTML_id] = value;
 	$('#' + HTML_id).html(content);
 	$('#' + HTML_id + '_select').val(value);
-	// FIXME: setting cookies doesn't appy to all situations, yet we do it anyway.
-	set_cookies(HTML_id, value);
 }
 
 function set_chart(chart_id, content) {
-
 	$('#' + chart_id + '_select').val(content);
-	set_cookies(chart_id, content);
-
 	draw_chart(chart_id, false, content);
 }
 
