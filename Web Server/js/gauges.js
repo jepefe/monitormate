@@ -359,7 +359,7 @@ function get_cc_output_gauge(chart) {
 }
 
 
-function get_fx_inv_chrg_gauge(chart) {
+function get_inverter_power_gauge(chart) {
 
 	/*global json_status */
 	var chart = chart || false;

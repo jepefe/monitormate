@@ -7,7 +7,7 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
@@ -66,7 +66,7 @@ class fx():
 
 		#Modifiers for 230V devices
 		self.modifiers = 0
-		#Device name	 
+		#Device name
 		self.name = "FX-series Inverter/Charger"
 
 
@@ -86,7 +86,7 @@ class fx():
 		# Misc byte
 		# Outback mate1 documentation says the bit 1 indicates a 230V unit and the voltage read have to be doubled
 		# and the current divided by 2. But doing that with the devices I have borrowed for testings returns a bad readings
-		# Set 230V modifiers disabled by default 
+		# Set 230V modifiers disabled by default
 		misc_byte = int(datastream[12])
 		misc_modifiers_volts = 1
 		misc_modifiers_amps = 1
@@ -127,11 +127,22 @@ class fx():
 		self.status_formatted[7] = int(datastream[7]) * misc_modifiers_amps
 
 		# Inverter Operating Mode
-		oper_modes = {'00':'Inverter Off', '01':'Search', '02':'Inverter On', 
-				'03':'Charge', '04':'Silent', '05':'Float', '06':'Equalize',
-				'07':'Charger Off', '08':'Support', '09':'Sell Enabled',
-				'10':'Pass-through', '90':'Inverter Error', '91':'AGS Error',
-				'92':'Comm Error'}
+		oper_modes = {
+			'00':'Off',
+			'01':'Searching',
+			'02':'Inverting',
+			'03':'Charging',
+			'04':'Silent',
+			'05':'Float',
+			'06':'Equalize',
+			'07':'Charger Off',
+			'08':'Support',
+			'09':'Sell',
+			'10':'Pass-through',
+			'90':'Inverter Error',
+			'91':'AGS Error',
+			'92':'Comm Error'
+		}
 		self.status_formatted[8] = oper_modes[datastream[8]]
 
 		# Error Codes
@@ -196,7 +207,7 @@ class fx():
 	def get_values_with_names(self):
 	 
 		values = {}
-		for idx, i in enumerate(self.valuenames_formatted):		  
+		for idx, i in enumerate(self.valuenames_formatted):
 			values.update({i:self.status_formatted[idx]})
 		# print values
 		return values

@@ -560,6 +560,100 @@ function get_battery_volts() {
 }
 
 
+function get_inverter_power() {
+
+	/*global deviceLabel, full_day_data */
+	var total_day_data_watts = [];
+	var day_data_watts = [];
+	var all_devices_data = [];
+	var count;
+
+	for (var port in full_day_data[FX_ID]) {
+		// port interates through each fx-series inverters
+
+		if (port != "totals") {
+			day_data_watts[port] = [];
+		}
+
+		for (y = 0; y < full_day_data[FX_ID][port].length; y++) {
+			// y is the datapoint (from 0 to n)
+
+			if (port == "totals") {
+
+				total_watts = (full_day_data[FX_ID][port][y].inverter_current) * 1 * full_day_data[FX_ID][port][y].battery_volt;
+				total_day_data_watts[y] = [full_day_data[FX_ID][port][y].timestamp, total_watts];
+				
+			} else {
+	
+				// make an object with some extra data (charge mode) that we can display in tooltips.
+				day_data_watts[port][y] = {
+					x: full_day_data[FX_ID][port][y].timestamp,
+					y: -(full_day_data[FX_ID][port][y].inverter_current * full_day_data[FX_ID][port][y].battery_volt),
+					mode: "(" + full_day_data[FX_ID][port][y].operational_mode + ")"
+				};
+			}
+		}
+	}
+
+
+	// Set up each series.
+	for (var i in day_data_watts) {
+		device_data = {
+//			color: cfg_colorProduction,
+			data: day_data_watts[i],
+			name: deviceLabel[i],
+			type: 'line',
+		};
+		all_devices_data.push(device_data);
+	}
+
+	// If there was a total, set up that series
+	if (total_day_data_watts.length > 0) {
+		total_data = {
+			color: cfg_colorProduction,
+			data: total_day_data_watts,
+			name: 'Total',
+			type: 'areaspline'
+		};
+		all_devices_data.push(total_data);
+	}
+	
+	chart_options = {
+		colors: cfg_colorsChargers,
+		series: all_devices_data,
+		tooltip: {
+			shared: true,
+			useHTML: true,
+			headerFormat: '<table class="tooltip"><th colspan="3">{point.key}</th>',
+			pointFormat: '<tr><td class="figure">{point.y}</td><td style="color:{series.color};">&#9679;</td><td>{series.name} {point.mode}</td></tr>',
+			footerFormat: '</table>',
+			dateTimeLabelFormats: {
+				hour: '%l:%M%P'
+			},
+			valueDecimals: 0,
+			valueSuffix: ' Watts'
+		},
+    	yAxis: {
+		    labels: {
+				formatter: function () {
+					return (this.value/1000).toFixed(1) + ' kW'
+				}
+		    },
+    		min: -500,
+    		minRange: 800,
+		    plotLines: [{
+                color: '#666666',
+                width: 2,
+                value: 0,
+                zIndex: 1
+            }]
+		}
+	};
+
+	return chart_options;
+}
+
+
 function get_fndc_soc() {
 
 	/*global full_day_data */
@@ -660,7 +754,13 @@ function get_fndc_shunts() {
 					return (this.value/1000).toFixed(1) + ' kW'
 				}
 		    },
-		    minRange: 1000
+		    minRange: 500,
+		    plotLines: [{
+                color: '#666666',
+                width: 2,
+                value: 0,
+                zIndex: 1
+            }]
 		},
 		tooltip: {
 			shared: true,
@@ -719,6 +819,7 @@ function get_fndc_shunt(shunt) {
 					break;	
 			}
 			
+//			shunt_amps = Math.abs(shunt_amps);
 			shunt_watts = shunt_amps * full_day_data[FNDC_ID][port][i].battery_volt;
 			day_data_shunt[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_watts];
 		}
@@ -738,7 +839,13 @@ function get_fndc_shunt(shunt) {
 					return (this.value/1000).toFixed(1) + ' kW'
 				}
 		    },
-		    minRange: 1000
+		    minRange: 500,
+		    plotLines: [{
+                color: '#666666',
+                width: 2,
+                value: 0,
+                zIndex: 1
+            }]
 		},
 		tooltip: {
 			shared: true,

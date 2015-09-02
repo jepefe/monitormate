@@ -3,6 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=800">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
 	<!--<link rel="stylesheet" href="./css/zebra.css" type="text/css">-->
@@ -47,12 +50,16 @@
 		<div id="fndc_amps_vs_volts" class="multichart"></div>
 	</div>
 	<div class="fullwidth-chart">
+		<h2>Battery Voltage</h2>
+		<div id="battery_volts" class="multichart"></div>
+	</div>
+	<div class="fullwidth-chart">
 		<h2>Battery Net Ah</h2>
 		<div id="fndc_net_ah" class="multichart"></div>
 	</div>
 	<div class="fullwidth-chart">
-		<h2>Battery Voltage</h2>
-		<div id="battery_volts" class="multichart"></div>
+		<h2>Inverter/Charger</h2>
+		<div id="inverter_power" class="multichart"></div>
 	</div>
 	<div class="fullwidth-chart">
 		<h2>PV Charge Power</h2>
@@ -107,6 +114,7 @@
 			draw_chart('fndc_amps_vs_volts', update);
 			draw_chart('battery_volts', update);
 			draw_chart('fndc_net_ah', update);
+			draw_chart('inverter_power', update);
 			draw_chart('cc_charge_power', update);
 			draw_chart('cc_charge_current', update);
 			draw_chart('cc_input_volts', update);

@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=800">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
 	<link rel="stylesheet" href="./css/flex.css" type="text/css">
 	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
 	<script src="http://code.highcharts.com/4.1.7/highcharts.js"></script>
 	<script src="http://code.highcharts.com/4.1.7/highcharts-more.js"></script>
-	<script src="./js/jquery.cookie-1.4.1.min.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<script src="./js/charts.js"></script>
@@ -33,7 +36,7 @@
 		array("fndc_soc_gauge", "fndc_soc"),
 		array("batt_volts_gauge", "battery_volts"),
 		array("fndc_shuntNet_gauge", "fndc_shunts"),
-		array("fx_inv_chrg_gauge", "fx_inv_power"),
+		array("inverter_power_gauge", "inverter_power"),
 		array("cc_output_gauge", "cc_charge_power"),
 		array("fndc_shuntA_gauge", "fndc_shuntA"),
 		array("fndc_shuntB_gauge", "fndc_shuntB"),
@@ -64,6 +67,7 @@
 				draw_chart('fndc_soc', false);
 				draw_chart('battery_volts', false);
 				draw_chart('fndc_shunts', false);
+				draw_chart('inverter_power', false);
 				draw_chart('cc_charge_power', false);
 				draw_chart('fndc_shuntA', false);
 				draw_chart('fndc_shuntB', false);
@@ -91,7 +95,7 @@
 			draw_chart("fndc_soc_gauge", update);
 			draw_chart("batt_volts_gauge", update);
 			draw_chart("cc_output_gauge", update);
-			draw_chart("fx_inv_chrg_gauge", update);
+			draw_chart("inverter_power_gauge", update);
 			draw_chart("fndc_shuntA_gauge", update);
 			draw_chart("fndc_shuntB_gauge", update);
 			draw_chart("fndc_shuntC_gauge", update);
