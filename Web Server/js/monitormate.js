@@ -26,6 +26,12 @@ var years_data    = [];
 var months_data   = [];
 var days_data     = [];
 
+// currenty used by details.html for reasons I can't figure out at 2:23am.
+var status_content = {
+	status_top: "summary",
+	status_bottom: "none",
+};
+
 if (typeof Highcharts !== 'undefined') {
 	// Make a copy of the defaults, call this line before any other setOptions call
 	var HCDefaults = $.extend(true, {}, Highcharts.getOptions(), {});

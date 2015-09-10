@@ -580,7 +580,7 @@ function get_inverter_power() {
 
 			if (port == "totals") {
 
-				total_watts = (full_day_data[FX_ID][port][y].inverter_current) * 1 * full_day_data[FX_ID][port][y].battery_volt;
+				total_watts = (full_day_data[FX_ID][port][y].inverter_current) * 1 * full_day_data[FX_ID][port][y].ac_output_voltage;
 				total_day_data_watts[y] = [full_day_data[FX_ID][port][y].timestamp, total_watts];
 				
 			} else {
@@ -588,7 +588,7 @@ function get_inverter_power() {
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_watts[port][y] = {
 					x: full_day_data[FX_ID][port][y].timestamp,
-					y: -(full_day_data[FX_ID][port][y].inverter_current * full_day_data[FX_ID][port][y].battery_volt),
+					y: -(full_day_data[FX_ID][port][y].inverter_current * full_day_data[FX_ID][port][y].ac_output_voltage),
 					mode: "(" + full_day_data[FX_ID][port][y].operational_mode + ")"
 				};
 			}
@@ -639,8 +639,8 @@ function get_inverter_power() {
 					return (this.value/1000).toFixed(1) + ' kW'
 				}
 		    },
-    		min: -500,
-    		minRange: 800,
+//    		min: -500,
+    		minRange: 500,
 		    plotLines: [{
                 color: '#666666',
                 width: 2,

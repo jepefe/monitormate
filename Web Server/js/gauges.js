@@ -383,7 +383,7 @@ function get_inverter_power_gauge(chart) {
 			}
 		}
 	}
-	total_watts = Math.round(total_watts / 100) * 100;
+	total_watts = Math.round(total_watts / 10) * 10;
 
 	if (chart) {
 
