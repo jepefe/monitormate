@@ -84,6 +84,8 @@
 				$("#update_time").text('N/A');
 			}
 
+			finalize_CSS();
+			
 		});
 
 		function refresh_data(update) {

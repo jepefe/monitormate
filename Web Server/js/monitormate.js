@@ -49,6 +49,15 @@ if (typeof Highcharts !== 'undefined') {
 	}
 }
 
+function finalize_CSS() {
+	// try to blur the navbar, and if that works then change the color.
+	cssBlurSupport = $('#navbar').css("-webkit-backdrop-filter", "blur(30px)");
+	
+	if (cssBlurSupport) {    
+	    $('#navbar').css("background-color", "rgba(238, 239, 249, 0.2)");
+	}
+}
+
 function get_URLvars() {
 	var vars = {};
 	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {

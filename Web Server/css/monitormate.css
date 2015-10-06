@@ -16,12 +16,14 @@ body {
 	width: 100%;
 	height: 34px;
 	padding: 0px 10px;
-	background-color: rgba(255, 255, 255, 0.96);
+	background-color: rgba(238, 239, 249, 0.96);		
+/*	background-color: rgba(238, 239, 249, 0.2);
+	-webkit-backdrop-filter: blur(30px);*/
 	overflow: hidden;
 	box-sizing: border-box;
 	text-align: center;
 	z-index: 100;
-	border-bottom: 1px solid rgb(236, 237, 249);
+	border-bottom: 1px solid rgba(210, 212, 237, 0.5);
 }
 
 #navbar h1 {
@@ -46,9 +48,9 @@ ol#toc {
 }
 
 ol#toc li {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgb(255, 255, 255);
     float: left;
-    margin: 0 1px 0 0;
+    margin: 0 3px 0 0;
     padding-left: 10px;
 }
 
@@ -61,7 +63,7 @@ ol#toc a {
 }
 
 ol#toc li.current {
-    background-color: #48f;
+    background-color: rgb(67, 135, 255);
 }
 
 ol#toc li.current a {
