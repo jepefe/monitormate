@@ -506,22 +506,25 @@ function register_summary($summary, &$status_array) {
 		
 		while ($row = mysql_fetch_assoc($todaysRecordq)) {
 			
-			// check if the new summary values are higher (make sure they haven't been reset because of mismatched clocks)
+			// IF the new summary values are equal or higher than existing values (as they should be)
+			// ELSE they are lower and were likely reset because the mate thinks it's a new day. 
+
 			if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
-				// go ahead and update, the numbers look safe.
 				$query = $update_query;
 			} else {
-				// the values that lead to not updating the values
-				$msgLog = "EXISTING VALUES (TODAY):\n".print_r($row, TRUE)."\n";
-				// the query we decided not to use.
-				$msgLog .= "\n".$update_query."\n";
+				// the values that lead to not inserting new values
+				$msgLog = "Summary data for today not inserted.\n";
+				$msgLog .= "Current status values: ".floatval($summary['kwh_in'])." kWh in, ".floatval($summary['kwh_out'])." kWh out are greater than or equal to...\n";
+				$msgLog .= "Today's values: ".$row['kwh_in']." kWh in, ".$row['kwh_out']." kWh out.\n";
+				$msgLog .= "MATE3 Local Time: ".$status_array['time']['mate_local_time']."\n";
+				$msgLog .= "Server Local Time: ".$status_array['time']['server_local_time']."\n";
 			}
 			break; // there should only be one record, but break just in case.
 		}
 
 	} else if (mysql_num_rows($prevdayRecordq) > 0) {
-		// there wasn't a summary record for today.
-		// successful query for previous day with at least 1 result.
+		// there where no records in the summary table for today (based on server clock)
+		// but there were records for yesterday.
 
 		while ($row = mysql_fetch_assoc($prevdayRecordq)) {
 			
