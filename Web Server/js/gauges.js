@@ -137,7 +137,7 @@ function get_fndc_soc_gauge(chart) {
 			var device = json_status['devices'][i];
 			var current_soc = device.soc;
 			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
-			if (cfg_isApple) {
+			if (isApple) {
 				var upArrow = "&#11014;";
 				var downArrow = "&#11015;";
 			} else {
@@ -227,8 +227,8 @@ function get_batt_volts_gauge(chart) {
 		return [current_batt];
 
 	} else {
-		var chartMin = cfg_sysVoltage - (cfg_sysVoltage/12);
-		var chartMax = cfg_sysVoltage + (cfg_sysVoltage*(3/8));
+		var chartMin = CONFIG.sysVoltage - (CONFIG.sysVoltage/12);
+		var chartMax = CONFIG.sysVoltage + (CONFIG.sysVoltage*(3/8));
 		chart_options = {
 			title: {
 				text: 'Battery Voltage'
@@ -249,31 +249,31 @@ function get_batt_volts_gauge(chart) {
 	
 				plotBands: [{
 					from: chartMin,
-					to: cfg_sysVoltage - (cfg_sysVoltage/24),
+					to: CONFIG.sysVoltage - (CONFIG.sysVoltage/24),
 					thickness: 40,
 					color: '#e52e31' // red
 				}, {
-					from: cfg_sysVoltage - (cfg_sysVoltage/24),
-					to: cfg_sysVoltage,
+					from: CONFIG.sysVoltage - (CONFIG.sysVoltage/24),
+					to: CONFIG.sysVoltage,
 					thickness: 40,
 					color: '#fadd00' // yellow
 				}, {
-					from: cfg_sysVoltage,
-					to: cfg_sysAbsorbVoltage * 0.97,
+					from: CONFIG.sysVoltage,
+					to: CONFIG.sysAbsorbVoltage * 0.97,
 					thickness: 40,
 					color: 'rgba(57,194,29,0.50)' // green
 				}, {
-					from: cfg_sysAbsorbVoltage * 0.97,
-					to: cfg_sysAbsorbVoltage * 1.03,
+					from: CONFIG.sysAbsorbVoltage * 0.97,
+					to: CONFIG.sysAbsorbVoltage * 1.03,
 					thickness: 40,
 					color: '#39c21d' // green
 				}, {
-					from: cfg_sysAbsorbVoltage * 1.03,
-					to: chartMax - (cfg_sysVoltage/24),
+					from: CONFIG.sysAbsorbVoltage * 1.03,
+					to: chartMax - (CONFIG.sysVoltage/24),
 					thickness: 40,
 					color: '#fadd00' // yellow
 				}, {
-					from: chartMax - (cfg_sysVoltage/24),
+					from: chartMax - (CONFIG.sysVoltage/24),
 					to: chartMax,
 					thickness: 40,
 					color: '#e52e31' // red
@@ -326,24 +326,24 @@ function get_cc_output_gauge(chart) {
 			},
 			yAxis: {
 				min: 0,
-				max: cfg_pvWattage,
+				max: CONFIG.pvWattage,
 	
 				tickInterval: 500,
 				minorTickInterval: 100,
 				
 				plotBands: [{
 					from: 0,
-					to: (cfg_pvWattage*0.20),
+					to: (CONFIG.pvWattage*0.20),
 					thickness: 40,
 					color: 'rgba(57,194,29,0.25)' // green
 				}, {
-					from: (cfg_pvWattage*0.20),
-					to: (cfg_pvWattage*0.80),
+					from: (CONFIG.pvWattage*0.20),
+					to: (CONFIG.pvWattage*0.80),
 					thickness: 40,
 					color: 'rgba(57,194,29,0.50)' // green
 				}, {
-					from: (cfg_pvWattage*0.80),
-					to: cfg_pvWattage,
+					from: (CONFIG.pvWattage*0.80),
+					to: CONFIG.pvWattage,
 					thickness: 40,
 					color: 'rgba(57,194,29,1.0)' // green
 				}]
@@ -367,17 +367,20 @@ function get_inverter_power_gauge(chart) {
 	var chart_mode = null;
 	var chart_max = null; 
 	
+	var chart_min = null;
+	
+	
 	for (var i = 0; i < json_status['devices'].length; i++) {	
 		if (json_status['devices'][i]['device_id'] == FX_ID) {
 			var device = json_status['devices'][i];
 			if (device.operational_mode == "Charge") {
-				chart_mode = "Chargers";
-				chart_max = cfg_chargerMax;
+				chart_mode = "Charging";
+				chart_max = CONFIG.chargerMax;
 				var charging_watts = device.charge_current * device.ac_input_voltage;
 				total_watts = total_watts + charging_watts;
 			} else {
-				chart_mode = "Inverters";
-				chart_max = cfg_inverterMax;
+				chart_mode = "Inverting";
+				chart_max = CONFIG.inverterMax;
 				var inverting_watts = device.inverter_current * device.ac_output_voltage;
 				total_watts = total_watts + inverting_watts;
 			}
@@ -470,15 +473,15 @@ function get_fndc_shunt_gauge(shunt, chart) {
 			
 			switch (shunt) {
 				case "A":
-					shunt_label = cfg_shuntLabel[1];
+					shunt_label = CONFIG.shuntLabel[1];
 					shunt_amps = device.shunt_a_amps;
 					break;
 				case "B":
-					shunt_label = cfg_shuntLabel[2];
+					shunt_label = CONFIG.shuntLabel[2];
 					shunt_amps = device.shunt_b_amps;
 					break;
 				case "C":
-					shunt_label = cfg_shuntLabel[3];
+					shunt_label = CONFIG.shuntLabel[3];
 					shunt_amps = device.shunt_c_amps;
 					break;
 			}
@@ -492,13 +495,13 @@ function get_fndc_shunt_gauge(shunt, chart) {
 				}
 				switch (shunt) {
 					case "A":
-						chart_max = cfg_shuntMax[1];
+						chart_max = CONFIG.shuntRange.A.max;
 						break;
 					case "B":
-						chart_max = cfg_shuntMax[3];
+						chart_max = CONFIG.shuntRange.B.max;
 						break;
 					case "C":
-						chart_max = cfg_shuntMax[5];
+						chart_max = CONFIG.shuntRange.C.max;
 						break;
 				}
 			} else {
@@ -506,13 +509,13 @@ function get_fndc_shunt_gauge(shunt, chart) {
 				chart_mode = " ↓";
 				switch (shunt) {
 					case "A":
-						chart_max = cfg_shuntMax[0];
+						chart_max = CONFIG.shuntRange.A.min;
 						break;
 					case "B":
-						chart_max = cfg_shuntMax[2];
+						chart_max = CONFIG.shuntRange.B.min;
 						break;
 					case "C":
-						chart_max = cfg_shuntMax[4];
+						chart_max = CONFIG.shuntRange.C.min;
 						break;
 				}
 			}
@@ -522,13 +525,13 @@ function get_fndc_shunt_gauge(shunt, chart) {
 				chart_mode = "";
 				switch (shunt) {
 					case "A":
-						chart_max = cfg_shuntMax[1];
+						chart_max = CONFIG.shuntRange.A.max;
 						break;
 					case "B":
-						chart_max = cfg_shuntMax[3];
+						chart_max = CONFIG.shuntRange.C.max;
 						break;
 					case "C":
-						chart_max = cfg_shuntMax[5];
+						chart_max = CONFIG.shuntRange.C.max;
 						break;
 				}
 				shunt_watts = shunt_amps * device.battery_volt;
@@ -639,6 +642,12 @@ function get_fndc_shuntNet_gauge(chart) {
 //	chart_disColor[0] = "rgba(229,46,49,0.25)"; // red
 //	chart_disColor[1] = "rgba(229,46,49,0.50)"; // red
 //	chart_disColor[2] = "rgba(229,46,49,1.00)"; // red
+
+	var charge_max;
+	var discharge_max;
+	charge_max = CONFIG.shuntRange.A.max + CONFIG.shuntRange.B.max + CONFIG.shuntRange.C.max;
+	discharge_max = net_max = CONFIG.shuntRange.A.min + CONFIG.shuntRange.B.min + CONFIG.shuntRange.C.min;
+	net_max = Math.max(charge_max, discharge_max);	
 	
 	for (var i = 0; i < json_status['devices'].length; i++) {	
 		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
@@ -647,15 +656,12 @@ function get_fndc_shuntNet_gauge(chart) {
 			net_amps = device.shunt_a_amps + device.shunt_b_amps + device.shunt_c_amps;
 
 			if (net_amps >= 0) {
-				chart_color = chart_chgColor;
 				chart_mode = "Charging Battery";
-				net_max = cfg_shuntMax[1] + cfg_shuntMax[3] + cfg_shuntMax[5];
 			} else {
-				chart_color = chart_disColor;
 				chart_mode = "Discharging Battery";
-				net_max = cfg_shuntMax[0] + cfg_shuntMax[2] + cfg_shuntMax[4];
 			}
-			net_watts = Math.abs(net_amps * device.battery_volt);			
+//			net_watts = Math.abs(net_amps * device.battery_volt);
+			net_watts = net_amps * device.battery_volt;
 
 			break; // only one FNDC!
 		}
@@ -674,7 +680,7 @@ function get_fndc_shuntNet_gauge(chart) {
 			},
 	
 			yAxis: {
-				min: 0,
+				min: -net_max,
 				max: net_max,
 	
 	//			tickInterval: 500,
@@ -688,18 +694,34 @@ function get_fndc_shuntNet_gauge(chart) {
 					from: 0,
 					to: (net_max*0.20),
 					thickness: 40,
-					color: chart_color[0]
+					color: chart_chgColor[0]
 				}, {
 					from: (net_max*0.20),
 					to: (net_max*0.80),
 					thickness: 40,
-					color: chart_color[1]
+					color: chart_chgColor[1]
 				}, {
 					from: (net_max*0.80),
 					to: net_max,
 					thickness: 40,
-					color: chart_color[2]
-				}],
+					color: chart_chgColor[2]
+				}, {
+					from: 0,
+					to: -(net_max*0.20),
+					thickness: 40,
+					color: chart_disColor[0]
+				}, {
+					from: -(net_max*0.20),
+					to: -(net_max*0.80),
+					thickness: 40,
+					color: chart_disColor[1]
+				}, {
+					from: -(net_max*0.80),
+					to: -net_max,
+					thickness: 40,
+					color: chart_disColor[2]
+				}
+				],
 			},
 	
 			plotOptions: {

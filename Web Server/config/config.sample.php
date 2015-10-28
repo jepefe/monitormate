@@ -69,7 +69,7 @@ $shuntLabel = array(
 
 // Max power that will flow in or out of each shunt. This is only to
 // inform the charts for reasonable min/max values on gauges etc.
-$shuntMax = array(
+$shuntRange = array(
 	"A_Neg"  => 4000,	"A_Pos"  => 2400,
 	"B_Neg"  => 0,		"B_Pos"  => 1500,
 	"C_Neg"  => 0,		"C_Pos"  => 1000
@@ -96,50 +96,46 @@ define("RAD_ID", 6);	// 6 is a Radian-series inverter
 
 ?>
 
-// Platform detection, looks for Apple platforms both OS X and iOS.
-var cfg_isApple = navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)?true:false;
-// FIXME: should also detect specifically "touch" devices
-
 var FX_ID = <?php echo FX_ID; ?>;	
 var CC_ID = <?php echo CC_ID; ?>;
 var FNDC_ID = <?php echo FNDC_ID; ?>;
 var RAD_ID = <?php echo RAD_ID; ?>;
 
-var cfg_sysName = "<?php echo $system_name; ?>";
-var cfg_sysVoltage = <?php echo $system_voltage; ?>;
-var cfg_sysBattCapacity = <?php echo $system_batt_capacity; ?>;
-var cfg_sysAbsorbVoltage = <?php echo $system_absorbVoltage; ?>;
-var cfg_sysEndAmps = <?php echo $system_endAmps; ?>;
-var cfg_pvWattage = <?php echo $pv_wattage; ?>;
-var cfg_genRating = <?php echo $gen_rating; ?>;
-var cfg_inverterMax = <?php echo $inverter_max; ?>;
-var cfg_chargerMax = <?php echo $charger_max; ?>;
-var cfg_agsPort = <?php echo $ags_port; ?>;
-
-var cfg_deviceLabel = new Array();
-	cfg_deviceLabel[1] = "<?php echo $deviceLabel[1]; ?>";
-	cfg_deviceLabel[2] = "<?php echo $deviceLabel[2]; ?>";
-	cfg_deviceLabel[3] = "<?php echo $deviceLabel[3]; ?>";
-	cfg_deviceLabel[4] = "<?php echo $deviceLabel[4]; ?>";
-	cfg_deviceLabel[5] = "<?php echo $deviceLabel[5]; ?>";
-	cfg_deviceLabel[6] = "<?php echo $deviceLabel[6]; ?>";
-	cfg_deviceLabel[7] = "<?php echo $deviceLabel[7]; ?>";
-	cfg_deviceLabel[8] = "<?php echo $deviceLabel[8]; ?>";
-	cfg_deviceLabel[9] = "<?php echo $deviceLabel[9]; ?>";
-	cfg_deviceLabel[10] = "<?php echo $deviceLabel[10]; ?>";
-
-var cfg_shuntLabel = new Array();
-	cfg_shuntLabel[1] = "<?php echo $shuntLabel['A']; ?>";
-	cfg_shuntLabel[2] = "<?php echo $shuntLabel['B']; ?>";
-	cfg_shuntLabel[3] = "<?php echo $shuntLabel['C']; ?>";
-
-var cfg_shuntMax = new Array();
-	cfg_shuntMax[0] = <?php echo $shuntMax['A_Neg']; ?>;
-	cfg_shuntMax[1] = <?php echo $shuntMax['A_Pos']; ?>;
-	cfg_shuntMax[2] = <?php echo $shuntMax['B_Neg']; ?>;
-	cfg_shuntMax[3] = <?php echo $shuntMax['B_Pos']; ?>;
-	cfg_shuntMax[4] = <?php echo $shuntMax['C_Neg']; ?>;
-	cfg_shuntMax[5] = <?php echo $shuntMax['C_Pos']; ?>;
+var CONFIG = {
+	sysName: "<?php echo $system_name; ?>",
+	sysVoltage: <?php echo $system_voltage; ?>,
+	sysBattCapacity: <?php echo $system_batt_capacity; ?>,
+	sysAbsorbVoltage: <?php echo $system_absorbVoltage; ?>,
+	sysEndAmps: <?php echo $system_endAmps; ?>,
+	pvWattage: <?php echo $pv_wattage; ?>,
+	genRating: <?php echo $gen_rating; ?>,
+	inverterMax: <?php echo $inverter_max; ?>,
+	chargerMax: <?php echo $charger_max; ?>,
+	agsPort: <?php echo $ags_port; ?>,
+	deviceLabel: [
+		"<?php echo $deviceLabel[1]; ?>",
+		"<?php echo $deviceLabel[2]; ?>",
+		"<?php echo $deviceLabel[3]; ?>",
+		"<?php echo $deviceLabel[4]; ?>",
+		"<?php echo $deviceLabel[5]; ?>",
+		"<?php echo $deviceLabel[6]; ?>",
+		"<?php echo $deviceLabel[7]; ?>",
+		"<?php echo $deviceLabel[8]; ?>",
+		"<?php echo $deviceLabel[9]; ?>",
+		"<?php echo $deviceLabel[10]; ?>"
+	],	
+	shuntLabel: [
+		"<?php echo $shuntLabel['A']; ?>",
+		"<?php echo $shuntLabel['B']; ?>",
+		"<?php echo $shuntLabel['C']; ?>"
+	],
+	shuntRange: {
+		A: { min: <?php echo $shuntRange['A_Neg'].", max: ".$shuntRange['A_Pos']; ?>},
+		B: { min: <?php echo $shuntRange['B_Neg'].", max: ".$shuntRange['B_Pos']; ?>},
+		C: { min: <?php echo $shuntRange['C_Neg'].", max: ".$shuntRange['C_Pos']; ?>}
+	}
+	
+}
 
 var cfg_colorProduction = "<?php echo $colorProduction; ?>";
 var cfg_colorUsage = "<?php echo $colorUsage; ?>";

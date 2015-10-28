@@ -92,6 +92,35 @@ if (typeof Highcharts !== 'undefined') {
 					}
 				}
 			},
+			area: {
+				fillOpacity: 0.25,
+				stickyTracking: true,
+				lineWidth: 1.0,
+				marker: {
+					enabled: false,
+					symbol: 'circle',
+					lineColor: null, // inherit from series color
+					fillColor: null, // inherit from series color
+					states: {
+						hover: {
+							enabled: true,
+							radius: 3,
+							lineWidth: 2,
+							lineColor: '#FFFFFF'
+						}
+					}
+				},
+				states: {
+					hover: {
+						halo: {
+							opacity: 1,
+							size: 5
+						},
+						lineWidth: 1.0,
+						lineWidthPlus: 0
+					}
+				}
+			},
 			areaspline: {
 				fillOpacity: 0.25,
 				lineWidth: 0,
@@ -258,7 +287,7 @@ function get_cc_charge_power() {
 		},
     	yAxis: {
     		min: 0,
-    		minRange: cfg_pvWattage/3,
+    		minRange: CONFIG.pvWattage/3,
 		    labels: {
 				formatter: function () {
 					return (this.value/1000).toFixed(1) + ' kW'
@@ -343,7 +372,7 @@ function get_cc_charge_current() {
 		},
     	yAxis: {
     		min: 0,
-    		minRange: cfg_pvWattage/cfg_sysVoltage/3,
+    		minRange: CONFIG.pvWattage/CONFIG.sysVoltage/3,
 		    labels: {
 		        format: '{value} A'
 		    }
@@ -470,7 +499,7 @@ function get_cc_input_current() {
 		},
     	yAxis: {
     		min: 0,
-    		minRange: cfg_pvWattage/cfg_sysVoltage/3,
+    		minRange: CONFIG.pvWattage/CONFIG.sysVoltage/3,
 		    labels: {
 		        format: '{value} A'
 		    }, 
@@ -495,8 +524,8 @@ function get_battery_volts() {
 			for (j = 0; j < full_day_data[FNDC_ID][port].length; j++) {
 				day_data_volts[j] = [full_day_data[FNDC_ID][port][j].timestamp, parseFloat(full_day_data[FNDC_ID][port][j].battery_volt)];
 				// 0.005 V per 2 V cell, per 1 degree C above or below 25° -- target voltage goes up when cold and down when hot
-				temp_compensation = (0.005) * (cfg_sysVoltage/2) * (parseInt(full_day_data[FNDC_ID][port][j].battery_temp) - 25);
-				voltage_target = cfg_sysAbsorbVoltage - temp_compensation;
+				temp_compensation = (0.005) * (CONFIG.sysVoltage/2) * (parseInt(full_day_data[FNDC_ID][port][j].battery_temp) - 25);
+				voltage_target = CONFIG.sysAbsorbVoltage - temp_compensation;
 				day_data_target[j] = [full_day_data[FNDC_ID][port][j].timestamp, voltage_target];
 			}
 
@@ -540,17 +569,17 @@ function get_battery_volts() {
     		labels: {
 		        format: '{value} V'
 		    },
-    		minRange: cfg_sysVoltage/6,
+    		minRange: CONFIG.sysVoltage/6,
 //			plotLines: [{
 //				color: '#00bb00',
 //				width: 1.5,
-//				value: cfg_sysAbsorbVoltage
+//				value: CONFIG.sysAbsorbVoltage
 //			}],
 		    plotBands: [{
 		    	// red for below the system voltage plus a tad: 12.2, 24.4, or 48.8
                 color: '#ffedee',
                 from: 0,
-				to: cfg_sysVoltage
+				to: CONFIG.sysVoltage
 			}]
 		},
 	};
@@ -566,7 +595,8 @@ function get_inverter_power() {
 	var total_day_data_watts = [];
 	var day_data_watts = [];
 	var all_devices_data = [];
-	var count;
+	var chart_watts = 0;
+//	var count;
 
 	for (var port in full_day_data[FX_ID]) {
 		// port interates through each fx-series inverters
@@ -584,13 +614,23 @@ function get_inverter_power() {
 				total_day_data_watts[y] = [full_day_data[FX_ID][port][y].timestamp, total_watts];
 				
 			} else {
-	
+
+				// IF there is charge current, plot the charger amps as a positive value
+				// ELSE we'll assume it's inverter and plot the inverter amps as a negative value
+				
+				if (full_day_data[FX_ID][port][y].charge_current > 0) {
+					chart_watts = full_day_data[FX_ID][port][y].charge_current * full_day_data[FX_ID][port][y].ac_output_voltage;
+				} else {
+					chart_watts = -(full_day_data[FX_ID][port][y].inverter_current * full_day_data[FX_ID][port][y].ac_output_voltage);
+				}
+
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_watts[port][y] = {
 					x: full_day_data[FX_ID][port][y].timestamp,
-					y: -(full_day_data[FX_ID][port][y].inverter_current * full_day_data[FX_ID][port][y].ac_output_voltage),
+					y: chart_watts,
 					mode: "(" + full_day_data[FX_ID][port][y].operational_mode + ")"
 				};
+
 			}
 		}
 	}
@@ -602,7 +642,8 @@ function get_inverter_power() {
 //			color: cfg_colorProduction,
 			data: day_data_watts[i],
 			name: deviceLabel[i],
-			type: 'line',
+//			type: 'line'
+			type: 'area'
 		};
 		all_devices_data.push(device_data);
 	}
@@ -619,6 +660,11 @@ function get_inverter_power() {
 	}
 	
 	chart_options = {
+		plotOptions: {
+			area: {
+				stacking: 'normal',
+			}
+		},
 		colors: cfg_colorsChargers,
 		series: all_devices_data,
 		tooltip: {
@@ -634,6 +680,7 @@ function get_inverter_power() {
 			valueSuffix: ' Watts'
 		},
     	yAxis: {
+		    reversedStacks: false,
 		    labels: {
 				formatter: function () {
 					return (this.value/1000).toFixed(1) + ' kW'
@@ -933,7 +980,7 @@ function get_fndc_amps_vs_volts() {
     		labels: {
 		        format: '{value} V'
 		    },
-    		minRange: cfg_sysVoltage/6,
+    		minRange: CONFIG.sysVoltage/6,
     		opposite: false
 		}, { // secondary axis
 			endOnTick: true,
@@ -1017,7 +1064,7 @@ function get_fndc_net_ah() {
 //    		labels: {
 //		        format: '{value} V'
 //		    },
-//    		minRange: cfg_sysVoltage/6,
+//    		minRange: CONFIG.sysVoltage/6,
 //		    opposite: true
 //		}]
 	};

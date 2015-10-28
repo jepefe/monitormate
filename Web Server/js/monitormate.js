@@ -13,6 +13,9 @@ GNU General Public License at <http://www.gnu.org/licenses/>
 for more details.
 */
 
+// list global's from the config file...
+/* global CONFIG */
+
 // some arrays for the labels for the devices and shunts.
 // these will get set up in set_labels() after get_datastream().
 var deviceLabel = [];
@@ -31,6 +34,12 @@ var status_content = {
 	status_top: "summary",
 	status_bottom: "none",
 };
+
+// Platform detection, looks for Apple platforms both OS X and iOS.
+// FIXME: should also detect specifically "touch" devices
+function isApple() {
+	return navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)?true:false;
+}
 
 if (typeof Highcharts !== 'undefined') {
 	// Make a copy of the defaults, call this line before any other setOptions call
@@ -68,10 +77,12 @@ function get_URLvars() {
 
 
 function update_URL(page, dateString) {
+	var queryString = null;
+	
 	if (!dateString) {
-		var queryString = page;
+		queryString = page;
 	} else {
-		var queryString = page + "?date=" + dateString;
+		queryString = page + "?date=" + dateString;
 	}
 	window.history.replaceState(null, null, queryString);
 }
@@ -94,7 +105,7 @@ function get_cookies() {
 
 
 function set_labels() {
-	// convert all the cfg_ labels to regular ones...
+	// convert all the CONFIG labels to regular ones...
 
 	/*global deviceLabel, shuntLabel, full_day_data */
 
@@ -104,7 +115,7 @@ function set_labels() {
 			// not the summary data, only the numberical entries
 			for (var port in full_day_data[type]) {
 
-				if (cfg_deviceLabel[port] === "") {
+				if (CONFIG.deviceLabel[port] === "") {
 					// If there's not a label in the config, then assign default name based on ID type
 					switch (parseInt(type)) {
 						case FX_ID:
@@ -124,15 +135,15 @@ function set_labels() {
 						break;
 					}
 				} else {
-					deviceLabel[port] = cfg_deviceLabel[port];
+					deviceLabel[port] = CONFIG.deviceLabel[port];
 				}
 			}
 		}
 	}
 	
 	// the shunts are a bit more straight forward...
-	for (var channel in cfg_shuntLabel) {
-		if (cfg_shuntLabel[channel] === "") {
+	for (var channel in CONFIG.shuntLabel) {
+		if (CONFIG.shuntLabel[channel] === "") {
 			switch (channel) {
 				case "1":
 					shuntLabel[channel] = "Shunt A";
@@ -148,7 +159,7 @@ function set_labels() {
 					break;
 			}
 		} else {
-			shuntLabel[channel] = cfg_shuntLabel[channel];
+			shuntLabel[channel] = CONFIG.shuntLabel[channel];
 		}
 	}
 }

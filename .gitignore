@@ -3,5 +3,5 @@ config.js
 *.pyc
 MonitorMate.esproj
 Web Server/config/config.server.php
-
+Web Server/config/config.local.php
 Web Server/config/debug
