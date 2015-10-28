@@ -145,13 +145,13 @@ function set_labels() {
 	for (var channel in CONFIG.shuntLabel) {
 		if (CONFIG.shuntLabel[channel] === "") {
 			switch (channel) {
-				case "1":
+				case "0":
 					shuntLabel[channel] = "Shunt A";
 					break;
-				case "2":
+				case "1":
 					shuntLabel[channel] = "Shunt B";
 					break;
-				case "3":
+				case "2":
 					shuntLabel[channel] = "Shunt C";
 					break;
 				default:

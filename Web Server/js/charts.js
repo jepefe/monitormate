@@ -822,15 +822,15 @@ function get_fndc_shunts() {
 			valueSuffix: ' Watts'
 		},
 	    series: [{
-	    	name: shuntLabel[1],
+	    	name: shuntLabel[0],
 	    	color: cfg_colorShuntA,
 			data: day_data_shunt_a
 		}, {
-		    name: shuntLabel[2],
+		    name: shuntLabel[1],
 	    	color: cfg_colorShuntB,
 			data: day_data_shunt_b
 		}, {
-		    name: shuntLabel[3],
+		    name: shuntLabel[2],
 	    	color: cfg_colorShuntC,
 			data: day_data_shunt_c
 		}, {
@@ -907,7 +907,7 @@ function get_fndc_shunt(shunt) {
 			valueSuffix: ' Watts'
 		},
 	    series: [{
-	    	name: shuntLabel[1],
+	    	name: shuntLabel[0],
 	    	color: cfg_colorShuntA,
 			data: day_data_shunt
 		}]

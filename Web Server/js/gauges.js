@@ -473,15 +473,15 @@ function get_fndc_shunt_gauge(shunt, chart) {
 			
 			switch (shunt) {
 				case "A":
-					shunt_label = CONFIG.shuntLabel[1];
+					shunt_label = shuntLabel[0];
 					shunt_amps = device.shunt_a_amps;
 					break;
 				case "B":
-					shunt_label = CONFIG.shuntLabel[2];
+					shunt_label = shuntLabel[1];
 					shunt_amps = device.shunt_b_amps;
 					break;
 				case "C":
-					shunt_label = CONFIG.shuntLabel[3];
+					shunt_label = shuntLabel[2];
 					shunt_amps = device.shunt_c_amps;
 					break;
 			}
