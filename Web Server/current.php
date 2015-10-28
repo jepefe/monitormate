@@ -5,8 +5,9 @@
 	<meta name="viewport" content="width=800">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
+	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
+	<link rel="mask-icon" href="./images/mask-icon.svg" color='#ff9c1a'>
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
 	<link rel="stylesheet" href="./css/flex.css" type="text/css">
 	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
