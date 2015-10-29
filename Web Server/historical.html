@@ -82,7 +82,7 @@
 		function refresh_data(update) {
 
 			/*global display_date */
-			var update = (update != false)? true : false;
+			// var update = (update != false)? true : false;
 			
 			if (display_date == get_formatted_date()) { // if it's today.
 				update_URL('historical.html');
@@ -123,10 +123,11 @@
 
 		function change_day(delta) {
 
-			/*global display_date */
-			var delta = parseInt(delta);
-			var queryString;
-
+			/* global display_date */
+			// var queryString;
+			
+			delta = parseInt(delta);
+			
 			if (delta == 0) {
 				display_date = get_formatted_date();
 			} else {
