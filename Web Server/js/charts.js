@@ -13,6 +13,8 @@ GNU General Public License at <http://www.gnu.org/licenses/>
 for more details.
 */
 
+/* global CONFIG */
+
 // Common theme for all the charts.
 if (typeof Highcharts !== 'undefined') {
 
@@ -934,7 +936,10 @@ function get_fndc_amps_vs_volts() {
 	/*global full_day_data */
 	var day_data_volts = [];
 	var day_data_amps = [];
-
+	var shunt_a_current = null;
+	var shunt_b_current = null;
+	var shunt_c_current = null;
+	var net_current = null;
 	
 	for (var port in full_day_data[FNDC_ID]) {
 		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
@@ -943,7 +948,7 @@ function get_fndc_amps_vs_volts() {
 			shunt_c_current = parseFloat(full_day_data[FNDC_ID][port][i].shunt_c_current);
 			net_current     = shunt_a_current + shunt_b_current + shunt_c_current;
 
-			day_data_amps[i]  = [full_day_data[FNDC_ID][port][i].timestamp, net_amps];
+			day_data_amps[i]  = [full_day_data[FNDC_ID][port][i].timestamp, net_current];
 			day_data_volts[i] = [full_day_data[FNDC_ID][port][i].timestamp, parseFloat(full_day_data[FNDC_ID][port][i].battery_voltage)];
 		}
 	}
