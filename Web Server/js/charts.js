@@ -448,7 +448,6 @@ function get_cc_input_volts() {
 
 }
 
-
 function get_cc_input_current() {
 
 	/*global deviceLabel, full_day_data */

@@ -29,29 +29,22 @@ if (isset($_GET) && isset($_GET["q"])) {
 	if (isset($_GET["date"])) {
 		// TODO: I should verify that the date is properly formatted.
 		$date = $_GET["date"];
-	} else if (DEBUG) {
-		// DEBUG: just always use the same date as today.
-		$date = "2015-05-05";
 	}
-	
+
 	if (isset($_GET["scope"])) {
 		// TODO: I should verify that it's an integer in a valid range.
 		$scope = $_GET["scope"];
 	}
 	
 	switch ($_GET["q"]) {
-		// FIXME: most if not all of these don't work if a date is actually passed in!!
 		case 'years':
-			// query_years($date);
-			query_years();
+			query_years($date);
 			break;
 		case 'months':
-			// query_months($date);
-			query_months();
+			query_months($date);
 			break;
 		case 'days':
-			// query_days($date);
-			query_days();
+			query_days($date);
 			break;
 		case 'full_day':
 			query_full_day($date, $scope);
