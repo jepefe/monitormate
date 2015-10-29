@@ -270,7 +270,7 @@ function query_full_day($date, $scope){
 						ORDER BY date";
 	
 	// if there's more than one charge controller (fm/mx) we should get the cc totals.
-	$query_cc_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_volts
+	$query_cc_totals =	"SELECT date, SUM(charge_current) AS total_current, battery_voltage
 						FROM `monitormate_cc`
 						WHERE ".$whereClause."
 						GROUP BY date

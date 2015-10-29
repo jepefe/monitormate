@@ -33,7 +33,7 @@ class cc:
 		'aux_mode',			#  [8] AUX Mode
 		'error_modes',		#  [9] Error Codes
 		'charge_mode',		# [10] Charger Mode
-		'battery_volts',	# [11] Battery Voltage
+		'battery_voltage',	# [11] Battery Voltage
 		'daily_ah',			# [12] Daily Ah
 		'unused'			# [13] unused
 	]
@@ -49,7 +49,7 @@ class cc:
 		'aux_mode',			#  [6] AUX Mode
 		'error_modes',		#  [7] Error Codes
 		'charge_mode',		#  [8] Charger Mode
-		'battery_volts',	#  [9] Battery Voltage
+		'battery_voltage',	#  [9] Battery Voltage
 		'daily_ah'			# [10] Daily Ah
 	]
 

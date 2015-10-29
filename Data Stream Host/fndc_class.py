@@ -24,12 +24,12 @@ class fndc():
 	valuenames = [
 		'address',			#  [0] Port Address
 		'device_id',		#  [1] Device Type
-		'shunt_a_amps',		#  [2] Shunt A Amps  		
-		'shunt_b_amps',		#  [3] Shunt B Amps  		
-		'shunt_c_amps',		#  [4] Shunt C Amps  		
+		'shunt_a_current',	#  [2] Shunt A Amps  		
+		'shunt_b_current',	#  [3] Shunt B Amps  		
+		'shunt_c_current',	#  [4] Shunt C Amps  		
 		'extra_data_id',	#  [5] Extra Data Identifier
 		'extra_data',		#  [6] Extra Data			
-		'battery_volts',	#  [7] Battery Voltage		
+		'battery_voltage',	#  [7] Battery Voltage		
 		'soc',				#  [8] State of Charge		
 		'shunt_enable',		#  [9] Shunt Enable		
 		'status_flags',		# [10] Status Flags
@@ -40,9 +40,9 @@ class fndc():
 	valuenames_formatted = [
 		'address',								#  [0] Port Address
 		'device_id',							#  [1] Device Type
-		'shunt_a_amps',							#  [2] Shunt A Amps
-		'shunt_b_amps',							#  [3] Shunt B Amps
-		'shunt_c_amps',							#  [4] Shunt C Amps
+		'shunt_a_current',						#  [2] Shunt A Amps
+		'shunt_b_current',						#  [3] Shunt B Amps
+		'shunt_c_current',						#  [4] Shunt C Amps
 		'accumulated_ah_shunt_a',				#  [5] Accumulated Ah Shunt A
 		'accumulated_kwh_shunt_a',				#  [6] Accumulated kWh Shunt A
 		'accumulated_ah_shunt_b',				#  [7] Accumulated Ah Shunt B
@@ -60,7 +60,7 @@ class fndc():
 		'charge_params_met',					# [19] Charge Parameters Met
 		'relay_mode',							# [20] Relay Mode
 		'relay_status',							# [21] Relay Status
-		'battery_volt',							# [22] Battery Voltage
+		'battery_voltage',						# [22] Battery Voltage
 		'soc',									# [23] State of Charge
 		'shunt_enabled_a',						# [24] Shunt A Enabled
 		'shunt_enabled_b',						# [25] Shunt B Enabled

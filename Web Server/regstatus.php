@@ -51,7 +51,7 @@ if(isset($_POST)){
 			        break;
 		    }
 		    $json_error .=  PHP_EOL;
-		    mmLog('error', $json_error);
+		    logEntry('error', $json_error);
 		}
 
 		// add the server time in ISO8601 format (DATE_ISO8601 has improperly formed TZ offset)
@@ -68,25 +68,34 @@ if(isset($_POST)){
 //			$date_time = date('Y-m-d G:i',time()); //Date from localhost
 //		}
 		$timestamp = NULL;
+		$prevTimestamp = NULL;
+		$prevStatus = file_get_contents("./data/status.json");
+		$prevStatusArray = json_decode($prevStatus, TRUE);
 		
 		switch ($reg_time) {
 			// should be set to "mate", "host", or "server" 
 			case "mate":
 				$timestamp = strtotime($status_array['time']['mate_local_time']);
+				$prevTimestamp = strtotime($prevStatusArray['time']['mate_local_time']);
 				break;
 			case "host":
 				$timestamp = strtotime($status_array['time']['host_local_time']);
+				$prevTimestamp = strtotime($prevStatusArray['time']['host_local_time']);
 				break;
 			default:
 				// this is the fall back in case the field is poorly formatted.
 				$timestamp = strtotime($status_array['time']['server_local_time']);
+				$prevTimestamp = strtotime($prevStatusArray['time']['server_local_time']);
 				break;
 		}
 
 		// are we at the configured registration interval?
 		if (!(date('i', $timestamp) % $reg_interval)) {
-			// current time matche the reg_interval so we should register data in the database
-			$reg = true;
+			// current time matches the reg_interval so we should register data in the database
+			if (date('i', $timestamp) != date('i', $prevTimestamp)) {
+				// see if the current minute is the same as the last update
+				$reg = true;
+			}
 		}
 	
 		$date_time = date('Y-m-d G:i', $timestamp); // Date string for passing to register functions
@@ -162,6 +171,9 @@ if(isset($_POST)){
 			}
 		}
 		
+		// connect to the database before we start registering the data.
+		$connection = db_connection();
+		
 		foreach ($status_array['devices'] as $i) {
 			switch ($i["device_id"]) {
 	
@@ -217,13 +229,12 @@ if(isset($_POST)){
 
 	} else if (isset($_GET["clearlog"])) {
 		file_put_contents('./data/error.log', NULL);
-		print("Error log has been cleared.");
+		print("Error log has been cleared. <a href='debug.html'>Back</a>");
 	} else {
 		// it's either missing the token or it doesn't match... 
 		exit;
 	}
 }
-
 
 function register_fndc($device_array, $date_time) {
 
@@ -231,9 +242,9 @@ function register_fndc($device_array, $date_time) {
 	 	date,
 	 	address,
 	 	device_id,
-	 	shunt_a_amps,
-	 	shunt_b_amps,
-	 	shunt_c_amps,
+	 	shunt_a_current,
+	 	shunt_b_current,
+	 	shunt_c_current,
 	 	accumulated_ah_shunt_a,
 		accumulated_kwh_shunt_a,
 		accumulated_ah_shunt_b,
@@ -251,7 +262,7 @@ function register_fndc($device_array, $date_time) {
 		charge_params_met,
 		relay_mode,
 		relay_status,
-		battery_volt,
+		battery_voltage,
 		soc,
 		shunt_enabled_a,
 		shunt_enabled_b,
@@ -261,9 +272,9 @@ function register_fndc($device_array, $date_time) {
 		'".$date_time."',
 		'".$device_array['address']."',
 		'".$device_array['device_id']."',
-		'".$device_array['shunt_a_amps']."',
-		'".$device_array['shunt_b_amps']."',
-		'".$device_array['shunt_c_amps']."',
+		'".$device_array['shunt_a_current']."',
+		'".$device_array['shunt_b_current']."',
+		'".$device_array['shunt_c_current']."',
 		'".$device_array['accumulated_ah_shunt_a']."',
 		'".$device_array['accumulated_kwh_shunt_a']."',
 		'".$device_array['accumulated_ah_shunt_b']."',
@@ -281,7 +292,7 @@ function register_fndc($device_array, $date_time) {
 		'".$device_array['charge_params_met']."',
 		'".$device_array['relay_mode']."',
 		'".$device_array['relay_status']."',
-		'".$device_array['battery_volt']."',
+		'".$device_array['battery_voltage']."',
 		'".$device_array['soc']."',
 		'".$device_array['shunt_enabled_a']."',
 		'".$device_array['shunt_enabled_b']."',
@@ -289,12 +300,10 @@ function register_fndc($device_array, $date_time) {
 		'".$device_array['battery_temp']."'
 	)";
 
-	$connection = db_connection();
-	mysql_query($query,$connection);
+	runQuery($query);
 }
 
-
-function register_cc($device_array,$date_time){
+function register_cc($device_array, $date_time){
 	$query = "INSERT INTO monitormate_cc (
 		date,
 		address,
@@ -306,7 +315,7 @@ function register_cc($device_array,$date_time){
 		aux_mode,
 		error_modes,
 		charge_mode,
-		battery_volts,
+		battery_voltage,
 		daily_ah
 	) VALUES (
 		'".$date_time."',
@@ -317,18 +326,19 @@ function register_cc($device_array,$date_time){
 		'".$device_array['pv_voltage']."',
 		'".$device_array['daily_kwh']."',
 		'".$device_array['aux_mode']."',
-		'".implode(",", $device_array['error_modes'])."',
+		'".implode(", ", $device_array['error_modes'])."',
 		'".$device_array['charge_mode']."',
-		'".$device_array['battery_volts']."',
+		'".$device_array['battery_voltage']."',
 		'".$device_array['daily_ah']."'
 	)";
 
-	$connection = db_connection();
-	mysql_query($query,$connection);
+	// $connection = db_connection();
+	// mysql_query($query,$connection);
+	runQuery($query);
 }
 
 
-function register_fx($device_array,$date_time){
+function register_fx($device_array, $date_time){
 	$query = "INSERT INTO monitormate_fx (
 		date,
 		address,device_id,
@@ -341,7 +351,7 @@ function register_fx($device_array,$date_time){
 		operational_mode,
 		error_modes,
 		ac_mode,
-		battery_volt,
+		battery_voltage,
 		misc,
 		warning_modes
 	) VALUES (
@@ -355,18 +365,19 @@ function register_fx($device_array,$date_time){
 		'".$device_array['ac_output_voltage']."',
 		'".$device_array['sell_current']."',
 		'".$device_array['operational_mode']."',
-		'".implode(",", $device_array['error_modes'])."',
+		'".implode(", ", $device_array['error_modes'])."',
 		'".$device_array['ac_mode']."',
-		'".$device_array['battery_volt']."',
+		'".$device_array['battery_voltage']."',
 		'".$device_array['misc']."',
-		'".implode(",", $device_array['warning_modes'])."'
+		'".implode(", ", $device_array['warning_modes'])."'
 	)";
 
-	$connection = db_connection();
-	mysql_query($query,$connection);		
+	// $connection = db_connection();
+	// mysql_query($query,$connection);
+	runQuery($query);		
 }
 
-function register_radian($device_array,$date_time){
+function register_radian($device_array, $date_time){
 
 	$query = "INSERT INTO monitormate_radian (
 		date,
@@ -389,7 +400,7 @@ function register_radian($device_array,$date_time){
 		operational_mode,
 		error_modes,
 		ac_mode,
-		battery_volt,
+		battery_voltage,
 		misc,
 		warning_modes
 	) VALUES (
@@ -411,44 +422,45 @@ function register_radian($device_array,$date_time){
 		'".$device_array['sell_current_l1']."',
 		'".$device_array['sell_current_l2']."',
 		'".$device_array['operational_mode']."',
-		'".implode(",", $device_array['error_modes'])."',
+		'".implode(", ", $device_array['error_modes'])."',
 		'".$device_array['ac_mode']."',
-		'".$device_array['battery_volt']."',
-		'".implode(",", $device_array['misc'])."',
-		'".implode(",", $device_array['warning_modes'])."'
+		'".$device_array['battery_voltage']."',
+		'".implode(", ", $device_array['misc'])."',
+		'".implode(", ", $device_array['warning_modes'])."'
 	)";
 
-	$connection = db_connection();
-	mysql_query($query,$connection);		
+	// $connection = db_connection();
+	// mysql_query($query, $connection);
+	runQuery($query);		
 }
 
 
 function register_summary($summary, &$status_array) {
 	
-	$connection = db_connection();
+	// $connection = db_connection();
 	
 	// TODO: instead of doing five queries, we should just do one.
 	// currently it gets max_temp, min_temp, max_pv_voltage, max_soc from database queries, since then puts them back into summary table.
 	
-	$max_tempq = mysql_query("select max(battery_temp) from monitormate_fndc where date(date) ='".$summary['date']."'",$connection);
+	$max_tempq = mysql_query("select max(battery_temp) from monitormate_fndc where date(date) ='".$summary['date']."'");
 	$max_temp = mysql_fetch_row($max_tempq);
 	if ($max_temp != NULL) {
 		$summary['max_temp'] = $max_temp[0];
 	}
 
-	$min_tempq = mysql_query("select min(battery_temp) from monitormate_fndc where date(date) ='".$summary['date']."'",$connection);
+	$min_tempq = mysql_query("select min(battery_temp) from monitormate_fndc where date(date) ='".$summary['date']."'");
 	$min_temp = mysql_fetch_row($min_tempq);
 	if($min_temp != NULL){
 		$summary['min_temp'] = $min_temp[0];
 	}
 	
-	$max_pv_voltageq = mysql_query("select max(pv_voltage) from monitormate_cc where date(date) ='".$summary['date']."'",$connection);
+	$max_pv_voltageq = mysql_query("select max(pv_voltage) from monitormate_cc where date(date) ='".$summary['date']."'");
 	$max_pv_voltage = mysql_fetch_row($max_pv_voltageq);
 	if($max_pv_voltage != NULL){
 		$summary['max_pv_voltage'] = $max_pv_voltage[0];
 	}
 	
-	$max_socq = mysql_query("select max(soc) from monitormate_fndc where date(date) ='".$summary['date']."'",$connection);
+	$max_socq = mysql_query("select max(soc) from monitormate_fndc where date(date) ='".$summary['date']."'");
 	$max_soc = mysql_fetch_row($max_socq);
 	if($max_soc != NULL){
 		$summary['max_soc'] = $max_soc[0];
@@ -495,11 +507,11 @@ function register_summary($summary, &$status_array) {
 	if (time() < strtotime('01:30:00')) {
 		// we look at the last record from the previous day.
 		$previousDay = date('Y-m-d', strtotime('-1 day', strtotime($summary['date'])));
-		$prevdayRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$previousDay."'",$connection);
+		$prevdayRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$previousDay."'");
 	}
 
 	// we look at the last record from today
-	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$summary['date']."'",$connection);
+	$todaysRecordq = mysql_query("SELECT date, kwh_in, kwh_out FROM monitormate_summary WHERE date = '".$summary['date']."'");
 	
 	if (mysql_num_rows($todaysRecordq) > 0) {
 		// successful query for today, with at least 1 result.
@@ -545,16 +557,9 @@ function register_summary($summary, &$status_array) {
 		$msgLog = "Somehow we didn't get query results for today or yesterday. Maybe this is the first day of logging.\n";
 		$query = $insert_query;
 	}
-		
-	if ($query) {
-		mmLog('query', $msgLog."QUERY: ".$query);
-		mysql_query($query, $connection);
-	} else {
-		mmLog('error', $msgLog);
-	}
 
+	runQuery($query);	
 }
-
 
 function db_connection() {
 	global $dbpass;
@@ -566,7 +571,14 @@ function db_connection() {
     return $connection;
 }
 
-function mmLog($type, $msg) {
+function runQuery($query) {
+	$result = mysql_query($query);
+	if ($result === FALSE) {
+		logEntry('error', mysql_error()."\n".$query);	
+	}
+}
+
+function logEntry($type, $msg) {
 	$data = "-------------------\n".date('Y-m-d H:i:s')."\n-------------------\n";
 	$data .= $msg."\n";
 	switch ($type) {

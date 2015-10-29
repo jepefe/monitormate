@@ -40,7 +40,7 @@ class radian():
                   'operational_mode',\
                   'error_modes',\
                   'ac_mode',\
-                  'battery_volt',\
+                  'battery_voltage',\
                   'misc',\
                   'warning_modes']
     
@@ -64,7 +64,7 @@ class radian():
                   'operational_mode',\
                   'error_modes',\
                   'ac_mode',\
-                  'battery_volt',\
+                  'battery_voltage',\
                   'misc',\
                   'warning_modes']
 

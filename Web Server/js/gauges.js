@@ -136,7 +136,7 @@ function get_fndc_soc_gauge(chart) {
 		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
 			var device = json_status['devices'][i];
 			var current_soc = device.soc;
-			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
+			var total_shunt_amps = parseFloat(device.shunt_a_current) + parseFloat(device.shunt_b_current) + parseFloat(device.shunt_c_current);
 			if (isApple) {
 				var upArrow = "&#11014;";
 				var downArrow = "&#11015;";
@@ -213,11 +213,11 @@ function get_batt_volts_gauge(chart) {
 	for (var i = 0; i < json_status['devices'].length; i++) {
 		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
 			var device = json_status['devices'][i];
-			current_batt = device.battery_volt;
+			current_batt = device.battery_voltage;
 			break; // only one FNDC!
 		} else if (json_status['devices'][i]['device_id'] == FNDC_ID) {
 			var device = json_status['devices'][i];
-			current_batt = device.battery_volts;
+			current_batt = device.battery_voltage;
 		}
 
 	}
@@ -299,7 +299,7 @@ function get_cc_output_gauge(chart) {
 	for (var i = 0; i < json_status['devices'].length; i++) {	
 		if (json_status['devices'][i]['device_id'] == CC_ID) {
 			var device = json_status['devices'][i];
-			var charging_watts = device.charge_current * device.battery_volts;
+			var charging_watts = device.charge_current * device.battery_voltage;
 			total_watts = total_watts + charging_watts;
 		}
 	}
@@ -474,15 +474,15 @@ function get_fndc_shunt_gauge(shunt, chart) {
 			switch (shunt) {
 				case "A":
 					shunt_label = shuntLabel[0];
-					shunt_amps = device.shunt_a_amps;
+					shunt_amps = device.shunt_a_current;
 					break;
 				case "B":
 					shunt_label = shuntLabel[1];
-					shunt_amps = device.shunt_b_amps;
+					shunt_amps = device.shunt_b_current;
 					break;
 				case "C":
 					shunt_label = shuntLabel[2];
-					shunt_amps = device.shunt_c_amps;
+					shunt_amps = device.shunt_c_current;
 					break;
 			}
 
@@ -534,9 +534,9 @@ function get_fndc_shunt_gauge(shunt, chart) {
 						chart_max = CONFIG.shuntRange.C.max;
 						break;
 				}
-				shunt_watts = shunt_amps * device.battery_volt;
+				shunt_watts = shunt_amps * device.battery_voltage;
 			} else {
-				shunt_watts = Math.abs(shunt_amps * device.battery_volt);
+				shunt_watts = Math.abs(shunt_amps * device.battery_voltage);
 			}
 
 			break; // only one FNDC!
@@ -653,15 +653,15 @@ function get_fndc_shuntNet_gauge(chart) {
 		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
 			var device = json_status['devices'][i];
 
-			net_amps = device.shunt_a_amps + device.shunt_b_amps + device.shunt_c_amps;
+			net_amps = device.shunt_a_current + device.shunt_b_current + device.shunt_c_current;
 
 			if (net_amps >= 0) {
 				chart_mode = "Charging Battery";
 			} else {
 				chart_mode = "Discharging Battery";
 			}
-//			net_watts = Math.abs(net_amps * device.battery_volt);
-			net_watts = net_amps * device.battery_volt;
+//			net_watts = Math.abs(net_amps * device.battery_voltage);
+			net_watts = net_amps * device.battery_voltage;
 
 			break; // only one FNDC!
 		}

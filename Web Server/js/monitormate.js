@@ -271,7 +271,7 @@ function populate_chart_select(pselect) {
 	}
 
 	if (full_day_data[CC_ID]) { /* FM/MX charge controller available */
-		select_items.push('<option value="battery_volts">Battery Voltage</option>');
+		select_items.push('<option value="battery_voltage">Battery Voltage</option>');
 		select_items.push('<option value="cc_charge_current">PV Charging Current</option>');
 		select_items.push('<option value="cc_charge_power">PV Charging Power</option>');
 		select_items.push('<option value="cc_input_volts">PV Input Voltage</option>');
@@ -393,7 +393,7 @@ function set_status(HTML_id, value) {
 		case FX_ID:
 			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
-						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
+						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_voltage + ' V</td></tr>\
 						<tr><td class="label">AC Output Voltage:</td><td>' + device.ac_output_voltage + ' V</td></tr>\
 						<tr><td class="label">Inverter Current:</td><td>' + device.inverter_current + ' A</td></tr>\
 						<tr><td class="label">AC Input Mode:</td><td>' + device.ac_mode + '</td></tr>\
@@ -432,10 +432,10 @@ function set_status(HTML_id, value) {
 			break;
 
 		case CC_ID:
-			var charge_watts = parseFloat(device.battery_volts) * parseFloat(device.charge_current);
+			var charge_watts = parseFloat(device.battery_voltage) * parseFloat(device.charge_current);
 			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Charge Mode:</td><td>' + device.charge_mode + '</td></tr>\
-						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_volts + ' V</td></tr>\
+						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_voltage + ' V</td></tr>\
 						<tr><td class="label">Charge Current:</td><td>' + device.charge_current + ' A</td></tr>\
 						<tr><td class="label">Charge Power:</td><td>' + charge_watts.toFixed(0) + ' W</td></tr>\
 						<tr><td class="label">PV Voltage:</td><td>' + device.pv_voltage + ' V</td></tr>\
@@ -448,7 +448,7 @@ function set_status(HTML_id, value) {
 			break;
 
 		case FNDC_ID:
-			var total_shunt_amps = parseFloat(device.shunt_a_amps) + parseFloat(device.shunt_b_amps) + parseFloat(device.shunt_c_amps);
+			var total_shunt_amps = parseFloat(device.shunt_a_current) + parseFloat(device.shunt_b_current) + parseFloat(device.shunt_c_current);
 			var net_accumulated_ah  = parseFloat(device.accumulated_ah_shunt_a) + parseFloat(device.accumulated_ah_shunt_b) + parseFloat(device.accumulated_ah_shunt_c);
 			var net_accumulated_kwh = parseFloat(device.accumulated_kwh_shunt_a) + parseFloat(device.accumulated_kwh_shunt_b) + parseFloat(device.accumulated_kwh_shunt_c);
 			var today_net_ah  = parseInt(device.today_net_input_ah) - parseInt(device.today_net_output_ah);
@@ -459,13 +459,13 @@ function set_status(HTML_id, value) {
 						<tr><td class="label">Charge Required:</td><td>' + (device.charge_factor_corrected_net_batt_ah * -1) + ' Ah, ' + (device.charge_factor_corrected_net_batt_kwh * -1) + ' kWh</td></tr>\
 						<tr><td class="label">Within Charge Params:</td><td>' + device.charge_params_met + '</td></tr>\
 						<th class="subhead">Battery</th>\
-						<tr><td class="label">Voltage:</td><td>' + device.battery_volt + ' V</td></tr>\
+						<tr><td class="label">Voltage:</td><td>' + device.battery_voltage + ' V</td></tr>\
 						<tr><td class="label">Temperature:</td><td>' + device.battery_temp + ' &deg;C (' + ((device.battery_temp * 1.8) + 32).toFixed(1) + ' &deg;F)</td></tr>\
 						<th class="subhead">Shunts</th>\
-						<tr><td class="label">' + device.shunt_a_label + ':</td><td>' + device.shunt_a_amps + ' A, ' + Math.round(device.shunt_a_amps * device.battery_volt) + ' W</td></tr>\
-						<tr><td class="label">' + device.shunt_b_label + ':</td><td>' + device.shunt_b_amps + ' A, ' + Math.round(device.shunt_b_amps * device.battery_volt) + ' W</td></tr>\
-						<tr><td class="label">' + device.shunt_c_label + ':</td><td>' + device.shunt_c_amps + ' A, ' + Math.round(device.shunt_c_amps * device.battery_volt) + ' W</td></tr>\
-						<tr><td class="label">Battery (Net):</td><td>' + total_shunt_amps.toFixed(1) + ' A, ' + Math.round(total_shunt_amps * device.battery_volt) + ' W</td></tr>\
+						<tr><td class="label">' + device.shunt_a_label + ':</td><td>' + device.shunt_a_current + ' A, ' + Math.round(device.shunt_a_current * device.battery_voltage) + ' W</td></tr>\
+						<tr><td class="label">' + device.shunt_b_label + ':</td><td>' + device.shunt_b_current + ' A, ' + Math.round(device.shunt_b_current * device.battery_voltage) + ' W</td></tr>\
+						<tr><td class="label">' + device.shunt_c_label + ':</td><td>' + device.shunt_c_current + ' A, ' + Math.round(device.shunt_c_current * device.battery_voltage) + ' W</td></tr>\
+						<tr><td class="label">Battery (Net):</td><td>' + total_shunt_amps.toFixed(1) + ' A, ' + Math.round(total_shunt_amps * device.battery_voltage) + ' W</td></tr>\
 						<th class="subhead">Today\'s Totals</th>\
 						<tr><td class="label">Input:</td><td>' + device.today_net_input_ah + ' Ah, ' + device.today_net_input_kwh + ' kWh</td></tr>\
 						<tr><td class="label">Output:</td><td>' + device.today_net_output_ah + ' Ah, ' + device.today_net_output_kwh + ' kWh</td></tr>\

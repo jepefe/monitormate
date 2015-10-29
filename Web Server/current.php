@@ -35,7 +35,7 @@
 
 	$charts_array = array(
 		array("fndc_soc_gauge", "fndc_soc"),
-		array("batt_volts_gauge", "battery_volts"),
+		array("batt_volts_gauge", "battery_voltage"),
 		array("fndc_shuntNet_gauge", "fndc_shunts"),
 		array("inverter_power_gauge", "inverter_power"),
 		array("cc_output_gauge", "cc_charge_power"),
@@ -66,7 +66,7 @@
 				// Apply the common chart theme 
 				apply_highchart_theme(Highcharts.chartTheme);
 				draw_chart('fndc_soc', false);
-				draw_chart('battery_volts', false);
+				draw_chart('battery_voltage', false);
 				draw_chart('fndc_shunts', false);
 				draw_chart('inverter_power', false);
 				draw_chart('cc_charge_power', false);

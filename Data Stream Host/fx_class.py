@@ -33,7 +33,7 @@ class fx():
 		'operational_mode',		#  [8] Inverter Operating Mode
 		'error_modes',			#  [9] Error Codes
 		'ac_mode',				# [10] AC Mode
-		'battery_volt',			# [11] Battery Voltage
+		'battery_voltage',		# [11] Battery Voltage
 		'misc',					# [12] Misc
 		'warning_modes'			# [13] Warning Codes
 	]
@@ -51,7 +51,7 @@ class fx():
 		'operational_mode',		#  [8] Inverter Operating Mode
 		'error_modes',			#  [9] Error Codes
 		'ac_mode',				# [10] AC Mode
-		'battery_volt',			# [11] Battery Voltage
+		'battery_voltage',			# [11] Battery Voltage
 		'misc',					# [12] Misc
 		'warning_modes'			# [13] Warning Codes
 	]

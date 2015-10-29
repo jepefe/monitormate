@@ -23,10 +23,10 @@
 		Loading…
 	</textarea>
 
-	<h1>Last Query Executed <a href="data/query.log">(link)</a></h1>
+	<!--<h1>Last Query Executed <a href="data/query.log">(link)</a></h1>
 	<textarea id="query_log" class="file" spellcheck="false">
 		Loading…
-	</textarea>
+	</textarea>-->
 	
 	<h1>Error Log <a href="data/error.log">(link)</a> <a href="regstatus.php?clearlog">(clear)</a></h1>
 	<textarea id="error_log" class="file" spellcheck="false">
@@ -37,7 +37,7 @@
 
 		$(document).ready(function() {
 			$("#status_json").load("data/status.json");
-			$("#query_log").load("data/query.log");
+			// $("#query_log").load("data/query.log");
 			$("#error_log").load("data/error.log");
 			get_current_status();
 			$('#server_local_time').text(json_status['time'].server_local_time);
