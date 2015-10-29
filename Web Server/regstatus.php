@@ -557,8 +557,12 @@ function register_summary($summary, &$status_array) {
 		$msgLog = "Somehow we didn't get query results for today or yesterday. Maybe this is the first day of logging.\n";
 		$query = $insert_query;
 	}
-
-	runQuery($query);	
+	
+	if ($query) {
+		runQuery($query);
+	} else {
+		logEntry('error', $msgLog);
+	}
 }
 
 function db_connection() {
