@@ -115,7 +115,7 @@ function set_labels() {
 			// not the summary data, only the numberical entries
 			for (var port in full_day_data[type]) {
 
-				if (CONFIG.deviceLabel[port] === "") {
+				if (CONFIG.deviceLabel[port - 1] === "") {
 					// If there's not a label in the config, then assign default name based on ID type
 					switch (parseInt(type)) {
 						case FX_ID:
@@ -135,7 +135,7 @@ function set_labels() {
 						break;
 					}
 				} else {
-					deviceLabel[port] = CONFIG.deviceLabel[port];
+					deviceLabel[port] = CONFIG.deviceLabel[port - 1];
 				}
 			}
 		}
