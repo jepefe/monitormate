@@ -13,7 +13,7 @@ GNU General Public License at <http://www.gnu.org/licenses/>
 for more details.
 */
 
-/* global CONFIG */
+/* global CONFIG, COLOR, ID */
 
 // Common theme for all the charts.
 if (typeof Highcharts !== 'undefined') {
@@ -253,7 +253,7 @@ function get_cc_charge_power() {
 	// Set up each series.
 	for (var i in day_data_watts) {
 		device_data = {
-//			color: cfg_colorProduction,
+//			color: COLOR.production,
 			data: day_data_watts[i],
 			name: deviceLabel[i],
 			type: 'line',
@@ -264,7 +264,7 @@ function get_cc_charge_power() {
 	// If there was a total, set up that series
 	if (total_day_data_watts.length > 0) {
 		total_data = {
-			color: cfg_colorProduction,
+			color: COLOR.production,
 			data: total_day_data_watts,
 			name: 'Total',
 			type: 'areaspline'
@@ -273,7 +273,7 @@ function get_cc_charge_power() {
 	}
 	
 	chart_options = {
-		colors: cfg_colorsChargers,
+		colors: COLOR.chargers,
 		series: all_devices_data,
 		tooltip: {
 			shared: true,
@@ -349,7 +349,7 @@ function get_cc_charge_current() {
 	// If there was a total, set up that series
 	if (total_day_data_amps.length > 0) {
 		total_data = {
-			color: cfg_colorProduction,
+			color: COLOR.production,
 			data: total_day_data_amps,
 			name: 'Total',
 			type: 'areaspline'
@@ -358,7 +358,7 @@ function get_cc_charge_current() {
 	}
 
 	chart_options = {
-		colors: cfg_colorsChargers,
+		colors: COLOR.chargers,
 	    series: all_devices_data_amps,
 		tooltip: {
 			shared: true,
@@ -422,7 +422,7 @@ function get_cc_input_volts() {
 	}
 
 	chart_options = {
-		colors: cfg_colorsChargers,
+		colors: COLOR.chargers,
 		series: all_devices_data_array_volts,
 		tooltip: {
 			shared: true,
@@ -484,7 +484,7 @@ function get_cc_input_current() {
 	}
 
 	chart_options = {
-		colors: cfg_colorsChargers,
+		colors: COLOR.chargers,
 	    series: all_devices_data_array_amps,
 		tooltip: {
 			shared: true,
@@ -555,7 +555,7 @@ function get_battery_voltage() {
 			data: day_data_target
 	    },{
 			name: 'Volts',
-			color: cfg_colorUsage,
+			color: COLOR.usage,
 			data: day_data_volts
 	    }],
 		tooltip: {
@@ -640,7 +640,7 @@ function get_inverter_power() {
 	// Set up each series.
 	for (var i in day_data_watts) {
 		device_data = {
-//			color: cfg_colorProduction,
+//			color: COLOR.production,
 			data: day_data_watts[i],
 			name: deviceLabel[i],
 //			type: 'line'
@@ -652,7 +652,7 @@ function get_inverter_power() {
 	// If there was a total, set up that series
 	if (total_day_data_watts.length > 0) {
 		total_data = {
-			color: cfg_colorProduction,
+			color: COLOR.production,
 			data: total_day_data_watts,
 			name: 'Total',
 			type: 'areaspline'
@@ -666,7 +666,7 @@ function get_inverter_power() {
 				stacking: 'normal',
 			}
 		},
-		colors: cfg_colorsChargers,
+		colors: COLOR.chargers,
 		series: all_devices_data,
 		tooltip: {
 			shared: true,
@@ -725,7 +725,7 @@ function get_fndc_soc() {
 	    },
 	    series: [{
 			name: 'Charge',
-			color: cfg_colorUsage,
+			color: COLOR.usage,
 			data: day_data_soc
 	    }],
 		tooltip: {
@@ -824,21 +824,21 @@ function get_fndc_shunts() {
 		},
 	    series: [{
 	    	name: shuntLabel[0],
-	    	color: cfg_colorShuntA,
+	    	color: COLOR.shunt.A,
 			data: day_data_shunt_a
 		}, {
 		    name: shuntLabel[1],
-	    	color: cfg_colorShuntB,
+	    	color: COLOR.shunt.B,
 			data: day_data_shunt_b
 		}, {
 		    name: shuntLabel[2],
-	    	color: cfg_colorShuntC,
+	    	color: COLOR.shunt.C,
 			data: day_data_shunt_c
 		}, {
 			name: "Net",
 			type: 'areaspline',
-			color: cfg_colorProduction,
-			negativeColor: cfg_colorUsage,
+			color: COLOR.production,
+			negativeColor: COLOR.usage,
 			data: day_data_net
 	    }]
 	};
@@ -909,7 +909,7 @@ function get_fndc_shunt(shunt) {
 		},
 	    series: [{
 	    	name: shuntLabel[0],
-	    	color: cfg_colorShuntA,
+	    	color: COLOR.shunt.A,
 			data: day_data_shunt
 		}]
 	};
@@ -959,12 +959,12 @@ function get_fndc_amps_vs_volts() {
 	    },
 	    series: [{
 			name: 'Volts',
-			color: cfg_colorUsage,
+			color: COLOR.usage,
 			data: day_data_volts,
 			yAxis: 0			
 	    }, {
 			name: "Amps",
-			color: cfg_colorProduction,
+			color: COLOR.production,
 			data: day_data_amps,
 			yAxis: 1
 	    }],
@@ -1025,11 +1025,11 @@ function get_fndc_net_ah() {
 	    },
 	    series: [{
 			name: "Net",
-			color: cfg_colorUsage,
+			color: COLOR.usage,
 			data: day_data_netAh,
 	    }, {
 			name: 'Corrected',
-			color: cfg_colorProduction,
+			color: COLOR.production,
 			data: day_data_compensatedAh,
 	    }],
 		tooltip: {
@@ -1137,11 +1137,11 @@ function chart_years(date) {
 		},
 	    series: [{
 	    	name: 'Production',
-	    	color: cfg_colorProduction,
+	    	color: COLOR.production,
 	        data: years_data_kwhin
 		}, {
 		    name: 'Usage',
-	    	color: cfg_colorUsage,
+	    	color: COLOR.usage,
 			data: years_data_kwhout
 		}, {
 	        name: 'Net',
@@ -1230,11 +1230,11 @@ function chart_months(date) {
 		},
 	    series: [{
 	        name: 'Production',
-	        color: cfg_colorProduction,
+	        color: COLOR.production,
 	        data: months_data_kwhin,
 		}, {
 	        name: 'Usage',
-	        color: cfg_colorUsage,
+	        color: COLOR.usage,
 	        data: months_data_kwhout,
 	    }, {
 	        name: 'Net',
@@ -1343,11 +1343,11 @@ function chart_days(date) {
 		},
 	    series: [{
 			name: 'Production',
-			color: cfg_colorProduction,
+			color: COLOR.production,
 			data: days_data_kwhin,
 		}, {
 	        name: 'Usage',
-			color: cfg_colorUsage,
+			color: COLOR.usage,
 	        data: days_data_kwhout,
 	    }, {
 	        name: 'Net',
@@ -1382,7 +1382,7 @@ function chart_days(date) {
 	    },
 	    yAxis: {
 			plotLines: [{
-				color: cfg_colorProduction,
+				color: COLOR.production,
 				dashStyle: 'shortdash',
 				label: {
 					align: 'left',
@@ -1400,7 +1400,7 @@ function chart_days(date) {
 				width: 1,
 				zIndex: 5,
 			},{
-				color: cfg_colorUsage,
+				color: COLOR.usage,
 				dashStyle: 'shortdash',
 				label: {
 					align: 'left',

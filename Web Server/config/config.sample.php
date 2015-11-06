@@ -97,10 +97,10 @@ define("RAD_ID", 6);	// 6 is a Radian-series inverter
 ?>
 
 var ID = {
-	fx: <?php echo FX_ID; ?>;
-	cc: <?php echo CC_ID; ?>;
-	fndc: <?php echo FNDC_ID; ?>;
-	rad: <?php echo RAD_ID; ?>;
+	fx: <?php echo FX_ID; ?>,
+	cc: <?php echo CC_ID; ?>,
+	fndc: <?php echo FNDC_ID; ?>,
+	rad: <?php echo RAD_ID; ?>
 }
 
 var CONFIG = {
@@ -139,7 +139,7 @@ var CONFIG = {
 	
 }
 
-var COLORS = {
+var COLOR = {
 	production: "<?php echo $colorProduction; ?>",
 	usage: "<?php echo $colorUsage; ?>",
 	shunts: {
@@ -147,7 +147,7 @@ var COLORS = {
 		B: "<?php echo $colorShuntB; ?>",
 		C: "<?php echo $colorShuntC; ?>"
 	},
-	chargers = [
+	chargers: [
 		<?php
 			foreach($colorChargers as $color) {
 				echo "'$color', ";
