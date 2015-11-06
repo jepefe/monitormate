@@ -96,10 +96,12 @@ define("RAD_ID", 6);	// 6 is a Radian-series inverter
 
 ?>
 
-var FX_ID = <?php echo FX_ID; ?>;	
-var CC_ID = <?php echo CC_ID; ?>;
-var FNDC_ID = <?php echo FNDC_ID; ?>;
-var RAD_ID = <?php echo RAD_ID; ?>;
+var ID = {
+	fx: <?php echo FX_ID; ?>;
+	cc: <?php echo CC_ID; ?>;
+	fndc: <?php echo FNDC_ID; ?>;
+	rad: <?php echo RAD_ID; ?>;
+}
 
 var CONFIG = {
 	sysName: "<?php echo $system_name; ?>",
@@ -137,14 +139,19 @@ var CONFIG = {
 	
 }
 
-var cfg_colorProduction = "<?php echo $colorProduction; ?>";
-var cfg_colorUsage = "<?php echo $colorUsage; ?>";
-var cfg_colorShuntA = "<?php echo $colorShuntA; ?>";
-var cfg_colorShuntB = "<?php echo $colorShuntB; ?>";
-var cfg_colorShuntC = "<?php echo $colorShuntC; ?>";
-var cfg_colorsChargers = [];
-<?php
-	foreach($colorChargers as $color) {
-		echo "cfg_colorsChargers.push('$color');";
-	}	
-?>
+var COLORS = {
+	production: "<?php echo $colorProduction; ?>",
+	usage: "<?php echo $colorUsage; ?>",
+	shunts: {
+		A: "<?php echo $colorShuntA; ?>",
+		B: "<?php echo $colorShuntB; ?>",
+		C: "<?php echo $colorShuntC; ?>"
+	},
+	chargers = [
+		<?php
+			foreach($colorChargers as $color) {
+				echo "'$color', ";
+			}
+		?>
+	]
+}

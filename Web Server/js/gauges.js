@@ -133,7 +133,7 @@ function get_fndc_soc_gauge(chart) {
 	}
 
 	for (var i = 0; i < json_status['devices'].length; i++) {
-		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
+		if (json_status['devices'][i]['device_id'] == ID.fndc) {
 			var device = json_status['devices'][i];
 			var current_soc = device.soc;
 			var total_shunt_amps = parseFloat(device.shunt_a_current) + parseFloat(device.shunt_b_current) + parseFloat(device.shunt_c_current);
@@ -211,11 +211,11 @@ function get_batt_volts_gauge(chart) {
 	var current_batt = null;
 
 	for (var i = 0; i < json_status['devices'].length; i++) {
-		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
+		if (json_status['devices'][i]['device_id'] == ID.fndc) {
 			var device = json_status['devices'][i];
 			current_batt = device.battery_voltage;
 			break; // only one FNDC!
-		} else if (json_status['devices'][i]['device_id'] == FNDC_ID) {
+		} else if (json_status['devices'][i]['device_id'] == ID.fndc) {
 			var device = json_status['devices'][i];
 			current_batt = device.battery_voltage;
 		}
@@ -297,7 +297,7 @@ function get_cc_output_gauge(chart) {
 	var total_watts = 0;
 	
 	for (var i = 0; i < json_status['devices'].length; i++) {	
-		if (json_status['devices'][i]['device_id'] == CC_ID) {
+		if (json_status['devices'][i]['device_id'] == ID.cc) {
 			var device = json_status['devices'][i];
 			var charging_watts = device.charge_current * device.battery_voltage;
 			total_watts = total_watts + charging_watts;
@@ -371,7 +371,7 @@ function get_inverter_power_gauge(chart) {
 	
 	
 	for (var i = 0; i < json_status['devices'].length; i++) {	
-		if (json_status['devices'][i]['device_id'] == FX_ID) {
+		if (json_status['devices'][i]['device_id'] == ID.fx) {
 			var device = json_status['devices'][i];
 			if (device.operational_mode == "Charge") {
 				chart_mode = "Charging";
@@ -468,7 +468,7 @@ function get_fndc_shunt_gauge(shunt, chart) {
 	chart_disColor[2] = "rgba(250,221,0,1.00)"; // yellow
 	
 	for (var i = 0; i < json_status['devices'].length; i++) {	
-		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
+		if (json_status['devices'][i]['device_id'] == ID.fndc) {
 			var device = json_status['devices'][i];
 			
 			switch (shunt) {
@@ -650,7 +650,7 @@ function get_fndc_shuntNet_gauge(chart) {
 	net_max = Math.max(charge_max, discharge_max);	
 	
 	for (var i = 0; i < json_status['devices'].length; i++) {	
-		if (json_status['devices'][i]['device_id'] == FNDC_ID) {
+		if (json_status['devices'][i]['device_id'] == ID.fndc) {
 			var device = json_status['devices'][i];
 
 			net_amps = device.shunt_a_current + device.shunt_b_current + device.shunt_c_current;

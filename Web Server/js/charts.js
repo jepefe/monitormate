@@ -222,28 +222,28 @@ function get_cc_charge_power() {
 	var all_devices_data = [];
 	var count;
 
-	for (var port in full_day_data[CC_ID]) {
+	for (var port in full_day_data[ID.cc]) {
 		// port interates through each FM/MX charge controllers
 
 		if (port != "totals") {
 			day_data_watts[port] = [];
 		}
 
-		for (y = 0; y < full_day_data[CC_ID][port].length; y++) {
+		for (y = 0; y < full_day_data[ID.cc][port].length; y++) {
 			// y is the datapoint (from 0 to n)
 
 			if (port == "totals") {
 
-				total_watts = (full_day_data[CC_ID][port][y].total_current) * 1 * full_day_data[CC_ID][port][y].battery_voltage;
-				total_day_data_watts[y] = [full_day_data[CC_ID][port][y].timestamp, total_watts];
+				total_watts = (full_day_data[ID.cc][port][y].total_current) * 1 * full_day_data[ID.cc][port][y].battery_voltage;
+				total_day_data_watts[y] = [full_day_data[ID.cc][port][y].timestamp, total_watts];
 				
 			} else {
 	
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_watts[port][y] = {
-					x: full_day_data[CC_ID][port][y].timestamp,
-					y: (full_day_data[CC_ID][port][y].charge_current * full_day_data[CC_ID][port][y].battery_voltage),
-					mode: "(" + full_day_data[CC_ID][port][y].charge_mode + ")"
+					x: full_day_data[ID.cc][port][y].timestamp,
+					y: (full_day_data[ID.cc][port][y].charge_current * full_day_data[ID.cc][port][y].battery_voltage),
+					mode: "(" + full_day_data[ID.cc][port][y].charge_mode + ")"
 				};
 			}
 		}
@@ -311,26 +311,26 @@ function get_cc_charge_current() {
 	var all_devices_data_amps = [];
 	var count;
 
-	for (var port in full_day_data[CC_ID]) {
+	for (var port in full_day_data[ID.cc]) {
 
 		if (port != "totals") {
 			day_data_amps[port] = []
 		}
 
-		for (y = 0; y < full_day_data[CC_ID][port].length; y++) {
+		for (y = 0; y < full_day_data[ID.cc][port].length; y++) {
 			
 			if (port == "totals") {
 
-				total_amps = parseInt(full_day_data[CC_ID][port][y].total_current);
-				total_day_data_amps[y] = [full_day_data[CC_ID][port][y].timestamp, total_amps];
+				total_amps = parseInt(full_day_data[ID.cc][port][y].total_current);
+				total_day_data_amps[y] = [full_day_data[ID.cc][port][y].timestamp, total_amps];
 
 			} else {
 
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_amps[port][y] = {
-					x: full_day_data[CC_ID][port][y].timestamp,
-					y: parseInt(full_day_data[CC_ID][port][y].charge_current),
-					mode: "(" + full_day_data[CC_ID][port][y].charge_mode + ")"
+					x: full_day_data[ID.cc][port][y].timestamp,
+					y: parseInt(full_day_data[ID.cc][port][y].charge_current),
+					mode: "(" + full_day_data[ID.cc][port][y].charge_mode + ")"
 				};
 			}
 		}
@@ -393,19 +393,19 @@ function get_cc_input_volts() {
 	var day_data_array_volts = [];
 	var all_devices_data_array_volts = [];
 
-	for (var port in full_day_data[CC_ID]) { 
+	for (var port in full_day_data[ID.cc]) { 
 
 		if (port != "totals") {	
 
 			day_data_array_volts[port] = []
 	
-			for (y = 0; y < full_day_data[CC_ID][port].length; y++) {
+			for (y = 0; y < full_day_data[ID.cc][port].length; y++) {
 
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_array_volts[port][y] = {
-					x: full_day_data[CC_ID][port][y].timestamp,
-					y: parseFloat(full_day_data[CC_ID][port][y].pv_voltage),
-					mode: "(" + full_day_data[CC_ID][port][y].charge_mode + ")"
+					x: full_day_data[ID.cc][port][y].timestamp,
+					y: parseFloat(full_day_data[ID.cc][port][y].pv_voltage),
+					mode: "(" + full_day_data[ID.cc][port][y].charge_mode + ")"
 				};
 			}
 		}
@@ -455,19 +455,19 @@ function get_cc_input_current() {
 	var day_data_array_amps = [];
 	var all_devices_data_array_amps = []
 
-	for (var port in full_day_data[CC_ID]) { 
+	for (var port in full_day_data[ID.cc]) { 
 
 		if (port != "totals") {	
 
 			day_data_array_amps[port] = []
 		
-			for (y = 0; y < full_day_data[CC_ID][port].length; y++) {
+			for (y = 0; y < full_day_data[ID.cc][port].length; y++) {
 
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_array_amps[port][y] = {
-					x: full_day_data[CC_ID][port][y].timestamp,
-					y: parseFloat(full_day_data[CC_ID][port][y].pv_current),
-					mode: "(" + full_day_data[CC_ID][port][y].charge_mode + ")"
+					x: full_day_data[ID.cc][port][y].timestamp,
+					y: parseFloat(full_day_data[ID.cc][port][y].pv_current),
+					mode: "(" + full_day_data[ID.cc][port][y].charge_mode + ")"
 				};
 			}
 		}
@@ -518,25 +518,25 @@ function get_battery_voltage() {
 	var day_data_volts = [];
 	var day_data_target = [];
 
-	if (full_day_data[FNDC_ID]) {
+	if (full_day_data[ID.fndc]) {
 		// if you have a fndc, get the data from there
-		for (var port in full_day_data[FNDC_ID]) {
+		for (var port in full_day_data[ID.fndc]) {
 
-			for (j = 0; j < full_day_data[FNDC_ID][port].length; j++) {
-				day_data_volts[j] = [full_day_data[FNDC_ID][port][j].timestamp, parseFloat(full_day_data[FNDC_ID][port][j].battery_voltage)];
+			for (j = 0; j < full_day_data[ID.fndc][port].length; j++) {
+				day_data_volts[j] = [full_day_data[ID.fndc][port][j].timestamp, parseFloat(full_day_data[ID.fndc][port][j].battery_voltage)];
 				// 0.005 V per 2 V cell, per 1 degree C above or below 25° -- target voltage goes up when cold and down when hot
-				temp_compensation = (0.005) * (CONFIG.sysVoltage/2) * (parseInt(full_day_data[FNDC_ID][port][j].battery_temp) - 25);
+				temp_compensation = (0.005) * (CONFIG.sysVoltage/2) * (parseInt(full_day_data[ID.fndc][port][j].battery_temp) - 25);
 				voltage_target = CONFIG.sysAbsorbVoltage - temp_compensation;
-				day_data_target[j] = [full_day_data[FNDC_ID][port][j].timestamp, voltage_target];
+				day_data_target[j] = [full_day_data[ID.fndc][port][j].timestamp, voltage_target];
 			}
 
 		}
 	} else {
 		// if you don't have a fndc, use the charge controller to get voltage.
-		for (var port in full_day_data[CC_ID]) {
+		for (var port in full_day_data[ID.cc]) {
 
-			for (j = 0; j < full_day_data[CC_ID][port].length; j++) {
-				day_data_volts[j] = [full_day_data[CC_ID][port][j].timestamp, parseFloat(full_day_data[CC_ID][port][j].battery_voltage)];
+			for (j = 0; j < full_day_data[ID.cc][port].length; j++) {
+				day_data_volts[j] = [full_day_data[ID.cc][port][j].timestamp, parseFloat(full_day_data[ID.cc][port][j].battery_voltage)];
 			}
 
 		}
@@ -599,37 +599,37 @@ function get_inverter_power() {
 	var chart_watts = 0;
 //	var count;
 
-	for (var port in full_day_data[FX_ID]) {
+	for (var port in full_day_data[ID.fx]) {
 		// port interates through each fx-series inverters
 
 		if (port != "totals") {
 			day_data_watts[port] = [];
 		}
 
-		for (y = 0; y < full_day_data[FX_ID][port].length; y++) {
+		for (y = 0; y < full_day_data[ID.fx][port].length; y++) {
 			// y is the datapoint (from 0 to n)
 
 			if (port == "totals") {
 
-				total_watts = (full_day_data[FX_ID][port][y].inverter_current) * 1 * full_day_data[FX_ID][port][y].ac_output_voltage;
-				total_day_data_watts[y] = [full_day_data[FX_ID][port][y].timestamp, total_watts];
+				total_watts = (full_day_data[ID.fx][port][y].inverter_current) * 1 * full_day_data[ID.fx][port][y].ac_output_voltage;
+				total_day_data_watts[y] = [full_day_data[ID.fx][port][y].timestamp, total_watts];
 				
 			} else {
 
 				// IF there is charge current, plot the charger amps as a positive value
 				// ELSE we'll assume it's inverter and plot the inverter amps as a negative value
 				
-				if (full_day_data[FX_ID][port][y].charge_current > 0) {
-					chart_watts = full_day_data[FX_ID][port][y].charge_current * full_day_data[FX_ID][port][y].ac_output_voltage;
+				if (full_day_data[ID.fx][port][y].charge_current > 0) {
+					chart_watts = full_day_data[ID.fx][port][y].charge_current * full_day_data[ID.fx][port][y].ac_output_voltage;
 				} else {
-					chart_watts = -(full_day_data[FX_ID][port][y].inverter_current * full_day_data[FX_ID][port][y].ac_output_voltage);
+					chart_watts = -(full_day_data[ID.fx][port][y].inverter_current * full_day_data[ID.fx][port][y].ac_output_voltage);
 				}
 
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_watts[port][y] = {
-					x: full_day_data[FX_ID][port][y].timestamp,
+					x: full_day_data[ID.fx][port][y].timestamp,
 					y: chart_watts,
-					mode: "(" + full_day_data[FX_ID][port][y].operational_mode + ")"
+					mode: "(" + full_day_data[ID.fx][port][y].operational_mode + ")"
 				};
 
 			}
@@ -707,12 +707,12 @@ function get_fndc_soc() {
 	/*global full_day_data */
 	day_data_soc = [];
 
-	if (full_day_data[FNDC_ID]) {
+	if (full_day_data[ID.fndc]) {
 
-		for (var port in full_day_data[FNDC_ID]) {
+		for (var port in full_day_data[ID.fndc]) {
 
-			for (j = 0; j < full_day_data[FNDC_ID][port].length; j++) {
-				day_data_soc[j] = [full_day_data[FNDC_ID][port][j].timestamp, parseInt(full_day_data[FNDC_ID][port][j].soc)];
+			for (j = 0; j < full_day_data[ID.fndc][port].length; j++) {
+				day_data_soc[j] = [full_day_data[ID.fndc][port][j].timestamp, parseInt(full_day_data[ID.fndc][port][j].soc)];
 			}
 
 		}
@@ -775,19 +775,19 @@ function get_fndc_shunts() {
 	var day_data_shunt_c = [];
 	var day_data_net = [];
 
-	for (var port in full_day_data[FNDC_ID]) {
-		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+	for (var port in full_day_data[ID.fndc]) {
+		for (i = 0; i < full_day_data[ID.fndc][port].length; i++) {
 			// each "i" is an object with all data for a given timestamp
 
-			shunt_a_watts = full_day_data[FNDC_ID][port][i].shunt_a_current * full_day_data[FNDC_ID][port][i].battery_voltage;
-			shunt_b_watts = full_day_data[FNDC_ID][port][i].shunt_b_current * full_day_data[FNDC_ID][port][i].battery_voltage;
-			shunt_c_watts = full_day_data[FNDC_ID][port][i].shunt_c_current * full_day_data[FNDC_ID][port][i].battery_voltage;
+			shunt_a_watts = full_day_data[ID.fndc][port][i].shunt_a_current * full_day_data[ID.fndc][port][i].battery_voltage;
+			shunt_b_watts = full_day_data[ID.fndc][port][i].shunt_b_current * full_day_data[ID.fndc][port][i].battery_voltage;
+			shunt_c_watts = full_day_data[ID.fndc][port][i].shunt_c_current * full_day_data[ID.fndc][port][i].battery_voltage;
 			net_watts     = shunt_a_watts + shunt_b_watts + shunt_c_watts;
 			
-			day_data_shunt_a[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_a_watts];
-			day_data_shunt_b[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_b_watts];
-			day_data_shunt_c[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_c_watts];
-			day_data_net[i]     = [full_day_data[FNDC_ID][port][i].timestamp, net_watts];
+			day_data_shunt_a[i] = [full_day_data[ID.fndc][port][i].timestamp, shunt_a_watts];
+			day_data_shunt_b[i] = [full_day_data[ID.fndc][port][i].timestamp, shunt_b_watts];
+			day_data_shunt_c[i] = [full_day_data[ID.fndc][port][i].timestamp, shunt_c_watts];
+			day_data_net[i]     = [full_day_data[ID.fndc][port][i].timestamp, net_watts];
 		}
 		break; // Only one iteration. there should be only one FNDC.
 	}
@@ -851,25 +851,25 @@ function get_fndc_shunt(shunt) {
 	/*global full_day_data, shuntLabel */
 	var day_data_shunt = [];
 
-	for (var port in full_day_data[FNDC_ID]) {
-		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
+	for (var port in full_day_data[ID.fndc]) {
+		for (i = 0; i < full_day_data[ID.fndc][port].length; i++) {
 			// each "i" is an object with all data for a given timestamp
 			
 			switch (shunt) {
 				case "A":
-					shunt_amps = full_day_data[FNDC_ID][port][i].shunt_a_current;
+					shunt_amps = full_day_data[ID.fndc][port][i].shunt_a_current;
 					break;	
 				case "B":
-					shunt_amps = full_day_data[FNDC_ID][port][i].shunt_b_current;
+					shunt_amps = full_day_data[ID.fndc][port][i].shunt_b_current;
 					break;	
 				case "C":
-					shunt_amps = full_day_data[FNDC_ID][port][i].shunt_c_current;
+					shunt_amps = full_day_data[ID.fndc][port][i].shunt_c_current;
 					break;	
 			}
 			
 //			shunt_amps = Math.abs(shunt_amps);
-			shunt_watts = shunt_amps * full_day_data[FNDC_ID][port][i].battery_voltage;
-			day_data_shunt[i] = [full_day_data[FNDC_ID][port][i].timestamp, shunt_watts];
+			shunt_watts = shunt_amps * full_day_data[ID.fndc][port][i].battery_voltage;
+			day_data_shunt[i] = [full_day_data[ID.fndc][port][i].timestamp, shunt_watts];
 		}
 		break; // Only one iteration. there should be only one FNDC.
 	}
@@ -940,15 +940,15 @@ function get_fndc_amps_vs_volts() {
 	var shunt_c_current = null;
 	var net_current = null;
 	
-	for (var port in full_day_data[FNDC_ID]) {
-		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
-			shunt_a_current = parseFloat(full_day_data[FNDC_ID][port][i].shunt_a_current);
-			shunt_b_current = parseFloat(full_day_data[FNDC_ID][port][i].shunt_b_current);
-			shunt_c_current = parseFloat(full_day_data[FNDC_ID][port][i].shunt_c_current);
+	for (var port in full_day_data[ID.fndc]) {
+		for (i = 0; i < full_day_data[ID.fndc][port].length; i++) {
+			shunt_a_current = parseFloat(full_day_data[ID.fndc][port][i].shunt_a_current);
+			shunt_b_current = parseFloat(full_day_data[ID.fndc][port][i].shunt_b_current);
+			shunt_c_current = parseFloat(full_day_data[ID.fndc][port][i].shunt_c_current);
 			net_current     = shunt_a_current + shunt_b_current + shunt_c_current;
 
-			day_data_amps[i]  = [full_day_data[FNDC_ID][port][i].timestamp, net_current];
-			day_data_volts[i] = [full_day_data[FNDC_ID][port][i].timestamp, parseFloat(full_day_data[FNDC_ID][port][i].battery_voltage)];
+			day_data_amps[i]  = [full_day_data[ID.fndc][port][i].timestamp, net_current];
+			day_data_volts[i] = [full_day_data[ID.fndc][port][i].timestamp, parseFloat(full_day_data[ID.fndc][port][i].battery_voltage)];
 		}
 	}
 	
@@ -1006,15 +1006,15 @@ function get_fndc_net_ah() {
 	var day_data_compensatedAh = [];
 
 	
-	for (var port in full_day_data[FNDC_ID]) {
-		for (i = 0; i < full_day_data[FNDC_ID][port].length; i++) {
-			netAh  = parseFloat(full_day_data[FNDC_ID][port][i].accumulated_ah_shunt_a);
-			netAh += parseFloat(full_day_data[FNDC_ID][port][i].accumulated_ah_shunt_b);
-			netAh += parseFloat(full_day_data[FNDC_ID][port][i].accumulated_ah_shunt_c);
-			compensatedAh = parseFloat(full_day_data[FNDC_ID][port][i].charge_factor_corrected_net_batt_ah);
+	for (var port in full_day_data[ID.fndc]) {
+		for (i = 0; i < full_day_data[ID.fndc][port].length; i++) {
+			netAh  = parseFloat(full_day_data[ID.fndc][port][i].accumulated_ah_shunt_a);
+			netAh += parseFloat(full_day_data[ID.fndc][port][i].accumulated_ah_shunt_b);
+			netAh += parseFloat(full_day_data[ID.fndc][port][i].accumulated_ah_shunt_c);
+			compensatedAh = parseFloat(full_day_data[ID.fndc][port][i].charge_factor_corrected_net_batt_ah);
 
-			day_data_netAh[i]  = [full_day_data[FNDC_ID][port][i].timestamp, netAh];
-			day_data_compensatedAh[i] = [full_day_data[FNDC_ID][port][i].timestamp, compensatedAh];
+			day_data_netAh[i]  = [full_day_data[ID.fndc][port][i].timestamp, netAh];
+			day_data_compensatedAh[i] = [full_day_data[ID.fndc][port][i].timestamp, compensatedAh];
 		}
 	}
 	

@@ -14,7 +14,9 @@ for more details.
 */
 
 // list global's from the config file...
-/* global CONFIG */
+/* global ID, CONFIG, COLORS */
+/* global Highcharts */
+/* global $ */
 
 // some arrays for the labels for the devices and shunts.
 // these will get set up in set_labels() after get_datastream().
@@ -60,7 +62,7 @@ if (typeof Highcharts !== 'undefined') {
 
 function finalize_CSS() {
 	// try to blur the navbar, and if that works then change the color.
-	cssBlurSupport = $('#navbar').css("-webkit-backdrop-filter", "blur(30px)");
+	var cssBlurSupport = $('#navbar').css("-webkit-backdrop-filter", "blur(30px)");
 	
 	if (cssBlurSupport) {    
 	    $('#navbar').css("background-color", "rgba(238, 239, 249, 0.2)");
@@ -68,11 +70,15 @@ function finalize_CSS() {
 }
 
 function get_URLvars() {
-	var vars = {};
-	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-		vars[key] = value;
-	});
-	return vars;
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
 }
 
 
@@ -118,16 +124,16 @@ function set_labels() {
 				if (CONFIG.deviceLabel[port - 1] === "") {
 					// If there's not a label in the config, then assign default name based on ID type
 					switch (parseInt(type)) {
-						case FX_ID:
+						case ID.fx:
 							deviceLabel[port] = "FX Inverter";
 							break;
-						case RAD_ID:
+						case ID.rad:
 							deviceLabel[port] = "Radian";
 							break;
-						case CC_ID:
+						case ID.cc:
 							deviceLabel[port] = "FM/MX";
 							break;
-						case FNDC_ID:
+						case ID.fndc:
 							deviceLabel[port] = "FLEXnet DC";
 							break;
 						default:
@@ -176,8 +182,8 @@ function get_data(date, scope) {
 
 function get_dataStream(date, scope) {
 
-	/*global full_day_data */
-	var chart_data;
+	/* global full_day_data */
+	var urlArguments;
 	
 	// FIXME: this otherwise assumes date is well formatted. Which is not necessarily true.
 	if (!date || date == "today") {
@@ -217,15 +223,15 @@ function get_dataStream(date, scope) {
 }
 
 function get_days_in_month(year, month) {
-	// makes a date object for *next* month...
-	// subtracks a single millisecond (to make it the last second of the previous day)
-	// gets the day of *that* month
-	// now return that, which is the number of days in that month!
-	return (new Date((new Date(year, month + 1, 1)) - 1)).getDate();
+	// months are zero-based, so we're asking for the following month
+	// but because we ask for the zero-th day, it gives us the current month's last day.
+	return new Date(year, month, 0).getDate();
 }
 
 
 function get_formatted_date(date) {
+	var d;
+	
 	if (!date) {
 		d = new Date();
 	} else {
@@ -261,8 +267,8 @@ function populate_chart_select(pselect) {
 	/*global full_day_data */
 	var select_items = [];
 
-	if (full_day_data[FNDC_ID]) { /* FlexNet available */
-		for (i in full_day_data[FNDC_ID]) {
+	if (full_day_data[ID.fndc]) { /* FlexNet available */
+		for (var i in full_day_data[ID.fndc]) {
 			select_items.push('<option value="fndc_soc">State of Charge</option>');
 			select_items.push('<option value="fndc_shunts">Input/Output</option>');
 			select_items.push('<option value="fndc_amps_vs_volts">Battery Amps vs Volts</option>');
@@ -270,7 +276,7 @@ function populate_chart_select(pselect) {
 		}
 	}
 
-	if (full_day_data[CC_ID]) { /* FM/MX charge controller available */
+	if (full_day_data[ID.cc]) { /* FM/MX charge controller available */
 		select_items.push('<option value="battery_voltage">Battery Voltage</option>');
 		select_items.push('<option value="cc_charge_current">PV Charging Current</option>');
 		select_items.push('<option value="cc_charge_power">PV Charging Power</option>');
@@ -320,6 +326,8 @@ function populate_status_select() {
 function get_current_status() {
 
 	/*global json_status */
+	var dateObj;
+	var timeStr;
 
 	if (json_status) {
 		// if we're just updating the status, it can be asynchronous.
@@ -347,8 +355,9 @@ function get_current_status() {
 function set_status(HTML_id, value) {
 
 	/*global deviceLabel, full_day_data, json_status, shuntLabel, status_content */
-	var HTML_id = HTML_id;
-	var value = value;
+	// no longer in use?
+	// var HTML_id = HTML_id;
+	// var value = value;
 
 	var address;
 	var content = '';
@@ -390,7 +399,7 @@ function set_status(HTML_id, value) {
 						</table>';
 			break;
 
-		case FX_ID:
+		case ID.fx:
 			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
 						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_voltage + ' V</td></tr>\
@@ -407,7 +416,7 @@ function set_status(HTML_id, value) {
 						</table>';
 			break;
 
-		case RAD_ID:
+		case ID.rad:
 			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
 						<tr><td class="label">AC Input Mode:</td><td>' + device.ac_mode + '</td></tr>\
@@ -431,7 +440,7 @@ function set_status(HTML_id, value) {
 						</table>';
 			break;
 
-		case CC_ID:
+		case ID.cc:
 			var charge_watts = parseFloat(device.battery_voltage) * parseFloat(device.charge_current);
 			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Charge Mode:</td><td>' + device.charge_mode + '</td></tr>\
@@ -447,7 +456,7 @@ function set_status(HTML_id, value) {
 						</table>';
 			break;
 
-		case FNDC_ID:
+		case ID.fndc:
 			var total_shunt_amps = parseFloat(device.shunt_a_current) + parseFloat(device.shunt_b_current) + parseFloat(device.shunt_c_current);
 			var net_accumulated_ah  = parseFloat(device.accumulated_ah_shunt_a) + parseFloat(device.accumulated_ah_shunt_b) + parseFloat(device.accumulated_ah_shunt_c);
 			var net_accumulated_kwh = parseFloat(device.accumulated_kwh_shunt_a) + parseFloat(device.accumulated_kwh_shunt_b) + parseFloat(device.accumulated_kwh_shunt_c);
@@ -495,10 +504,12 @@ function set_chart(chart_id, content) {
 
 function draw_chart(chart_id, update, content) {
 
-	var update = update || false;
 	var chart = null;
 	var chart_data = null;
+	var func_call;
 
+	update = update || false;
+	
 	// if only one thing was passed in, assume the ID and the chart are the same name
 	if (content == null) {
 		content = chart_id;
