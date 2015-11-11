@@ -217,10 +217,13 @@ if (typeof Highcharts !== 'undefined') {
 function get_cc_charge_power() {
 
 	/*global deviceLabel, full_day_data */
+	var chart_options = {};
+	var device_data = {};
+	var total_data = {};
 	var total_day_data_watts = [];
 	var day_data_watts = [];
 	var all_devices_data = [];
-	var count;
+	var total_watts = 0;
 
 	for (var port in full_day_data[ID.cc]) {
 		// port interates through each FM/MX charge controllers
@@ -229,7 +232,7 @@ function get_cc_charge_power() {
 			day_data_watts[port] = [];
 		}
 
-		for (y = 0; y < full_day_data[ID.cc][port].length; y++) {
+		for (var y = 0; y < full_day_data[ID.cc][port].length; y++) {
 			// y is the datapoint (from 0 to n)
 
 			if (port == "totals") {
@@ -306,18 +309,21 @@ function get_cc_charge_power() {
 function get_cc_charge_current() {
 
 	/*global deviceLabel, full_day_data */
+	var chart_options = {};
+	var device_data = {};
+	var total_data = {};
 	var total_day_data_amps = [];
 	var day_data_amps = [];
 	var all_devices_data_amps = [];
-	var count;
-
+	var total_amps = 0;
+	
 	for (var port in full_day_data[ID.cc]) {
 
 		if (port != "totals") {
 			day_data_amps[port] = []
 		}
 
-		for (y = 0; y < full_day_data[ID.cc][port].length; y++) {
+		for (var y = 0; y < full_day_data[ID.cc][port].length; y++) {
 			
 			if (port == "totals") {
 
@@ -389,7 +395,7 @@ function get_cc_charge_current() {
 function get_cc_input_volts() {
 
 	/*global deviceLabel, full_day_data */
-	var total_day_data__array_volts = [];
+	// var total_day_data__array_volts = [];
 	var day_data_array_volts = [];
 	var all_devices_data_array_volts = [];
 
@@ -399,7 +405,7 @@ function get_cc_input_volts() {
 
 			day_data_array_volts[port] = []
 	
-			for (y = 0; y < full_day_data[ID.cc][port].length; y++) {
+			for (var y = 0; y < full_day_data[ID.cc][port].length; y++) {
 
 				// make an object with some extra data (charge mode) that we can display in tooltips.
 				day_data_array_volts[port][y] = {
@@ -413,7 +419,7 @@ function get_cc_input_volts() {
 
 	for (var i in day_data_array_volts) {
 
-		series = {
+		var series = {
 			data: day_data_array_volts[i],
 			name: deviceLabel[i]
 		};
@@ -1130,11 +1136,6 @@ function chart_years(date) {
 		legend: {
 			enabled: false
 		},
-		plotOptions: {
-			series: {
-				pointRange: 24 * 3600 * 1000 * 365	// 1 year
-			}
-		},
 	    series: [{
 	    	name: 'Production',
 	    	color: COLOR.production,
@@ -1222,11 +1223,6 @@ function chart_months(date) {
 		},
 		legend: {
 			enabled: false
-		},
-		plotOptions: {
-			series: {
-				pointRange: 24 * 3600 * 1000 * 30	// one month
-			}
 		},
 	    series: [{
 	        name: 'Production',
