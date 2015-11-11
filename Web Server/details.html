@@ -48,30 +48,32 @@
 			var devices_array = json_status['devices'];			 
 			for (var i in devices_array) {
 				switch (devices_array[i].device_id) {
-					case FX_ID:
+					// FIXME: this is missing the Radian code!
+					case ID.fx:
 						if ($('#inverters').text() == "None Found") {
 							$('#inverters').text('');
 						}
 						$('#inverters').append("<div class='status' style='display: inline-block;'><div id='device_"+i+"' class='status_content'>Inverter Found.</div></div>&nbsp;");
-						$('#device_'+i).data('devAddress', FX_ID+':'+devices_array[i].address);
+						$('#device_'+i).data('devAddress', ID.fx+':'+devices_array[i].address);
 						set_status('device_'+i, $('#device_'+i).data('devAddress'));
 						break;
-					case CC_ID:
+					case ID.cc:
 						if ($('#charge_controllers').text() == "None Found") {
 							$('#charge_controllers').text('');
 						}
 						$('#charge_controllers').append("<div class='status' style='display: inline-block;'><div id='device_"+i+"' class='status_content'>Charge Controller Found.</div></div>&nbsp;");
-						$('#device_'+i).data('devAddress', CC_ID+':'+devices_array[i].address);
+						$('#device_'+i).data('devAddress', ID.cc+':'+devices_array[i].address);
 						set_status('device_'+i, $('#device_'+i).data('devAddress'));
 						break;
-					case FNDC_ID:
+					case ID.fndc:
 						if ($('#fndc').text() == "None Found") {
 							$('#fndc').text('');
 						}
 						$('#fndc').append("<div class='status' style='display: inline-block;'><div id='device_"+i+"' class='status_content'>FNDC Found.</div></div>&nbsp;");
-						$('#device_'+i).data('devAddress', FNDC_ID+':'+devices_array[i].address);
+						$('#device_'+i).data('devAddress', ID.fndc+':'+devices_array[i].address);
 						set_status('device_'+i, $('#device_'+i).data('devAddress'));
 						break;
+					
 				}
 			}
 					
