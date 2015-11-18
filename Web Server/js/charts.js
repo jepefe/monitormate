@@ -547,6 +547,9 @@ function get_battery_voltage() {
 
 		}
 	}
+	
+	// var chartMin = CONFIG.sysVoltage - (CONFIG.sysVoltage/12);
+	// var chartMax = CONFIG.sysVoltage + (CONFIG.sysVoltage*(3/8));
 
 	chart_options = {
 	    legend: {
@@ -573,19 +576,25 @@ function get_battery_voltage() {
 			}
 		},
     	yAxis: {
+			// min: chartMin,
+			// max: chartMax,
+    		minRange: CONFIG.sysVoltage/6,
+			
     		labels: {
 		        format: '{value} V'
 		    },
-    		minRange: CONFIG.sysVoltage/6,
-//			plotLines: [{
-//				color: '#00bb00',
-//				width: 1.5,
-//				value: CONFIG.sysAbsorbVoltage
-//			}],
+
 		    plotBands: [{
-		    	// red for below the system voltage plus a tad: 12.2, 24.4, or 48.8
-                color: '#ffedee',
-                from: 0,
+		    	// // red for below the system voltage plus a tad: 12.2, 24.4, or 48.8
+                // color: '#ffedee',
+                // from: 0,
+				// to: CONFIG.sysVoltage
+				color: '#ffedee', // red
+				from: 0,
+				to: CONFIG.sysVoltage - (CONFIG.sysVoltage/24)
+			}, {
+				color: '#ffffe1', // yellow
+				from: CONFIG.sysVoltage - (CONFIG.sysVoltage/24),
 				to: CONFIG.sysVoltage
 			}]
 		},
