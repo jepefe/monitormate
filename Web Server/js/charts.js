@@ -13,6 +13,7 @@ GNU General Public License at <http://www.gnu.org/licenses/>
 for more details.
 */
 
+/* global Highcharts */
 /* global CONFIG, COLOR, ID */
 
 // Common theme for all the charts.
@@ -398,7 +399,8 @@ function get_cc_input_volts() {
 	// var total_day_data__array_volts = [];
 	var day_data_array_volts = [];
 	var all_devices_data_array_volts = [];
-
+	var chart_options = {};
+	
 	for (var port in full_day_data[ID.cc]) { 
 
 		if (port != "totals") {	
@@ -460,7 +462,8 @@ function get_cc_input_current() {
 	var total_day_data__array_amps = [];
 	var day_data_array_amps = [];
 	var all_devices_data_array_amps = []
-
+	var chart_options = {};
+	
 	for (var port in full_day_data[ID.cc]) { 
 
 		if (port != "totals") {	
@@ -523,7 +526,8 @@ function get_battery_voltage() {
 	/*global full_day_data */
 	var day_data_volts = [];
 	var day_data_target = [];
-
+	var chart_options = {};
+	
 	if (full_day_data[ID.fndc]) {
 		// if you have a fndc, get the data from there
 		for (var port in full_day_data[ID.fndc]) {
@@ -612,6 +616,7 @@ function get_inverter_power() {
 	var day_data_watts = [];
 	var all_devices_data = [];
 	var chart_watts = 0;
+	var chart_options = {};
 //	var count;
 
 	for (var port in full_day_data[ID.fx]) {
@@ -720,8 +725,9 @@ function get_inverter_power() {
 function get_fndc_soc() {
 
 	/*global full_day_data */
-	day_data_soc = [];
-
+	var day_data_soc = [];
+	var chart_options = {};
+	
 	if (full_day_data[ID.fndc]) {
 
 		for (var port in full_day_data[ID.fndc]) {
@@ -789,7 +795,8 @@ function get_fndc_shunts() {
 	var day_data_shunt_b = [];
 	var day_data_shunt_c = [];
 	var day_data_net = [];
-
+	var chart_options = {};
+	
 	for (var port in full_day_data[ID.fndc]) {
 		for (i = 0; i < full_day_data[ID.fndc][port].length; i++) {
 			// each "i" is an object with all data for a given timestamp
@@ -865,7 +872,8 @@ function get_fndc_shunt(shunt) {
 
 	/*global full_day_data, shuntLabel */
 	var day_data_shunt = [];
-
+	var chart_options = {};
+	
 	for (var port in full_day_data[ID.fndc]) {
 		for (i = 0; i < full_day_data[ID.fndc][port].length; i++) {
 			// each "i" is an object with all data for a given timestamp
@@ -954,6 +962,7 @@ function get_fndc_amps_vs_volts() {
 	var shunt_b_current = null;
 	var shunt_c_current = null;
 	var net_current = null;
+	var chart_options = {};
 	
 	for (var port in full_day_data[ID.fndc]) {
 		for (i = 0; i < full_day_data[ID.fndc][port].length; i++) {
@@ -1019,7 +1028,7 @@ function get_fndc_net_ah() {
 	/*global full_day_data */
 	var day_data_netAh = [];
 	var day_data_compensatedAh = [];
-
+	var chart_options = {};
 	
 	for (var port in full_day_data[ID.fndc]) {
 		for (i = 0; i < full_day_data[ID.fndc][port].length; i++) {
