@@ -17,7 +17,7 @@
 	<script src="./js/monitormate.js"></script>
 	<script src="./js/charts.js"></script>
 	<script src="./js/gauges.js"></script>
-	<title>MonitorMate — Gauges!</title>
+	<title>MonitorMate: Current Status</title>
 </head>
 <body>
 	<div id="navbar">

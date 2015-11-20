@@ -15,7 +15,7 @@
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<script src="./js/charts.js"></script>
-	<title>MonitorMate — Historical</title>
+	<title>MonitorMate: Historical</title>
 </head>
 <body>
 	<div id="navbar">
@@ -86,10 +86,10 @@
 			
 			if (display_date == get_formatted_date()) { // if it's today.
 				update_URL('historical.html');
-				document.title = "MonitorMate — Today";
+				document.title = "MonitorMate: Today";
 			} else {
 				update_URL('historical.html', display_date);
-				document.title = "MonitorMate — " + display_date;
+				document.title = "MonitorMate: " + display_date;
 			}
 
 			$('#display-date').text(display_date);
