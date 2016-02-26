@@ -1133,7 +1133,7 @@ function chart_years(date) {
 
 //		split_date = years_data[i].date.split(/[- :]/);	// split the YYYY-MM-DD into an array
 //		comp_date = new Date(split_date[0], 0, 1);				// use the year to make a date object for jan 1st of that year
-		comp_date = new Date(years_data[i].year);				// use the year to make a date object for jan 1st of that year
+		comp_date = new Date(years_data[i].year,0,1);			// use the year to make a date object for jan 1st of that year
 		year = comp_date.getTime();								// turn it into millisecond timestamp
 
 		kwh_in = Math.round(years_data[i].kwh_in);
