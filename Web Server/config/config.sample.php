@@ -40,7 +40,7 @@ $pv_wattage = 1500;				// Total wattage of your photo voltaic arrays
 $gen_rating = 6000;				// Total wattage of your generator (or AC IN)
 $inverter_max = 3800;			// Total ouput of your inverters (cumulative)
 $charger_max = 2400;			// Total charger output of your chargers (cumulative)
-$ags_port = FALSE;				// Port used for AGS. Leave "FALSE" if you don't use AGS.
+$ags_port = 0;					// Port used for AGS. Leave 0 if you don't use AGS.
 
 // Labels to use for the devices on your HUB ports.
 // If you leave any of these blank, a name will be automatically
