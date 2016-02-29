@@ -45,7 +45,7 @@ $ags_port = 0;					// Port used for AGS. Leave 0 if you don't use AGS.
 // Labels to use for the devices on your HUB ports.
 // If you leave any of these blank, a name will be automatically
 // generated based on the device type and port number.
-$deviceLabel = array(
+$deviceLabels = array(
 	1  => "",
 	2  => "",
 	3  => "",
@@ -61,7 +61,7 @@ $deviceLabel = array(
 // Labels to use for the shunts connected to the FLEXnet DC.
 // If you leave any of these blank, a name will be automatically
 // set to "Shunt A", "Shunt B", and "Shunt C".
-$shuntLabel = array(
+$shuntLabels = array(
 	"A"  => "",
 	"B"  => "",
 	"C"  => ""
@@ -69,7 +69,7 @@ $shuntLabel = array(
 
 // Max power that will flow in or out of each shunt. This is only to
 // inform the charts for reasonable min/max values on gauges etc.
-$shuntRange = array(
+$shuntRanges = array(
 	"A_Neg"  => 4000,	"A_Pos"  => 2400,
 	"B_Neg"  => 0,		"B_Pos"  => 1500,
 	"C_Neg"  => 0,		"C_Pos"  => 1000
@@ -114,27 +114,27 @@ var CONFIG = {
 	inverterMax: <?php echo $inverter_max; ?>,
 	chargerMax: <?php echo $charger_max; ?>,
 	agsPort: <?php echo $ags_port; ?>,
-	deviceLabel: [
-		"<?php echo $deviceLabel[1]; ?>",
-		"<?php echo $deviceLabel[2]; ?>",
-		"<?php echo $deviceLabel[3]; ?>",
-		"<?php echo $deviceLabel[4]; ?>",
-		"<?php echo $deviceLabel[5]; ?>",
-		"<?php echo $deviceLabel[6]; ?>",
-		"<?php echo $deviceLabel[7]; ?>",
-		"<?php echo $deviceLabel[8]; ?>",
-		"<?php echo $deviceLabel[9]; ?>",
-		"<?php echo $deviceLabel[10]; ?>"
+	deviceLabels: [
+		"<?php echo $deviceLabels[1]; ?>",
+		"<?php echo $deviceLabels[2]; ?>",
+		"<?php echo $deviceLabels[3]; ?>",
+		"<?php echo $deviceLabels[4]; ?>",
+		"<?php echo $deviceLabels[5]; ?>",
+		"<?php echo $deviceLabels[6]; ?>",
+		"<?php echo $deviceLabels[7]; ?>",
+		"<?php echo $deviceLabels[8]; ?>",
+		"<?php echo $deviceLabels[9]; ?>",
+		"<?php echo $deviceLabels[10]; ?>"
 	],	
-	shuntLabel: [
-		"<?php echo $shuntLabel['A']; ?>",
-		"<?php echo $shuntLabel['B']; ?>",
-		"<?php echo $shuntLabel['C']; ?>"
+	shuntLabels: [
+		"<?php echo $shuntLabels['A']; ?>",
+		"<?php echo $shuntLabels['B']; ?>",
+		"<?php echo $shuntLabels['C']; ?>"
 	],
-	shuntRange: {
-		A: { min: <?php echo $shuntRange['A_Neg'].", max: ".$shuntRange['A_Pos']; ?>},
-		B: { min: <?php echo $shuntRange['B_Neg'].", max: ".$shuntRange['B_Pos']; ?>},
-		C: { min: <?php echo $shuntRange['C_Neg'].", max: ".$shuntRange['C_Pos']; ?>}
+	shuntRanges: {
+		A: { min: <?php echo $shuntRanges['A_Neg'].", max: ".$shuntRanges['A_Pos']; ?>},
+		B: { min: <?php echo $shuntRanges['B_Neg'].", max: ".$shuntRanges['B_Pos']; ?>},
+		C: { min: <?php echo $shuntRanges['C_Neg'].", max: ".$shuntRanges['C_Pos']; ?>}
 	}
 	
 }

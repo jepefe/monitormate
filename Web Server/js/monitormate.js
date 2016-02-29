@@ -20,8 +20,8 @@ for more details.
 
 // some arrays for the labels for the devices and shunts.
 // these will get set up in set_labels() after get_datastream().
-var deviceLabel = [];
-var shuntLabel  = [];
+var deviceLabels = [];
+var shuntLabels  = [];
 
 // the date, status, and arrays with all the data.
 var display_date  = null;
@@ -113,7 +113,7 @@ function get_cookies() {
 function set_labels() {
 	// convert all the CONFIG labels to regular ones...
 
-	/*global deviceLabel, shuntLabel, full_day_data */
+	/*global deviceLabels, shuntLabels, full_day_data */
 
 	for (var type in full_day_data) {
 		// look through the data and apply names to all the devices we found
@@ -121,51 +121,51 @@ function set_labels() {
 			// not the summary data, only the numberical entries
 			for (var port in full_day_data[type]) {
 
-				if (CONFIG.deviceLabel[port - 1] === "") {
+				if (CONFIG.deviceLabels[port - 1] === "") {
 					// If there's not a label in the config, then assign default name based on ID type
 					switch (parseInt(type)) {
 						case ID.fx:
-							deviceLabel[port] = "FX Inverter";
+							deviceLabels[port] = "FX Inverter";
 							break;
 						case ID.rad:
-							deviceLabel[port] = "Radian";
+							deviceLabels[port] = "Radian";
 							break;
 						case ID.cc:
-							deviceLabel[port] = "FM/MX";
+							deviceLabels[port] = "FM/MX";
 							break;
 						case ID.fndc:
-							deviceLabel[port] = "FLEXnet DC";
+							deviceLabels[port] = "FLEXnet DC";
 							break;
 						default:
-							deviceLabel[port] = "Unknown Device";
+							deviceLabels[port] = "Unknown Device";
 						break;
 					}
 				} else {
-					deviceLabel[port] = CONFIG.deviceLabel[port - 1];
+					deviceLabels[port] = CONFIG.deviceLabels[port - 1];
 				}
 			}
 		}
 	}
 	
 	// the shunts are a bit more straight forward...
-	for (var channel in CONFIG.shuntLabel) {
-		if (CONFIG.shuntLabel[channel] === "") {
+	for (var channel in CONFIG.shuntLabels) {
+		if (CONFIG.shuntLabels[channel] === "") {
 			switch (channel) {
 				case "0":
-					shuntLabel[channel] = "Shunt A";
+					shuntLabels[channel] = "Shunt A";
 					break;
 				case "1":
-					shuntLabel[channel] = "Shunt B";
+					shuntLabels[channel] = "Shunt B";
 					break;
 				case "2":
-					shuntLabel[channel] = "Shunt C";
+					shuntLabels[channel] = "Shunt C";
 					break;
 				default:
-					shuntLabel[channel] = "Unknown Shunt";
+					shuntLabels[channel] = "Unknown Shunt";
 					break;
 			}
 		} else {
-			shuntLabel[channel] = CONFIG.shuntLabel[channel];
+			shuntLabels[channel] = CONFIG.shuntLabels[channel];
 		}
 	}
 }
@@ -293,7 +293,7 @@ function populate_chart_select(pselect) {
 */
 function populate_status_select() {
 
-	/*global deviceLabel, full_day_data */
+	/*global deviceLabels, full_day_data */
 	var tabs = [];
 
 	// i is the ID
@@ -311,7 +311,7 @@ function populate_status_select() {
 					var val = '';
 	
 					val = i + ":" + port;
-					tabs.push("<option value=" + val + ">" + deviceLabel[port] + " (" + port + ")</option>");
+					tabs.push("<option value=" + val + ">" + deviceLabels[port] + " (" + port + ")</option>");
 				}
 			}
 		}
@@ -354,7 +354,7 @@ function get_current_status() {
 
 function set_status(HTML_id, value) {
 
-	/*global deviceLabel, full_day_data, json_status, shuntLabel, status_content */
+	/*global deviceLabels, full_day_data, json_status, shuntLabels, status_content */
 	// no longer in use?
 	// var HTML_id = HTML_id;
 	// var value = value;

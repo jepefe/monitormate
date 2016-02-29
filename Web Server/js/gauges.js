@@ -473,15 +473,15 @@ function get_fndc_shunt_gauge(shunt, chart) {
 			
 			switch (shunt) {
 				case "A":
-					shunt_label = shuntLabel[0];
+					shunt_label = shuntLabels[0];
 					shunt_amps = device.shunt_a_current;
 					break;
 				case "B":
-					shunt_label = shuntLabel[1];
+					shunt_label = shuntLabels[1];
 					shunt_amps = device.shunt_b_current;
 					break;
 				case "C":
-					shunt_label = shuntLabel[2];
+					shunt_label = shuntLabels[2];
 					shunt_amps = device.shunt_c_current;
 					break;
 			}
@@ -495,13 +495,13 @@ function get_fndc_shunt_gauge(shunt, chart) {
 				}
 				switch (shunt) {
 					case "A":
-						chart_max = CONFIG.shuntRange.A.max;
+						chart_max = CONFIG.shuntRanges.A.max;
 						break;
 					case "B":
-						chart_max = CONFIG.shuntRange.B.max;
+						chart_max = CONFIG.shuntRanges.B.max;
 						break;
 					case "C":
-						chart_max = CONFIG.shuntRange.C.max;
+						chart_max = CONFIG.shuntRanges.C.max;
 						break;
 				}
 			} else {
@@ -509,13 +509,13 @@ function get_fndc_shunt_gauge(shunt, chart) {
 				chart_mode = " ↓";
 				switch (shunt) {
 					case "A":
-						chart_max = CONFIG.shuntRange.A.min;
+						chart_max = CONFIG.shuntRanges.A.min;
 						break;
 					case "B":
-						chart_max = CONFIG.shuntRange.B.min;
+						chart_max = CONFIG.shuntRanges.B.min;
 						break;
 					case "C":
-						chart_max = CONFIG.shuntRange.C.min;
+						chart_max = CONFIG.shuntRanges.C.min;
 						break;
 				}
 			}
@@ -525,13 +525,13 @@ function get_fndc_shunt_gauge(shunt, chart) {
 				chart_mode = "";
 				switch (shunt) {
 					case "A":
-						chart_max = CONFIG.shuntRange.A.max;
+						chart_max = CONFIG.shuntRanges.A.max;
 						break;
 					case "B":
-						chart_max = CONFIG.shuntRange.C.max;
+						chart_max = CONFIG.shuntRanges.C.max;
 						break;
 					case "C":
-						chart_max = CONFIG.shuntRange.C.max;
+						chart_max = CONFIG.shuntRanges.C.max;
 						break;
 				}
 				shunt_watts = shunt_amps * device.battery_voltage;
@@ -645,8 +645,8 @@ function get_fndc_shuntNet_gauge(chart) {
 
 	var charge_max;
 	var discharge_max;
-	charge_max = CONFIG.shuntRange.A.max + CONFIG.shuntRange.B.max + CONFIG.shuntRange.C.max;
-	discharge_max = net_max = CONFIG.shuntRange.A.min + CONFIG.shuntRange.B.min + CONFIG.shuntRange.C.min;
+	charge_max = CONFIG.shuntRanges.A.max + CONFIG.shuntRanges.B.max + CONFIG.shuntRanges.C.max;
+	discharge_max = net_max = CONFIG.shuntRanges.A.min + CONFIG.shuntRanges.B.min + CONFIG.shuntRanges.C.min;
 	net_max = Math.max(charge_max, discharge_max);	
 	
 	for (var i = 0; i < json_status['devices'].length; i++) {	

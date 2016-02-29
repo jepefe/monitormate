@@ -121,7 +121,7 @@ if(isset($_POST)){
 		);
 		
 		for ($i = 0; $i < count($status_array['devices']); $i++) {
-			if ($deviceLabel[$i+1] === "") { 
+			if ($deviceLabels[$i+1] === "") { 
 				// If there's not a label in the config, then assign default name based on ID type 
 				switch ($status_array['devices'][$i]['device_id']) {
 					case FX_ID:
@@ -141,12 +141,12 @@ if(isset($_POST)){
 					break;	
 				}
 			} else {
-				$label = $deviceLabel[$i+1];
+				$label = $deviceLabels[$i+1];
 			}
 			$status_array['devices'][$i]['label'] = $label;
 			// if it's a flexnetdc then we also look for shunt labels
 			if ($status_array['devices'][$i]['device_id'] == FNDC_ID) {
-				foreach ($shuntLabel as $key => $shunt_label) {
+				foreach ($shuntLabels as $key => $shunt_label) {
 					switch ($key) {
 						case "A":
 							if ($shunt_label === "") {

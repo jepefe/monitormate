@@ -217,7 +217,7 @@ if (typeof Highcharts !== 'undefined') {
 
 function get_cc_charge_power() {
 
-	/*global deviceLabel, full_day_data */
+	/*global deviceLabels, full_day_data */
 	var chart_options = {};
 	var device_data = {};
 	var total_data = {};
@@ -259,7 +259,7 @@ function get_cc_charge_power() {
 		device_data = {
 //			color: COLOR.production,
 			data: day_data_watts[i],
-			name: deviceLabel[i],
+			name: deviceLabels[i],
 			type: 'line',
 		};
 		all_devices_data.push(device_data);
@@ -309,7 +309,7 @@ function get_cc_charge_power() {
 
 function get_cc_charge_current() {
 
-	/*global deviceLabel, full_day_data */
+	/*global deviceLabels, full_day_data */
 	var chart_options = {};
 	var device_data = {};
 	var total_data = {};
@@ -347,7 +347,7 @@ function get_cc_charge_current() {
 	for (var i in day_data_amps) {
 		device_data = {
 			data: day_data_amps[i],
-			name: deviceLabel[i],
+			name: deviceLabels[i],
 			type: 'line',
 		};
 		all_devices_data_amps.push(device_data);
@@ -395,7 +395,7 @@ function get_cc_charge_current() {
 
 function get_cc_input_volts() {
 
-	/*global deviceLabel, full_day_data */
+	/*global deviceLabels, full_day_data */
 	// var total_day_data__array_volts = [];
 	var day_data_array_volts = [];
 	var all_devices_data_array_volts = [];
@@ -423,7 +423,7 @@ function get_cc_input_volts() {
 
 		var series = {
 			data: day_data_array_volts[i],
-			name: deviceLabel[i]
+			name: deviceLabels[i]
 		};
 		all_devices_data_array_volts.push(series);
 
@@ -458,7 +458,7 @@ function get_cc_input_volts() {
 
 function get_cc_input_current() {
 
-	/*global deviceLabel, full_day_data */
+	/*global deviceLabels, full_day_data */
 	var total_day_data__array_amps = [];
 	var day_data_array_amps = [];
 	var all_devices_data_array_amps = []
@@ -486,7 +486,7 @@ function get_cc_input_current() {
 
 		series = {
 			data: day_data_array_amps[i],
-			name: deviceLabel[i]
+			name: deviceLabels[i]
 		};
 
 		all_devices_data_array_amps.push(series);		
@@ -611,7 +611,7 @@ function get_battery_voltage() {
 
 function get_inverter_power() {
 
-	/*global deviceLabel, full_day_data */
+	/*global deviceLabels, full_day_data */
 	var total_day_data_watts = [];
 	var day_data_watts = [];
 	var all_devices_data = [];
@@ -662,7 +662,7 @@ function get_inverter_power() {
 		device_data = {
 //			color: COLOR.production,
 			data: day_data_watts[i],
-			name: deviceLabel[i],
+			name: deviceLabels[i],
 //			type: 'line'
 			type: 'area'
 		};
@@ -790,7 +790,7 @@ function get_fndc_soc() {
 
 function get_fndc_shunts() {
 
-	/*global full_day_data, shuntLabel */
+	/*global full_day_data, shuntLabels */
 	var day_data_shunt_a = [];
 	var day_data_shunt_b = [];
 	var day_data_shunt_c = [];
@@ -845,16 +845,16 @@ function get_fndc_shunts() {
 			valueSuffix: ' Watts'
 		},
 	    series: [{
-	    	name: shuntLabel[0],
-	    	color: COLOR.shunt.A,
+	    	name: shuntLabels[0],
+	    	color: COLOR.shunts.A,
 			data: day_data_shunt_a
 		}, {
-		    name: shuntLabel[1],
-	    	color: COLOR.shunt.B,
+		    name: shuntLabels[1],
+	    	color: COLOR.shunts.B,
 			data: day_data_shunt_b
 		}, {
-		    name: shuntLabel[2],
-	    	color: COLOR.shunt.C,
+		    name: shuntLabels[2],
+	    	color: COLOR.shunts.C,
 			data: day_data_shunt_c
 		}, {
 			name: "Net",
@@ -870,7 +870,7 @@ function get_fndc_shunts() {
 
 function get_fndc_shunt(shunt) {
 
-	/*global full_day_data, shuntLabel */
+	/*global full_day_data, shuntLabels */
 	var day_data_shunt = [];
 	var chart_options = {};
 	
@@ -931,8 +931,8 @@ function get_fndc_shunt(shunt) {
 			valueSuffix: ' Watts'
 		},
 	    series: [{
-	    	name: shuntLabel[0],
-	    	color: COLOR.shunt.A,
+	    	name: shuntLabels[0],
+	    	color: COLOR.shunts.A,
 			data: day_data_shunt
 		}]
 	};
