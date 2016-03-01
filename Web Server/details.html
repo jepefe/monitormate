@@ -73,7 +73,14 @@
 						$('#device_'+i).data('devAddress', ID.fndc+':'+devices_array[i].address);
 						set_status('device_'+i, $('#device_'+i).data('devAddress'));
 						break;
-					
+					case ID.rad:
+						if ($('#inverters').text() == "None Found") {
+							$('#inverters').text('');
+						}
+						$('#inverters').append("<div class='status' style='display: inline-block;'><div id='device_"+i+"' class='status_content'>Inverter Found.</div></div>&nbsp;");
+						$('#device_'+i).data('devAddress', ID.rad+':'+devices_array[i].address);
+						set_status('device_'+i, $('#device_'+i).data('devAddress'));			
+						break;
 				}
 			}
 					
