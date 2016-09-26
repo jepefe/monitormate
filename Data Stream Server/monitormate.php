@@ -1,79 +1,108 @@
 #!/usr/bin/php
 <?php
+/*
+Copyright (C) 2016 Timothy Martin <https://github.com/instanttim>
 
-    define("FNDC", 4);
-    define("DEBUG", FALSE);
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License at <http://www.gnu.org/licenses/>
+for more details.
+*/
 
-    $ipAddress = "10.0.1.4";
-    $portNumber = "57027";
-    $local_socket = "udp://".$ipAddress.":".$portNumber;
+// settings
+// ob_start(); //Redirect output to internal buffer
+require_once './config.php';
+// ob_end_clean();
 
-    $server = stream_socket_server($local_socket, $errno, $errstr, STREAM_SERVER_BIND);
-    if (!$server) {
-        die("$errstr ($errno)");
-    }
-
-    $structure = array();
-    $count = 0;
-
-    do {
-        $pkt = stream_socket_recvfrom($server, 512, 0, $peer);
-        if (preg_match_all('/<([0-9,]*)>/', $pkt, $data) > 0) {
-            $count++;
-            foreach ($data[1] as $blurb) {
-                // the 3rd char *should* be the device type
-                $port = substr($blurb, 0, 2);
-                $deviceType = substr($blurb, 3, 1);
-                $extraDataID = substr($blurb, 20, 2);
-
-                if ($deviceType == FNDC) {
-                    if ($extraDataID >> 6) {
-                        // 7th bit is set, thus remove it
-                        $extraDataID = $extraDataID & 63;
-                    } 
-
-                    $structure[$deviceType]["DataID_".intval($extraDataID)] = $blurb;
-                } else {
-                    $structure[$deviceType]["Port_".intval($port)] = $blurb;
-                }            
-            }
-            
-            if (DEBUG) {
-                print("Valid Packet ".$count.":\n");
-                print_r($data[1]);
-                print("\n");
-            }
-
-        } else {
-            // junk packets, do nothing for now.
-        }
+// declarations
+$dataStream_array = array();
+$extraDataCount = 0;
+$dataComplete = FALSE;
+$json = NULL;
+$post = NULL;
 
 
-    } while ($pkt !== false && count($structure[FNDC]) < 14);
+// constants
+define("DEBUG", FALSE);
+define("FNDC", 4);
 
-    ksort($structure[FNDC], SORT_NATURAL);
+$socket = stream_socket_server($socketURL, $errno, $errstr, STREAM_SERVER_BIND);
+if (!$socket) {
+	die("$errstr ($errno)");
+}
 
-    if (DEBUG) {
-        print(json_encode($structure));
-        print("\n");
-    }
-    
-    $url = 'http://finleyridge.com/power/post_datastream.php';
-    $json = json_encode($structure);
+do {
+	$pkt = stream_socket_recvfrom($socket, 512, 0, $peer);
 
-    // init cURL
-    $ch = curl_init($url);
+	// match the parts between the < and >
+	if (preg_match_all('/<([0-9,]*)>/', $pkt, $dataStream) > 0) {
+		$extraDataCount++;
+		foreach ($dataStream[1] as $chunk) {
+			// the 3rd char of each chunk *should* be the device type
+			$portAddress = substr($chunk, 0, 2);
+			$deviceType = substr($chunk, 3, 1);
+			$extraDataID = substr($chunk, 20, 2);
 
-    // Tell cURL that we want to send a POST request.
-    curl_setopt($ch, CURLOPT_POST, 1);
+			if ($deviceType == FNDC) {
+				if ($extraDataID >> 6) {
+					// 7th bit is set, thus remove it
+					$extraDataID = $extraDataID & 63;
+				} 
+				$dataStream_array[$deviceType]["DataID_".intval($extraDataID)] = $chunk;
+			} else {
+				$dataStream_array[$deviceType]["Port_".intval($portAddress)] = $chunk;
+			}            
+		}
+		
+		if (DEBUG) {
+			print("Valid Packet ".$extraDataCount.":\n");
+			print_r($dataStream[1]);
+			print("\n");
+		}
 
-    // Attach our encoded JSON string to the POST fields.
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+	} else {
+		// junk chunks, do nothing for now.
+		// TODO: grab the time from these chunks?
+	}
 
-    // Set the content type to application/json
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json')); 
+if (isset($dataStream_array[FNDC])) {
+	if (count($dataStream_array[FNDC]) == 14) {
+		$dataComplete = TRUE;
+	}
+}
 
-    // Execute the request
-    $result = curl_exec($ch);
+} while ($pkt !== FALSE && $dataComplete == FALSE);
+
+ksort($dataStream_array[FNDC], SORT_NATURAL);
+
+if (DEBUG) {
+	print(json_encode($dataStream_array));
+	print("\n");
+}
+
+// make some json, then make the array for posting
+$json = json_encode($dataStream_array);
+$post = array("token" => $token, "datastream" => $json);
+
+// init cURL
+$ch = curl_init($url);
+
+// Tell cURL that we want to send a POST request.
+curl_setopt($ch, CURLOPT_POST, TRUE);
+
+// Attach our encoded JSON string to the POST fields.
+curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+
+// Execute the request
+$result = curl_exec($ch);
+
+// close
+curl_close($ch);
 
 ?>
