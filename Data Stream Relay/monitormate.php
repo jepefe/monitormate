@@ -116,7 +116,7 @@ do { // main loop
 	ksort($datastream_array[FNDC]['extra_data'], SORT_NATURAL);
 
 	// make some json, then make the array for posting
-	$post_data_array['time']['server_local_time'] = date('Y-m-d\TH:i:sP');
+	$post_data_array['time']['relay_local_time'] = date('Y-m-d\TH:i:sP');
 	$post_data_array['device_types'] = $datastream_array;
 	$json = json_encode($post_data_array);
 	$post = array('token' => $token, 'datastream' => $json);
