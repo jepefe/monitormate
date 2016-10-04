@@ -17,8 +17,8 @@ for more details.
 
 // constants
 define("FNDC", 4);
-
 $required_arguments = 3;
+$debug = FALSE;
 
 for ($i = 1; $i < $argc; $i = $i + 2 ) {
 	switch ($argv[$i]) {
@@ -65,13 +65,17 @@ do { // main loop
 	$json = NULL;
 	$post = NULL;
 
+	if ($debug) {
+		print("Processing Packets...\n");
+	}
+
 	do { // read data off the socket_get_status
 		$pkt = stream_socket_recvfrom($socket, 512, 0, $peer);
 		$datastream = NULL;
 		$port_address = NULL;
 		$device_type = NULL;
 		$extra_data_ID = NULL;
-		$data_complete = FALSE;
+		// $data_complete = FALSE;
 
 		// match the parts between the < and >
 		if (preg_match_all('/<([0-9,]*)>/', $pkt, $datastream) > 0) {
@@ -82,7 +86,7 @@ do { // main loop
 				$device_type = intval(substr($chunk, 3, 1));
 				$extra_data_ID = intval(substr($chunk, 20, 2));
 
-				$datastream_array[$device_type]['port_'.sprintf("%'.02d", $port_address)] = $chunk;
+				$datastream_array['devices'][$port_address - 1] = $chunk;
 
 				if ($device_type == FNDC) {
 					if ($extra_data_ID >> 6) {
@@ -90,14 +94,14 @@ do { // main loop
 						$extra_data_ID = $extra_data_ID & 63;
 					}
 					$sub_chunk = substr($chunk, 20, 8);
-					$datastream_array[$device_type]['extra_data'][$extra_data_ID] = $sub_chunk;
+					$datastream_array['extra_data'][$extra_data_ID] = $sub_chunk;
 				}            
 			}
 			
 			if ($debug) {
-				print("Valid Packet ".$packet_count.":\n");
-				print_r($datastream[1]);
-				print("\n");
+				print($packet_count.".");
+				// print_r($datastream[1]);
+				// print("\n");
 			}
 
 		} else {
@@ -105,19 +109,20 @@ do { // main loop
 			// TODO: grab the time from these chunks?
 		}
 
-		if (isset($datastream_array[FNDC])) {
-			if (count($datastream_array[FNDC]['extra_data']) == 14) {
-				$data_complete = TRUE;
-			}
-		}
+		// if (isset($datastream_array[FNDC])) {
+		// 	if (count($datastream_array['extra_data']) == 14) {
+		// 		$data_complete = TRUE;
+		// 	}
+		// }
 
-	} while ($pkt !== FALSE && $data_complete == FALSE);
+	} while ($pkt !== FALSE && $packet_count < 14);
 
-	ksort($datastream_array[FNDC]['extra_data'], SORT_NATURAL);
+	ksort($datastream_array['extra_data'], SORT_NATURAL);
 
 	// make some json, then make the array for posting
 	$post_data_array['time']['relay_local_time'] = date('Y-m-d\TH:i:sP');
-	$post_data_array['device_types'] = $datastream_array;
+	$post_data_array['devices'] = $datastream_array['devices'];
+	$post_data_array['extra_data'] = $datastream_array['extra_data'];
 	$json = json_encode($post_data_array);
 	$post = array('token' => $token, 'datastream' => $json);
 
@@ -129,7 +134,7 @@ do { // main loop
 	curl_close($ch);
 
 	if ($debug) {
-		print(json_encode($datastream_array)."\n");
+		print("\n\n".json_encode($datastream_array)."\n\n");
 		exit(0);
 	}
 
