@@ -14,7 +14,7 @@
 	<h1>Timestamps</h1>
 	<table>
 		<tr><td>Server Local Time:</td><td id="server_local_time"></td></tr>
-		<tr><td>Host Local Time:</td><td id="host_local_time"></td></tr>
+		<tr><td>Host Local Time:</td><td id="relay_local_time"></td></tr>
 		<tr><td>MATE Local Time:</td><td id="mate_local_time"></td></tr>
 	</table>
 	<p>
@@ -41,7 +41,7 @@
 			$("#error_log").load("data/error.log");
 			get_current_status();
 			$('#server_local_time').text(json_status['time'].server_local_time);
-			$('#host_local_time').text(json_status['time'].host_local_time);
+			$('#relay_local_time').text(json_status['time'].relay_local_time);
 			$('#mate_local_time').text(json_status['time'].mate_local_time);
 		});
 

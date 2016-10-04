@@ -73,14 +73,14 @@ if(isset($_POST)){
 		$prevStatusArray = json_decode($prevStatus, TRUE);
 		
 		switch ($reg_time) {
-			// should be set to "mate", "host", or "server" 
+			// should be set to "mate", "relay", or "server" 
 			case "mate":
 				$timestamp = strtotime($status_array['time']['mate_local_time']);
 				$prevTimestamp = strtotime($prevStatusArray['time']['mate_local_time']);
 				break;
-			case "host":
-				$timestamp = strtotime($status_array['time']['host_local_time']);
-				$prevTimestamp = strtotime($prevStatusArray['time']['host_local_time']);
+			case "relay":
+				$timestamp = strtotime($status_array['time']['relay_local_time']);
+				$prevTimestamp = strtotime($prevStatusArray['time']['relay_local_time']);
 				break;
 			default:
 				// this is the fall back in case the field is poorly formatted.
