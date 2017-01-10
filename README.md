@@ -52,7 +52,7 @@ python monitormate.py –help
 			Re-send MATE3 datastream to specified ip and port in format IP:PORT
 
  
-regstatus.php
+post_datastream.php
 ===========
 Gets a json string with devices status and record it in the database.
 
@@ -97,12 +97,10 @@ Optionally, if you want it to run as a daemon on Linux (assumes Debian-style, mo
 
 Example:
 
-	python monitormate.py -p2700 -u http://www.YOURSERVER.com/regstatus.php -i5 -t YOURTOKEN -c
+	php monitormate.php -p 57027 -u http://www.YOURSERVER.com/post_datastream.php  -t YOURTOKEN
 
-Go to  http://YOURSERVER/monitormate.html, maybe you have to wait a little depending your record interval.
+Go to  http://YOURSERVER/index.php (maybe you have to wait a little depending your record interval.)
 
-You can send data stream directly to your remote server and run monitormate.py on it.
+You can send data stream directly to your remote server and run monitormate.php on it.
 
-Time interval on monitormate.py only affects to “real time”. Interval for database record is in config.php.
-
-You can use the -r parameter to resend datastream to other computer or to send to the same using other port and use again the python script to see status in command line.
+The relay script sends the data up to the server as soon as it has all available information. Because of the way FNDC works this is about 14 seconds. Interval for database record is in config.php.
