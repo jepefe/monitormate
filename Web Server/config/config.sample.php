@@ -1,7 +1,7 @@
 <?php
 /*
 Copyright (C) 2012 Jesus Perez <jepefe@gmail.com>
-Copyright (C) 2014 Timothy Martin <https://github.com/instanttim>
+Copyright (C) 2014-2017 Timothy Martin <https://github.com/instanttim>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,19 +16,19 @@ for more details.
 */
 
 // DATABASE
-$dbhost="";			// Database host
-$dbuser="";			// Database user
-$dbpass="";			// Database password
-$dbname="";			// Database name
+$dbhost = "";			// Database host
+$dbuser = "";			// Database user
+$dbpass = "";			// Database password
+$dbname = "";			// Database name
 
-//UPDATES
-$token="";				// Token
-$reg_interval=5;		// Time between each database record in minutes.
+// UPDATES
+$token = "";			// Token
+$reg_interval = 5;		// Time between each database record in minutes.
 						// NOTE: It's recommended to set this to less than your "charge params met" time.
-$reg_time = "server";	// Which date/time information to use when registering the status data into the database
-						// OPTIONS: "server", "relay", or "mate"
+$reg_time = "server";	// "server", "relay", or "mate" depending on which time you'd like to use when 
+						// registering the status data into the database.
 
-$timezone="America/Los_Angeles";	//See http://www.php.net/manual/en/timezones.php, example for Spain: Europe/Madrid
+$timezone = "America/Los_Angeles";	//See http://www.php.net/manual/en/timezones.php, example for Spain: Europe/Madrid
 
 // SYSTEM
 $system_name = "My System";		// System Name
@@ -84,9 +84,11 @@ $colorShuntC		= "#4c328a";
 // You can add as many array elements here as you need, one for each charge controller.
 $colorChargers = array('#fab800', '#f68a98');
 
+// ----------------------------------------------------------------------------
 // DON'T MODIFY ANYTHING BELOW THIS LINE. THIS FILE IS ALSO LOADED
 // BY JAVASCRIPT AS A CONFIG FILE, BUT THE PHP WILL AUTOMATICALLY 
 // GENERATE THE NECESSARY INFORMATION IN THE JAVASCRIPT BELOW.
+// ----------------------------------------------------------------------------
 
 // Constants for device-type IDs
 define("FX_ID", 2);		// 2 is a FX-series inverter
@@ -94,6 +96,9 @@ define("CC_ID", 3);		// 3 is a FM/MX charge controller (CC)
 define("FNDC_ID", 4);	// 4 is a FLEXnet DC
 define("RAD_ID", 6);	// 6 is a Radian-series inverter
 
+define("DEBUG", file_exists("./config/debug.on"));
+
+date_default_timezone_set($timezone);
 ?>
 
 var ID = {
@@ -155,3 +160,11 @@ var COLOR = {
 		?>
 	]
 }
+
+<?php
+	if (DEBUG) {
+		echo "var DEBUG = true";
+	} else {
+		echo "var DEBUG = false";
+	}
+?>
