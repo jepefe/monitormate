@@ -1,6 +1,7 @@
 <?php
 /*
-Copyright (C) 2012-2017 Jesus Perez, Timothy Martin
+Copyright (C) 2012-2017 Timothy Martin
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
@@ -19,15 +20,15 @@ ob_end_clean();
 date_default_timezone_set($timezone);
 
 // Validate the GET/POST global variable data.
-define(DEBUG, ($_GET["debug"] == "true" ? TRUE : FALSE));
-define(POST, (!empty($_POST) AND isset($_POST["token"]) AND $_POST["token"] == $token ? TRUE : FALSE));
+define("POST", (!empty($_POST) AND isset($_POST["token"]) AND $_POST["token"] == $token ? TRUE : FALSE));
 
-if (DEBUG) {
+if (POST) {
+	$datastream_json = print_r($_POST['datastream'], TRUE);
+	file_put_contents("./data/datastream.json", $datastream_json);
+} elseif (DEBUG) {
+	define("DUMP_OUTPUT", TRUE);
 	$datastream_json = file_get_contents("./data/datastream.json");
 	print("<h2>Debugging Mode</h2>Data Stream JSON:<br/><pre>".$datastream_json."</pre>");
-} elseif (POST) {
-	$datastream_json = print_r($_POST['datastream'], TRUE);
-	file_put_contents("./data/datastream.json", $datastream_json);   
 } else {
 	exit("ERROR: No data to post.");
 }
@@ -245,7 +246,7 @@ $reg ? register_summary($summary, $parsed_array):false;
 // add the summary data
 $parsed_array['summary'] = $summary;
 
-if (DEBUG) {
+if (DUMP_OUTPUT) {
 	print("Status JSON:<br/><pre>".json_encode($parsed_array, JSON_PRETTY_PRINT)."</pre>");
 } else {
 	file_put_contents("./data/status.json.tmp", json_encode($parsed_array));
