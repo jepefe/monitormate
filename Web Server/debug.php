@@ -13,7 +13,9 @@ GNU General Public License at <http://www.gnu.org/licenses/>
 for more details.
 */
 
-file_put_contents('./data/error.log', "hi");
+// Right now all this script doese is clear the error log. Ultimately this'll be
+// a php replacement for the debug html file.
+file_put_contents('./data/error.log', NULL);
 header("Location: debug.html");
 
 ?>

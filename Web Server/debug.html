@@ -4,13 +4,25 @@
 	<meta charset="utf-8">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
-	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
 	<script src="./js/jquery.cookie-1.4.1.min.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<title>MonitorMate: Debug</title>
 </head>
 <body>
+	<div id="navbar">
+		<ol id="toc">
+			<li><a href="current.php">Current Status</a></li>
+			<li><a href="historical.html">Historical</a></li>
+			<li><a href="details.html">Details</a></li>
+			<li class="current"><a href="debug.html">DEBUG</a></li>
+		</ol>
+		<h1 id="navtitle"></h1>
+		<div id="button-cluster">
+			Updated: <span id="update_time">?</span>
+		</div>
+	</div>
 	<h1>Timestamps</h1>
 	<table>
 		<tr><td>Server Local Time:</td><td id="server_local_time"></td></tr>

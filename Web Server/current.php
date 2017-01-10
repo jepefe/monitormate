@@ -10,9 +10,9 @@
 	<link rel="mask-icon" href="./images/mask-icon.svg" color='#ff9c1a'>
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
 	<link rel="stylesheet" href="./css/flex.css" type="text/css">
-	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
-	<script src="http://code.highcharts.com/4.1.7/highcharts.js"></script>
-	<script src="http://code.highcharts.com/4.1.7/highcharts-more.js"></script>
+	<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script src="http://code.highcharts.com/4.2.7/highcharts.js"></script>
+	<script src="http://code.highcharts.com/4.2.7/highcharts-more.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<script src="./js/charts.js"></script>
@@ -25,6 +25,11 @@
 			<li class="current"><a href="current.php">Current Status</a></li>
 			<li><a href="historical.html">Historical</a></li>
 			<li><a href="details.html">Details</a></li>
+			<?php
+				if (DEBUG) {
+					print("<li><a href='debug.html'>DEBUG</a></li>");
+				}
+			?>
 		</ol>
 		<h1 id="navtitle"></h1>
 		<div id="button-cluster">
