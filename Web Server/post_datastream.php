@@ -25,8 +25,7 @@ define("POST", (!empty($_POST) AND isset($_POST["token"]) AND $_POST["token"] ==
 if (POST) {
 	$datastream_json = print_r($_POST['datastream'], TRUE);
 	file_put_contents("./data/datastream.json", $datastream_json);
-} elseif (DEBUG) {
-	define("DUMP_OUTPUT", TRUE);
+} elseif (DEBUG && !POST) {
 	$datastream_json = file_get_contents("./data/datastream.json");
 	print("<h2>Debugging Mode</h2>Data Stream JSON:<br/><pre>".$datastream_json."</pre>");
 } else {
@@ -246,11 +245,13 @@ $reg ? register_summary($summary, $parsed_array):false;
 // add the summary data
 $parsed_array['summary'] = $summary;
 
-if (DUMP_OUTPUT) {
+if (DEBUG && !POST) {
 	print("Status JSON:<br/><pre>".json_encode($parsed_array, JSON_PRETTY_PRINT)."</pre>");
 } else {
-	file_put_contents("./data/status.json.tmp", json_encode($parsed_array));
-	rename("./data/status.json.tmp", "./data/status.json");
+	file_put_contents("./data/status.json", json_encode($parsed_array));
+	// copy-on-write, rename seems unncessary. PHP claims fwrite is atomic.
+	// file_put_contents("./data/status.json.tmp", json_encode($parsed_array));
+	// rename("./data/status.json.tmp", "./data/status.json");
 }
 
 exit(0);
@@ -258,7 +259,7 @@ exit(0);
 /* FUNCTIONS! */
 
 function parseFXData($raw_data) {
-	if (DEBUG) {
+	if (DEBUG && !POST) {
 		$device_array['raw_data'] = $raw_data;
 	}
 	$keys_array = array(
@@ -370,7 +371,7 @@ function parseFXData($raw_data) {
 }
 
 function parseChargeControllerData($raw_data) {
-	if (DEBUG) {
+	if (DEBUG && !POST) {
 		$device_array['raw_data'] = $raw_data;
 	}
 	$keys_array = array(
@@ -458,7 +459,7 @@ function parseChargeControllerData($raw_data) {
 }
 
 function parseFNDCData($raw_data, $extra_data) {
-	if (DEBUG) {
+	if (DEBUG && !POST) {
 		$device_array['raw_data'] = $raw_data;
 	}
 	$keys_array = array(
