@@ -328,8 +328,8 @@ function get_cc_output_gauge(chart) {
 				min: 0,
 				max: CONFIG.pvWattage,
 	
-				tickInterval: 500,
-				minorTickInterval: 100,
+				//tickInterval: 500,
+				//minorTickInterval: 100,
 				
 				plotBands: [{
 					from: 0,
@@ -411,8 +411,8 @@ function get_inverter_power_gauge(chart) {
 				min: 0,
 				max: chart_max,
 	
-				tickInterval: 500,
-				minorTickInterval: 100,
+				// tickInterval: 500,
+				// minorTickInterval: 100,
 				
 				labels: {
 					step: 2
