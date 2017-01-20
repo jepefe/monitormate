@@ -10,9 +10,9 @@
 	<link rel="mask-icon" href="./images/mask-icon.svg" color='#ff9c1a'>
 	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
 	<link rel="stylesheet" href="./css/flex.css" type="text/css">
-	<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
-	<script src="http://code.highcharts.com/4.2.7/highcharts.js"></script>
-	<script src="http://code.highcharts.com/4.2.7/highcharts-more.js"></script>
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="http://code.highcharts.com/5.0.6/highcharts.js"></script>
+	<script src="http://code.highcharts.com/5.0.6/highcharts-more.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<script src="./js/charts.js"></script>
