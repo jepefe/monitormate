@@ -37,6 +37,14 @@ for ($i = 1; $i < $argc; $i = $i + 2 ) {
 		case '-t':
 			$token = $argv[$i+1];
 			break;
+		case '-h' || '--help':
+			print("Usage: monitormate.php [options]\nOptions:\n\n");
+			print("\t-a IP_ADDRESS\t\tIP address of your Mate3.\n");
+			print("\t-p UDP_PORT\t\tPort Mate3 is configured to use for Data Stream.\n");
+			print("\t-u URL\t\t\tThe full URL to the post_datastream.php on your webserver.\n");
+			print("\t-t TOKEN\t\tToken configured in config.php on your webserver. (optional)\n");
+			print("\t-d\t\t\tDebug output\n\n");
+			exit();
 		case '-d':
 			$debug = TRUE;
 			break;

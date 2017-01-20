@@ -11,47 +11,26 @@ How does this software work?
 ===========
 The software is divided in three parts:
 
-- Python script for receive and manage MATE3 datastream.
-- PHP scripts for database records and query’s.
+- PHP-CLI script for receive and relay MATE3 datastream to a webserver. (typically an off-site webserver.)
+- PHP scripts for registering the data in the database and query’s.
 - HTML/JavaScript webpage for visual representation.
 
 
-monitormate.py
+monitormate.php
 ===========
-Gets and process datastream to send status to a webserver. This script can work standalone and show devices status in command line. Use the following options:
+Gets and minimally processes datastream to send current status to a webserver. Use the following options:
 
-python monitormate.py –help
+php monitormate.php –-help
 
-	Usage: monitormate.py [options]
+	Usage: monitormate.php [options]
 	Options:
-		-h, --help
-			show this help message and exit
-		-p PORT, --port=PORT
-			Port to listen
-		-g, --get-status
-			Get all devices status
-		-f, --fxmodifier
-			Doubles voltage and divide current in 230V FX inverters
-		-s, --show-devices
-			Show connected devices to MATE3
-		-c, --continuous
-			Print data continuously
-		-d DEVICE_ADDRESS, --device-address=DEVICE_ADDRESS
-			Show specific device status
-		-i TIME_INTERVAL, --interval=TIME_INTERVAL
-			Time interval between reads in seconds. Use with -c
-		-j, --json
-			Prints json formatted string with all devices status to stdout
-		-n, --datetime
-			Include date and time and send to url. Use with -u.
-		-u URL, --send-json-url=URL
-			Send json via POST to specified url
-		-t TOKEN, --token=TOKEN
-			Include security token and send to url. Use with -u.
-		-r IP_PORT, --repeat-mate=IP_PORT
-			Re-send MATE3 datastream to specified ip and port in format IP:PORT
 
- 
+		-a IP_ADDRESS		IP address of your Mate3.
+		-p UDP_PORT			Port Mate3 is configured to use for Data Stream.
+		-u URL				The full URL to the post_datastream.php on your webserver.
+		-t TOKEN			Token configured in config.php on your webserver. (optional)
+		-d					Debug output
+	
 post_datastream.php
 ===========
 Gets a json string with devices status and record it in the database.
