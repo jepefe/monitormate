@@ -24,7 +24,6 @@ for ($i = 1; $i < $argc; $i = $i + 2 ) {
 	switch ($argv[$i]) {
 		case '-a':
 			$IP_address = $argv[$i+1];
-			//$required_arguments--;
 			break;
 		case '-p':
 			$port_number = $argv[$i+1];
