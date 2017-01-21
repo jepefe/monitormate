@@ -20,15 +20,15 @@ monitormate.php
 ===========
 Gets and minimally processes datastream to send current status to a webserver. Use the following options:
 
-php monitormate.php –-help
+php monitormate.php -h
 
 	Usage: monitormate.php [options]
 	Options:
 
-		-a IP_ADDRESS		IP address of your Mate3.
+		-a IP_ADDRESS		IP address on which to listen for data stream. (optional, defaults to all)
 		-p UDP_PORT			Port Mate3 is configured to use for Data Stream.
 		-u URL				The full URL to the post_datastream.php on your webserver.
-		-t TOKEN			Token configured in config.php on your webserver. (optional)
+		-t TOKEN			Token configured in config.php on your webserver. (optional, but recommended)
 		-d					Debug output
 	
 post_datastream.php

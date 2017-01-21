@@ -17,14 +17,14 @@ for more details.
 
 // constants
 define("FNDC", 4);
-$required_arguments = 3;
+$required_arguments = 2;
 $debug = FALSE;
 
 for ($i = 1; $i < $argc; $i = $i + 2 ) {
 	switch ($argv[$i]) {
 		case '-a':
 			$IP_address = $argv[$i+1];
-			$required_arguments--;
+			//$required_arguments--;
 			break;
 		case '-p':
 			$port_number = $argv[$i+1];
@@ -37,25 +37,27 @@ for ($i = 1; $i < $argc; $i = $i + 2 ) {
 		case '-t':
 			$token = $argv[$i+1];
 			break;
-		case '-h' || '--help':
-			print("Usage: monitormate.php [options]\nOptions:\n\n");
-			print("\t-a IP_ADDRESS\t\tIP address of your Mate3.\n");
-			print("\t-p UDP_PORT\t\tPort Mate3 is configured to use for Data Stream.\n");
-			print("\t-u URL\t\t\tThe full URL to the post_datastream.php on your webserver.\n");
-			print("\t-t TOKEN\t\tToken configured in config.php on your webserver. (optional)\n");
-			print("\t-d\t\t\tDebug output\n\n");
+		case '-h':
+		case '--help':
+			print_help();
 			exit();
 		case '-d':
 			$debug = TRUE;
 			break;
 		default:
-			exit("Unknown argument ".$argv[$i]."\n\n");
+			print("ERROR: Unknown argument ".$argv[$i]."\n\n");
+			print_help();
+			exit(1);
 	}
 }
 
 // validate all required arguments exist!
 if ($required_arguments != 0) {
-	exit("You didn't supply all the necessary arguments.\n\n");
+	print("ERROR: You didn't supply all the necessary arguments.\n\n");
+	print_help();
+	exit(1);
+} elseif (!isset($IP_address)) {
+	$IP_address = "0.0.0.0"; // this will make it listen on ALL interfaces
 }
 
 $socket_URL = "udp://".$IP_address.":".$port_number;
@@ -147,5 +149,15 @@ do { // main loop
 	}
 
 } while (TRUE); // Infinite loop for now. Maybe later let it fall through for error conditions.
+
+function print_help() {
+	print("Usage: php monitormate.php [options]\nOptions:\n\n");
+	print("\t-a IP_ADDRESS\t\tIP address on which to listen for data stream. (optional, defaults to all)\n");
+	print("\t-p UDP_PORT\t\tPort Mate3 is configured to use for Data Stream.\n");
+	print("\t-u URL\t\t\tThe full URL to the post_datastream.php on your webserver.\n");
+	print("\t-t TOKEN\t\tToken configured in config.php on your webserver. (optional, but recommended)\n");
+	print("\t-d\t\t\tDebug output\n\n");
+	print("Example: php monitormate.php -a 10.0.0.1 -p 57027 -u http://mydomain.com/monitormate/post_datastream.php\n\n");
+}
 
 ?>
