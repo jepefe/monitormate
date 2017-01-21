@@ -20,6 +20,10 @@ define("FNDC", 4);
 $required_arguments = 2;
 $debug = FALSE;
 
+if (!extension_loaded('curl')) {
+	exit("This script requires PHP to have the CURL extension loaded.");
+}
+
 for ($i = 1; $i < $argc; $i = $i + 2 ) {
 	switch ($argv[$i]) {
 		case '-a':
