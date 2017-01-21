@@ -66,6 +66,12 @@ if (!$socket) {
 	die("$errstr ($errno)");
 }
 
+// if the last char is NOT a backslash, then add it.
+if (substr_compare($post_URL, "/", strlen($post_URL) - 1) != 0) {
+	$post_URL = $post_URL."/";
+}
+$post_URL = $post_URL."post_datastream.php";
+
 do { // main loop
 	// start each iteration with empty data sets
 	$post_data_array = array();
@@ -153,10 +159,10 @@ function print_help() {
 	print("Usage: php monitormate.php [options]\nOptions:\n\n");
 	print("\t-a IP_ADDRESS\t\tIP address on which to listen for data stream. (optional, defaults to all)\n");
 	print("\t-p UDP_PORT\t\tPort Mate3 is configured to use for Data Stream.\n");
-	print("\t-u URL\t\t\tThe full URL to the post_datastream.php on your webserver.\n");
+	print("\t-u URL\t\t\tThe URL to your MonitorMate web server installation.\n");
 	print("\t-t TOKEN\t\tToken configured in config.php on your webserver. (optional, but recommended)\n");
 	print("\t-d\t\t\tDebug output\n\n");
-	print("Example: php monitormate.php -a 10.0.0.1 -p 57027 -u http://mydomain.com/monitormate/post_datastream.php\n\n");
+	print("Example: php monitormate.php -a 10.0.0.1 -p 57027 -u http://mydomain.com/monitormate/\n\n");
 }
 
 ?>

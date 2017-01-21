@@ -27,7 +27,7 @@ php monitormate.php -h
 
 		-a IP_ADDRESS		IP address on which to listen for data stream. (optional, defaults to all)
 		-p UDP_PORT			Port Mate3 is configured to use for Data Stream.
-		-u URL				The full URL to the post_datastream.php on your webserver.
+		-u URL				The URL to your MonitorMate web server installation.
 		-t TOKEN			Token configured in config.php on your webserver. (optional, but recommended)
 		-d					Debug output
 	

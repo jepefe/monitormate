@@ -14,7 +14,7 @@
 DIR=/usr/local/bin/monitormate
 DAEMON=$DIR/monitormate.php
 DAEMON_NAME=monitormate
-DAEMON_ARG="-a 10.0.1.10 -p 57027 -u http://yourwebsite.com/monitormate/post_datastream.php -t y0urT0k3nG03sH3r3!"
+DAEMON_ARG="-p 57027 -u http://yourwebsite.com/monitormate/ -t y0urT0k3nG03sH3r3!"
 
 # This next line determines what user the script runs as.
 # Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
