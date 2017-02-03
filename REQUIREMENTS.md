@@ -1,8 +1,8 @@
 Requirements & Dependencies 
 ===========
-- Python 2.x (Python 3.x  will not work because of changes in the code syntax)
 - PHP 5.4 or earlier (in 5.5 the mysql_ functions have been deprecated)
-	- MYSQL extension
+	- PHP-CLI for the relay scripts
+	- MYSQL extension on the server
 
 Windows
 ===========
