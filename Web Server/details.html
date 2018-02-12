@@ -7,7 +7,7 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
-	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
+	<link rel="stylesheet" href="monitormate.css" type="text/css">
 	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
@@ -40,12 +40,12 @@
 
 		$(document).ready(function() {
 
-			// set the system name in the navbar		
+			// set the system name in the navbar
 			$('#navtitle').text(CONFIG.sysName);
 
 			get_current_status();
 
-			var devices_array = json_status['devices'];			 
+			var devices_array = json_status['devices'];
 			for (var i in devices_array) {
 				switch (devices_array[i].device_id) {
 					// FIXME: this is missing the Radian code!
@@ -79,7 +79,7 @@
 						}
 						$('#inverters').append("<div class='status' style='display: inline-block;'><div id='device_"+i+"' class='status_content'>Inverter Found.</div></div>&nbsp;");
 						$('#device_'+i).data('devAddress', ID.rad+':'+devices_array[i].address);
-						set_status('device_'+i, $('#device_'+i).data('devAddress'));			
+						set_status('device_'+i, $('#device_'+i).data('devAddress'));
 						break;
 				}
 			}
@@ -99,7 +99,7 @@
 				}
 								
 			}
-		}		
+		}
 
 	</script>
 </body>

@@ -7,10 +7,10 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
-	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
+	<link rel="stylesheet" href="monitormate.css" type="text/css">
 	<!--<link rel="stylesheet" href="./css/zebra.css" type="text/css">-->
 	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script src="http://code.highcharts.com/5.0.6/highcharts.js"></script>
+	<script src="http://code.highcharts.com/5.0.14/highcharts.js"></script>
 	<!--<script type="text/javascript" src="./js/zebra_datepicker.js"></script>-->
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
@@ -27,8 +27,8 @@
 		<h1 id="display-date"></h1>
 		<div id="button-cluster">
 			<button onclick="change_day(-1)" class="square">&#9664;</button><button onclick="change_day(0)">Today</button><button onclick="change_day(1)" class="square">&#9654;</button>
-		</div>		
-	</div>	
+		</div>
+	</div>
 	<div class="bottom-double-charts">
 		<div id="years_chart" class="left-chart"></div>
 		<div id="months_chart" class="right-chart"></div>
@@ -40,7 +40,7 @@
 		<h2>State of Charge</h2>
 		<div id="fndc_soc" class="multichart"></div>
 	</div>
-	<div class="fullwidth-chart">	
+	<div class="fullwidth-chart">
 		<h2>Input/Output</h2>
 		<div id="fndc_shunts" class="multichart"></div>
 	</div>
@@ -118,7 +118,7 @@
 			draw_chart('cc_charge_current', update);
 			draw_chart('cc_input_volts', update);
 			draw_chart('cc_input_current', update);
-		}		
+		}
 
 
 		function change_day(delta) {
@@ -136,11 +136,11 @@
 				updated_date = new Date(new_date.getTime() + (delta * 86400000)); // one day in milliseconds
 				
 				if (updated_date < (new Date())) {	// make you're not sneaking into the future.
-					display_date = get_formatted_date(updated_date);					
+					display_date = get_formatted_date(updated_date);
 				} else {
 					alert("You can't predict the future...");
 					return;
-				}			
+				}
 			}
 
 			refresh_data(false);
@@ -148,7 +148,7 @@
 		}
 
 
-		$(document).ready(function() {			
+		$(document).ready(function() {
 
 			/*global display_date */
 			var URLvars = get_URLvars();
@@ -161,7 +161,7 @@
 				display_date = get_formatted_date();
 			}
 
-			// Apply the common theme 
+			// Apply the common theme
 			Highcharts.setOptions(Highcharts.chartTheme);
 			
 			// these should move into refresh_data()
@@ -170,7 +170,7 @@
 			chart_days();
 												
 			refresh_data(false);
-			//setInterval("refresh_data()", 15*1000);		
+			//setInterval("refresh_data()", 15*1000);
 			
 			finalize_CSS();
 			

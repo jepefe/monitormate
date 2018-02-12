@@ -534,9 +534,13 @@ function get_battery_voltage() {
 
 			for (j = 0; j < full_day_data[ID.fndc][port].length; j++) {
 				day_data_volts[j] = [full_day_data[ID.fndc][port][j].timestamp, parseFloat(full_day_data[ID.fndc][port][j].battery_voltage)];
-				// 0.005 V per 2 V cell, per 1 degree C above or below 25° -- target voltage goes up when cold and down when hot
-				temp_compensation = (0.005) * (CONFIG.sysVoltage/2) * (parseInt(full_day_data[ID.fndc][port][j].battery_temp) - 25);
-				voltage_target = CONFIG.sysAbsorbVoltage - temp_compensation;
+				if (CONFIG.temp_comp) {
+					// 0.005 V per 2 V cell, per 1 degree C above or below 25° -- target voltage goes up when cold and down when hot
+					temp_compensation = (0.005) * (CONFIG.sysVoltage/2) * (parseInt(full_day_data[ID.fndc][port][j].battery_temp) - 25);
+					voltage_target = CONFIG.sysAbsorbVoltage - temp_compensation;
+				} else {
+					voltage_target = CONFIG.sysAbsorbVoltage;
+				}
 				day_data_target[j] = [full_day_data[ID.fndc][port][j].timestamp, voltage_target];
 			}
 

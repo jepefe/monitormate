@@ -8,11 +8,10 @@
 	<link rel="icon" href="./images/favicon16.png" type="image/png">
 	<link rel="apple-touch-icon" href="./images/iosicon120.png" type="image/png">
 	<link rel="mask-icon" href="./images/mask-icon.svg" color='#ff9c1a'>
-	<link rel="stylesheet" href="./css/monitormate.css" type="text/css">
-	<link rel="stylesheet" href="./css/flex.css" type="text/css">
+	<link rel="stylesheet" href="monitormate.css" type="text/css">
 	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script src="http://code.highcharts.com/5.0.6/highcharts.js"></script>
-	<script src="http://code.highcharts.com/5.0.6/highcharts-more.js"></script>
+	<script src="http://code.highcharts.com/5.0.14/highcharts.js"></script>
+	<script src="http://code.highcharts.com/5.0.14/highcharts-more.js"></script>
 	<script src="./config/config.php"></script>
 	<script src="./js/monitormate.js"></script>
 	<script src="./js/charts.js"></script>
@@ -36,30 +35,27 @@
 			Updated: <span id="update_time">?</span>
 		</div>
 	</div>
-<?php 
-
-	$charts_array = array(
-		array("fndc_soc_gauge", "fndc_soc"),
-		array("batt_volts_gauge", "battery_voltage"),
-		array("fndc_shuntNet_gauge", "fndc_shunts"),
-		array("inverter_power_gauge", "inverter_power"),
-		array("cc_output_gauge", "cc_charge_power"),
-		array("fndc_shuntA_gauge", "fndc_shuntA"),
-		array("fndc_shuntB_gauge", "fndc_shuntB"),
-		array("fndc_shuntC_gauge", "fndc_shuntC")
-	);
-//	print("<pre>");
-//	print_r($charts_array);
-//	print("</pre>");
-	foreach ($charts_array as $chart) {
-		print("
-			<div class='flex-container'>
-				<div id='{$chart[0]}' class='flex-item flex-gauge'></div>
-				<div id='{$chart[1]}' class='flex-item'></div>
-			</div>\n
-		");	
-	}
+<?php
+	ob_start(); //Redirect output to internal buffer
+	require_once './config/config.php';
+	require_once './database.php';
+	ob_end_clean();
 	
+	$prefs = new Prefs;
+	$prefs->load();
+	
+	print("<table class='dashboard'>");
+	foreach ($prefs->dashboard_rows as $row) {
+		$item = explode(";", $row);
+		print("
+			<tr class='dashboard_row'>
+				<td class='table-gauge'><div class='table-gauge' id='{$item[0]}'></div></td>
+				<td class='table-chart'><div class='table-chart' id='{$item[1]}'></div></td>
+			</tr>\n
+		");
+	}
+	print("</table>");
+
 ?>
 
 	<script>
@@ -68,18 +64,18 @@
 			get_dataStream(false, 4);
 
 			if (full_day_data !== null) {
-				// Apply the common chart theme 
+				// Apply the common chart theme
 				apply_highchart_theme(Highcharts.chartTheme);
 				draw_chart('fndc_soc', false);
 				draw_chart('battery_voltage', false);
 				draw_chart('fndc_shunts', false);
 				draw_chart('inverter_power', false);
 				draw_chart('cc_charge_power', false);
-				draw_chart('fndc_shuntA', false);
-				draw_chart('fndc_shuntB', false);
+				// draw_chart('fndc_shuntA', false);
+				// draw_chart('fndc_shuntB', false);
 				draw_chart('fndc_shuntC', false);
 				
-				// Apply the common gauge theme 
+				// Apply the common gauge theme
 				apply_highchart_theme(Highcharts.gaugeTheme);
 	
 				refresh_data(false);
@@ -104,11 +100,11 @@
 			draw_chart("batt_volts_gauge", update);
 			draw_chart("cc_output_gauge", update);
 			draw_chart("inverter_power_gauge", update);
-			draw_chart("fndc_shuntA_gauge", update);
-			draw_chart("fndc_shuntB_gauge", update);
+			// draw_chart("fndc_shuntA_gauge", update);
+			// draw_chart("fndc_shuntB_gauge", update);
 			draw_chart("fndc_shuntC_gauge", update);
 			draw_chart("fndc_shuntNet_gauge", update);
-		}	
+		}
 
 	</script>
 	

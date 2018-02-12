@@ -140,3 +140,16 @@ CREATE TABLE IF NOT EXISTS `monitormate_summary` (
   `max_pv_voltage` int(11) NOT NULL,
   PRIMARY KEY (`date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `monitormate_prefs`
+--
+
+CREATE TABLE IF NOT EXISTS `monitormate_prefs` (
+  `uid` int(11) NOT NULL AUTO_INCREMENT,
+  `setting` text NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=MyISAM AUTO_INCREMENT DEFAULT CHARSET=utf8;

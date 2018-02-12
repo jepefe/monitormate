@@ -16,7 +16,7 @@ body {
 	width: 100%;
 	height: 34px;
 	padding: 0px 10px;
-	background-color: rgba(238, 239, 249, 0.96);		
+	background-color: rgba(238, 239, 249, 0.96);
 /*	background-color: rgba(238, 239, 249, 0.2);
 	-webkit-backdrop-filter: blur(30px);*/
 	overflow: hidden;
@@ -178,7 +178,7 @@ td.figure {
 	text-align: right;
 }
 
-tr.total td {	
+tr.total td {
 	border-top: 1px solid #bbb;
 }
 
@@ -191,10 +191,7 @@ input.datepicker {
 	width: 100px;
 }
 
-/*
-	LAYOUT 
-*/
-
+ 
 .status {
 	background-color: white;
 	border-radius: 6px;
@@ -214,20 +211,20 @@ input.datepicker {
 	margin-right: 0px;
 	margin-bottom: 10px;
 	background-color: white;
-	border-radius: 6px;	
+	border-radius: 6px;
 	padding: 10px 0px 0px 10px;
 }
 
 .multichart {
 	height: 250px;
-	min-width: 380px; /* should be double-wide width minus left margin (below) - */	
+	min-width: 380px; /* should be double-wide width minus left margin (below) - */
 }
 
 .fullwidth-chart {
 	background-color: white;
-	border-radius: 6px;	
+	border-radius: 6px;
 	clear: both;
-	margin: 20px 0px;	
+	margin: 20px 0px;
 	min-width: 720px;
 	padding: 10px 0px 0px 10px;
 }
@@ -237,7 +234,7 @@ input.datepicker {
 	width: 100%;
 	min-width: 720px;
 	height: 250px;
-	margin-top: 20px;	
+	margin-top: 20px;
 }
 
 .bottom-double-charts {
@@ -285,4 +282,43 @@ input.datepicker {
 	white-space: pre;
 	background-color: white;
 	font-family: Menlo, Courier, monospace;
+}
+
+/*
+	LAYOUT TABLES
+*/
+
+table.dashboard {
+	width: 100%;
+}
+
+tr.dashboard_row {
+	height: 250px;
+}
+
+tr.dashboard_row td {
+	height: 250px;
+	padding: 0px;
+}
+
+.dashboard td.table-gauge {
+	width: 280px;
+}
+
+div.table-gauge {
+	height: 235px;
+	width: 260px;
+	background-color: white;
+	border-radius: 4px;
+	margin: 5px 5px 10px 5px;
+	padding: 5px;
+}
+
+div.table-chart {
+	height: 235px;
+	width: auto;
+	background-color: white;
+	border-radius: 4px;
+	margin: 5px 5px 10px 0px;
+	padding: 5px;
 }

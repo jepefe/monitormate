@@ -41,6 +41,7 @@ $gen_rating = 6000;				// Total wattage of your generator (or AC IN)
 $inverter_max = 3800;			// Total ouput of your inverters (cumulative)
 $charger_max = 2400;			// Total charger output of your chargers (cumulative)
 $ags_port = 0;					// Port used for AGS. Leave 0 if you don't use AGS.
+$temp_comp = TRUE;				// Temperature Compensation, leave this on as long as you have an RTS installed.
 
 // Labels to use for the devices on your HUB ports.
 // If you leave any of these blank, a name will be automatically
