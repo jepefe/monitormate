@@ -136,12 +136,15 @@ do { // main loop
 
 	} while ($pkt !== FALSE && $packet_count < 14);
 
-	ksort($datastream_array['extra_data'], SORT_NATURAL);
-
-	// make some json, then make the array for posting
+	// make the array for posting
 	$post_data_array['time']['relay_local_time'] = date('Y-m-d\TH:i:sP');
 	$post_data_array['devices'] = $datastream_array['devices'];
-	$post_data_array['extra_data'] = $datastream_array['extra_data'];
+	// if there's FNDC data then sort the extra data before adding to the array.
+	if (isset($datastream_array[FNDC]) && isset($datastream_array['extra_data'])) {
+		ksort($datastream_array['extra_data'], SORT_NATURAL);
+		$post_data_array['extra_data'] = $datastream_array['extra_data'];
+	}
+
 	$json = json_encode($post_data_array);
 	$post = array('token' => $token, 'datastream' => $json);
 
