@@ -101,16 +101,17 @@ if (isset($datastream_array['devices'])) {
 
 			switch ($device_type) {
 				case FX_ID:
+				case FXR_ID:
 					$parsed_array['devices'][$port_address - 1] = parseFXData($device);
+					break;
+				case RAD_ID:
+					$parsed_array['devices'][$port_address - 1] = parseRADData($device);
 					break;
 				case CC_ID:
 					$parsed_array['devices'][$port_address - 1] = parseChargeControllerData($device);
 					break;
 				case FNDC_ID:
 					$parsed_array['devices'][$port_address - 1] = parseFNDCData($device, $datastream_array['extra_data']);
-					break;
-				case RAD_ID:
-					$parsed_array['devices'][$port_address - 1] = parseRADData($device);
 					break;
 			}
 		}
@@ -152,6 +153,9 @@ for ($i = 0; $i < count($parsed_array['devices']); $i++) {
 		switch ($parsed_array['devices'][$i]['device_id']) {
 			case FX_ID:
 				$label = "FX Inverter";
+				break;
+			case FXR_ID:
+				$label = "FXR Inverter";
 				break;
 			case RAD_ID:
 				$label = "Radian";
@@ -216,6 +220,7 @@ foreach ($parsed_array['devices'] as $i) {
 			break;
 
 		case FX_ID:
+		case FXR_ID:
 			$reg ? register_fx($i, $date_time):false;
 			break;
 

@@ -95,6 +95,7 @@ $colorChargers = array('#fab800', '#f68a98');
 define("FX_ID", 2);		// 2 is a FX-series inverter
 define("CC_ID", 3);		// 3 is a FM/MX charge controller (CC)
 define("FNDC_ID", 4);	// 4 is a FLEXnet DC
+define("FXR_ID", 5);	// 5 is a FXR-series inverter
 define("RAD_ID", 6);	// 6 is a Radian-series inverter
 
 define("DEBUG", file_exists("./config/debug.on"));
