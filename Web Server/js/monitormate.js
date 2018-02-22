@@ -127,6 +127,9 @@ function set_labels() {
 						case ID.fx:
 							deviceLabels[port] = "FX Inverter";
 							break;
+						case ID.fxr:
+							deviceLabels[port] = "FXR Inverter";
+							break;
 						case ID.rad:
 							deviceLabels[port] = "Radian";
 							break;
@@ -400,6 +403,7 @@ function set_status(HTML_id, value) {
 			break;
 
 		case ID.fx:
+		case ID.fxr:
 			content =	'<table><caption>' + device.label + '<div>Port ' + device.address + '</div></caption>\
 						<tr><td class="label">Operational Mode:</td><td>' + device.operational_mode + '</td></tr>\
 						<tr><td class="label">Battery Voltage:</td><td>' + device.battery_voltage + ' V</td></tr>\
