@@ -107,6 +107,7 @@ var ID = {
 	fx: <?php echo FX_ID; ?>,
 	cc: <?php echo CC_ID; ?>,
 	fndc: <?php echo FNDC_ID; ?>,
+	fxr: <?php echo FXR_ID; ?>,
 	rad: <?php echo RAD_ID; ?>
 }
 
