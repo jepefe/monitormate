@@ -79,7 +79,7 @@ $post_URL = $post_URL."post_datastream.php";
 do { // main loop
 	// start each iteration with empty data sets
 	$post_data_array = array();
-	$datastream_array = array();
+	$datastream_array = array_fill(0,10,null); // make 10 elements all filled with null
 	$packet_count = 0;
 	$json = NULL;
 	$post = NULL;
@@ -128,6 +128,7 @@ do { // main loop
 			// TODO: grab the time from these chunks?
 		}
 
+		// TODO: instead of just checking the total packet count, i should probably make sure all the extra data is collected?
 		// if (isset($datastream_array[FNDC])) {
 		// 	if (count($datastream_array['extra_data']) == 14) {
 		// 		$data_complete = TRUE;
@@ -140,7 +141,7 @@ do { // main loop
 	$post_data_array['time']['relay_local_time'] = date('Y-m-d\TH:i:sP');
 	$post_data_array['devices'] = $datastream_array['devices'];
 	// if there's FNDC data then sort the extra data before adding to the array.
-	if (isset($datastream_array[FNDC]) && isset($datastream_array['extra_data'])) {
+	if (isset($datastream_array['extra_data'])) {
 		ksort($datastream_array['extra_data'], SORT_NATURAL);
 		$post_data_array['extra_data'] = $datastream_array['extra_data'];
 	}

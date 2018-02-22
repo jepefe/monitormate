@@ -95,22 +95,24 @@ switch ($reg_time) {
 
 if (isset($datastream_array['devices'])) {
 	foreach ($datastream_array['devices'] as $device) {
-		$port_address = intval(substr($device, 0, 2));
-		$device_type = intval(substr($device, 3, 1));
+		if ($device != NULL) {
+			$port_address = intval(substr($device, 0, 2));
+			$device_type = intval(substr($device, 3, 1));
 
-		switch ($device_type) {
-			case FX_ID:
-				$parsed_array['devices'][$port_address - 1] = parseFXData($device);
-				break;
-			case CC_ID:
-				$parsed_array['devices'][$port_address - 1] = parseChargeControllerData($device);
-				break;
-			case FNDC_ID:
-				$parsed_array['devices'][$port_address - 1] = parseFNDCData($device, $datastream_array['extra_data']);
-				break;
-			case RAD_ID:
-				$parsed_array['devices'][$port_address - 1] = parseRADData($device);
-				break;
+			switch ($device_type) {
+				case FX_ID:
+					$parsed_array['devices'][$port_address - 1] = parseFXData($device);
+					break;
+				case CC_ID:
+					$parsed_array['devices'][$port_address - 1] = parseChargeControllerData($device);
+					break;
+				case FNDC_ID:
+					$parsed_array['devices'][$port_address - 1] = parseFNDCData($device, $datastream_array['extra_data']);
+					break;
+				case RAD_ID:
+					$parsed_array['devices'][$port_address - 1] = parseRADData($device);
+					break;
+			}
 		}
 	}
 }
