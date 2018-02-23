@@ -79,7 +79,8 @@ $post_URL = $post_URL."post_datastream.php";
 do { // main loop
 	// start each iteration with empty data sets
 	$post_data_array = array();
-	$datastream_array = array_fill(0,10,null); // make 10 elements all filled with null
+	$datastream_array = array();
+	$datastream_array['devices'] = array_fill(0,10,null); // make 10 elements all filled with null
 	$packet_count = 0;
 	$json = NULL;
 	$post = NULL;
