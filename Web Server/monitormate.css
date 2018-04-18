@@ -296,7 +296,7 @@ tr.dashboard_row {
 	height: 250px;
 }
 
-tr.dashboard_row td {
+tr.dashboard_row>td {
 	height: 250px;
 	padding: 0px;
 }
