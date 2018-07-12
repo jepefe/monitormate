@@ -66,20 +66,16 @@ Installation and Execution
 4. Use database.sql to create tables in your MySQL database. (I suggest phpAdmin to import)
 5. Copy the “Web Server” directory content to your web server.
 6. copy the "Data Stream Host" directory content to your host computer (if it's not the one you're using)
-7. Run monitormate.py on the host with the correct parameters.
+7. Run monitormate.php on the host with the correct parameters.
 
-Optionally, if you want it to run as a daemon on Linux (assumes Debian-style, modify as necessary):
+Optionally, if you want it to run as a daemon on Linux (assumes systemd usage, modify as necessary):
 
-1. Copy monitormate.sh to /etc/init.d
-2. Edit monitormate.sh with the proper paths and arguments for your system.
-3. Run "sudo update-rc.d monitormate.sh defaults" to have monitormate automatically run in the background at boot time.
+1. Create /usr/local/bin/monitormate/
+2. Copy monitormate.php to /usr/local/bin/monitormate/monitormate.php
+3. Edit monitormate.service for correct paths, port, URL, and token.
+4. Copy monitormate.service to /lib/systemd/system/monitormate.service
+5. Run "sudo systemctrl enable monitormate.service" to have monitormate automatically run in the background at boot time.
 
-Example:
-
-	php monitormate.php -p 57027 -u http://www.YOURSERVER.com/post_datastream.php  -t YOURTOKEN
-
-Go to  http://YOURSERVER/index.php (maybe you have to wait a little depending your record interval.)
-
-You can send data stream directly to your remote server and run monitormate.php on it.
+Go to  http://www.YOURSERVER.com/index.php (maybe you have to wait a little depending your record interval.)
 
 The relay script sends the data up to the server as soon as it has all available information. Because of the way FNDC works this is about 14 seconds. Interval for database record is in config.php.

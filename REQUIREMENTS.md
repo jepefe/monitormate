@@ -1,7 +1,7 @@
 Requirements & Dependencies 
 ===========
-- PHP 5.4 or earlier (in 5.5 the mysql_ functions have been deprecated)
-	- PHP-CLI for the relay scripts
+- PHP 5.6.x (untested on versions earlier than 5.4 or 7.x)
+	- PHP-CLI on the host for the relay scripts
 	- MYSQL extension on the server
 
 Windows

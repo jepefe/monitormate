@@ -1,0 +1,14 @@
+[Unit]
+Description=Monitor the datastream from an Outback Mate3
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/monitormate/monitormate.php -p 57027 -u http://yourwebsite.com/monitormate/ -t y0urT0k3nG03sH3r3!
+Restart=on-abort
+
+[Socket]
+ListenDatagram=57027
+
+[Install]
+WantedBy=multi-user.target
