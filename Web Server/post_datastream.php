@@ -16,7 +16,7 @@ for more details.
 
 ob_start(); //Redirect output to internal buffer
 require_once './config/config.php';
-ob_end_clean(); 
+ob_end_clean();
 date_default_timezone_set($timezone);
 
 // Validate the GET/POST global variable data.
@@ -32,7 +32,7 @@ if (POST) {
 	exit("ERROR: No data to post.");
 }
 
-$datastream_array = array();	// raw packet data 
+$datastream_array = array();	// raw packet data
 $parsed_array = array();		// parsed and interpreted data
 
 // populate the status array from the entire JSON feed from the host.
@@ -77,7 +77,7 @@ $prevStatus = file_get_contents("./data/status.json");
 $prevStatusArray = json_decode($prevStatus, TRUE);
 
 switch ($reg_time) {
-	// should be set to "mate", "relay", or "server" 
+	// should be set to "mate", "relay", or "server"
 	case "mate":
 		$timestamp = strtotime($parsed_array['time']['mate_local_time']);
 		$prevTimestamp = strtotime($prevStatusArray['time']['mate_local_time']);
@@ -101,8 +101,10 @@ if (isset($datastream_array['devices'])) {
 
 			switch ($device_type) {
 				case FX_ID:
-				case FXR_ID:
 					$parsed_array['devices'][$port_address - 1] = parseFXData($device);
+					break;
+				case FXR_ID:
+					$parsed_array['devices'][$port_address - 1] = parseFXRData($device);
 					break;
 				case RAD_ID:
 					$parsed_array['devices'][$port_address - 1] = parseRADData($device);
@@ -133,7 +135,7 @@ $fndc_data = NULL;
 $cc_total = array(
 	"total_daily_kwh" => 0,
 	"total_daily_ah" => 0,
-);			
+);
 $summary = array(
 	"date" => date('Y-m-d', $timestamp),
 	"kwh_in" => NULL,
@@ -148,8 +150,8 @@ $summary = array(
 );
 		
 for ($i = 0; $i < count($parsed_array['devices']); $i++) {
-	if ($deviceLabels[$i+1] === "") { 
-		// If there's not a label in the config, then assign default name based on ID type 
+	if ($deviceLabels[$i+1] === "") {
+		// If there's not a label in the config, then assign default name based on ID type
 		switch ($parsed_array['devices'][$i]['device_id']) {
 			case FX_ID:
 				$label = "FX Inverter";
@@ -168,7 +170,7 @@ for ($i = 0; $i < count($parsed_array['devices']); $i++) {
 				break;
 			default:
 				$label = "Unknown Device";
-			break;	
+			break;
 		}
 	} else {
 		$label = $deviceLabels[$i+1];
@@ -238,13 +240,13 @@ if ($fndc_data != NULL) {
 	// use the FNDC data if you have one.
 	$summary["kwh_in"]	= $fndc_data["today_net_input_kwh"];
 	$summary["kwh_out"] = $fndc_data["today_net_output_kwh"];
-	$summary["ah_in"]	= $fndc_data["today_net_input_ah"]; 
+	$summary["ah_in"]	= $fndc_data["today_net_input_ah"];
 	$summary["ah_out"]	= $fndc_data["today_net_output_ah"];
 	$summary["min_soc"]	= $fndc_data['today_min_soc'];
 } else {
 	// otherwise use accumulated charge controller data.
 	$summary["kwh_in"]	=  $cc_total["total_daily_kwh"];
-	$summary["ah_in"]	=  $cc_total["total_daily_ah"]; 
+	$summary["ah_in"]	=  $cc_total["total_daily_ah"];
 }
 
 $reg ? register_summary($summary, $parsed_array):false;
@@ -290,11 +292,11 @@ function parseFXData($raw_data) {
 	$misc = intval($raw_data_array[12]);
 
 	// Port Address & Device Type
-	$device_array[$keys_array[0]] = intval($raw_data_array[0]);  
+	$device_array[$keys_array[0]] = intval($raw_data_array[0]);
 	$device_array[$keys_array[1]] = intval($raw_data_array[1]);
 
 	// Inverter, Charger, and Buy Current
-	$device_array[$keys_array[2]] = intval($raw_data_array[2]);  
+	$device_array[$keys_array[2]] = intval($raw_data_array[2]);
 	$device_array[$keys_array[3]] = intval($raw_data_array[3]);
 	$device_array[$keys_array[4]] = intval($raw_data_array[4]);
 
@@ -351,13 +353,13 @@ function parseFXData($raw_data) {
 	);
 	$device_array[$keys_array[10]] = $ac_modes[$ac_index];
 
-	// Battery Voltage  
+	// Battery Voltage
 	$device_array[$keys_array[11]] = intval($raw_data_array[11]) * 0.1;
 	
 	// Misc
 	$device_array[$keys_array[12]] = ($misc & 0b10000000 ? "Aux Output On" : "Aux Output Off");
 
-	// Warning Codes  
+	// Warning Codes
 	$warning_byte = intval($raw_data_array[13]);
 	if (intval($warning_byte) != 0) {
 		($warning_byte & 0b00000001 ? $warning_array[] = "AC In Freq High" : NULL);
@@ -371,8 +373,120 @@ function parseFXData($raw_data) {
 	} else {
 		$warning_array[] = "None";
 	}
-	$device_array[$keys_array[13]] = $warning_array;  
+	$device_array[$keys_array[13]] = $warning_array;
 
+	// return the complete device array
+	return $device_array;
+}
+
+function parseFXRData($raw_data) {
+	if (DEBUG && !POST) {
+		$device_array['raw_data'] = $raw_data;
+	}
+	$keys_array = array(
+		'address',				#  [0] Port Address
+		'device_id',			#  [1] Device Type
+		'inverter_current',		#  [2] Inverter Current
+		'charge_current',		#  [3] Charger Current
+		'buy_current',			#  [4] Buy Current
+		'ac_input_voltage',		#  [5] AC Input Voltage
+		'ac_output_voltage',	#  [6] AC Output Voltage
+		'sell_current',			#  [7] Sell Current
+		'operational_mode',		#  [8] Inverter Operating Mode
+		'error_modes',			#  [9] Error Codes
+		'ac_mode',				# [10] AC Mode
+		'battery_voltage',		# [11] Battery Voltage
+		'misc',					# [12] Misc
+		'warning_modes'			# [13] Warning Codes
+	);
+
+	$raw_data_array = explode(",", $raw_data);
+	//$misc = intval($raw_data_array[12]);//DPO - original for FX
+	$misc = intval($raw_data_array[20]); // DPO - new position for FXR
+
+	// Port Address & Device Type
+	$device_array[$keys_array[0]] = intval($raw_data_array[0]);
+	$device_array[$keys_array[1]] = intval($raw_data_array[1]);
+
+	// Inverter, Charger, and Buy Current
+	$device_array[$keys_array[2]] = intval($raw_data_array[9]);  // DPO - new position for FXR
+	$device_array[$keys_array[3]] = intval($raw_data_array[10]); // DPO - new position for FXR
+	$device_array[$keys_array[4]] = intval($raw_data_array[11]); // DPO - new position for FXR
+
+
+	// AC Input and Output Voltages
+	$multiplier = ($misc & 0b00000001 ? 2 : 1);	// Multiply by two if Misc bit is set
+	$device_array[$keys_array[5]] = intval($raw_data_array[13]) * $multiplier;  // DPO - new position for FXR
+	$device_array[$keys_array[6]] = intval($raw_data_array[15]) * $multiplier;  // DPO - new position for FXR
+
+	// Sell Current
+	$device_array[$keys_array[7]] = intval($raw_data_array[12]);  // DPO - new position for FXR
+
+	// Operating Mode
+	$operating_index = intval($raw_data_array[16]);   // DPO - new position for FXR
+	$operating_modes = array(
+		0 => "Off",
+		1 => "Searching",
+		2 => "Inverting",
+		3 => "Charging",
+		4 => "Silent",
+		5 => "Float",
+		6 => "Equalize",
+		7 => "Charger Off",
+		8 => "Support",
+		9 => "Sell",
+		10 => "Pass-through",
+		90 => "Inverter Error",
+		91 => "AGS Error",
+		92 => "Comm Error"
+	);
+	$device_array[$keys_array[8]] = $operating_modes[$operating_index];	  // DPO - new position for FXR
+	// Error Codes
+	//$error_byte = intval($raw_data_array[9]);   //DPO - original for FX
+	$error_byte = intval($raw_data_array[17]);   // DPO - new position for FXR
+	if (intval($error_byte) != 0) {
+		($error_byte & 0b00000001 ? $error_array[] = "Low VAC Output" : NULL);
+		($error_byte & 0b00000010 ? $error_array[] = "Stacking Error" : NULL);
+		($error_byte & 0b00000100 ? $error_array[] = "Over Temp" : NULL);
+		($error_byte & 0b00001000 ? $error_array[] = "Low Battery" : NULL);
+		($error_byte & 0b00010000 ? $error_array[] = "Phase Loss" : NULL);
+		($error_byte & 0b00100000 ? $error_array[] = "High Battery" : NULL);
+		($error_byte & 0b01000000 ? $error_array[] = "Shorted Output" : NULL);
+		($error_byte & 0b10000000 ? $error_array[] = "Back feed" : NULL);
+	} else {
+		$error_array[] = "None";
+	}
+	$device_array[$keys_array[9]] = $error_array;  // DPO - new position for FXR
+	// AC Mode
+	$ac_index = intval($raw_data_array[18]);  // DPO - new position for FXR
+	$ac_modes = array(
+		0 => "No AC",
+		1 => "AC Drop",
+		2 => "AC Use"
+	);
+	$device_array[$keys_array[10]] = $ac_modes[$ac_index];  // DPO - new position for FXR
+
+	// Battery Voltage
+	$device_array[$keys_array[11]] = intval($raw_data_array[19]) * 0.1;	  // DPO - new position for FXR
+
+	// Misc
+	$device_array[$keys_array[12]] = ($misc & 0b10000000 ? "Aux Output On" : "Aux Output Off");
+
+	// Warning Codes
+	$warning_byte = intval($raw_data_array[21]);  // DPO - new position for FXR
+	if (intval($warning_byte) != 0) {
+		($warning_byte & 0b00000001 ? $warning_array[] = "AC In Freq High" : NULL);
+		($warning_byte & 0b00000010 ? $warning_array[] = "AC In Freq Low" : NULL);
+		($warning_byte & 0b00000100 ? $warning_array[] = "Input VAC High" : NULL);
+		($warning_byte & 0b00001000 ? $warning_array[] = "Input VAC Low" : NULL);
+		($warning_byte & 0b00010000 ? $warning_array[] = "Buy Amps > Input Size" : NULL);
+		($warning_byte & 0b00100000 ? $warning_array[] = "Temp Sensor Failed" : NULL);
+		($warning_byte & 0b01000000 ? $warning_array[] = "Comm Error" : NULL);
+		($warning_byte & 0b10000000 ? $warning_array[] = "Fan Failure" : NULL);
+	} else {
+		$warning_array[] = "None";
+	}
+	$device_array[$keys_array[13]] = $warning_array;
 	// return the complete device array
 	return $device_array;
 }
@@ -398,7 +512,7 @@ function parseChargeControllerData($raw_data) {
 	$raw_data_array = explode(",", $raw_data);
 
 	// Port Address & Device Type
-	$device_array[$keys_array[0]] = intval($raw_data_array[0]);  
+	$device_array[$keys_array[0]] = intval($raw_data_array[0]);
 	$device_array[$keys_array[1]] = intval($raw_data_array[1]);
 
 	// Charge Current
@@ -412,7 +526,7 @@ function parseChargeControllerData($raw_data) {
 	$device_array[$keys_array[5]] = intval($raw_data_array[6]);
 
 	// Aux Mode
-	$aux_byte = intval($raw_data_array[8]); 	
+	$aux_byte = intval($raw_data_array[8]);
 	if ($aux_byte >= 64) {
 		$aux_byte = $aux_byte - 64;
 	}
@@ -442,10 +556,10 @@ function parseChargeControllerData($raw_data) {
 	} else {
 		$error_array[] = "None";
 	}
-	$device_array[$keys_array[7]] = $error_array;  
+	$device_array[$keys_array[7]] = $error_array;
 
 	// Charge Mode
-	$charge_index = intval($raw_data_array[10]); 	
+	$charge_index = intval($raw_data_array[10]);
 	$charge_modes = array(
 		0 => "Silent",
 		1 => "Float",
@@ -504,7 +618,7 @@ function parseFNDCData($raw_data, $extra_data) {
 	$status_flags = $raw_data_array[10];
 
 	// Port Address & Device Type
-	$device_array[$keys_array[0]] = intval($raw_data_array[0]);  
+	$device_array[$keys_array[0]] = intval($raw_data_array[0]);
 	$device_array[$keys_array[1]] = intval($raw_data_array[1]);
 
 	// Shunt Amps
@@ -592,7 +706,7 @@ function parseFNDCData($raw_data, $extra_data) {
 }
 
 function parseRADData($raw_data) {
-	$device_array['raw_data'] = $raw_data; 
+	$device_array['raw_data'] = $raw_data;
 	return $device_array;
 }
 
@@ -734,7 +848,7 @@ function register_fx($device_array, $date_time){
 
 	// $connection = db_connection();
 	// mysql_query($query,$connection);
-	runQuery($query);		
+	runQuery($query);
 }
 
 function register_radian($device_array, $date_time){
@@ -791,7 +905,7 @@ function register_radian($device_array, $date_time){
 
 	// $connection = db_connection();
 	// mysql_query($query, $connection);
-	runQuery($query);		
+	runQuery($query);
 }
 
 
@@ -848,7 +962,7 @@ function register_summary($summary, &$parsed_array) {
 		'".$summary['max_soc']."',
 		'".$summary['min_soc']."',
 		'".$summary['max_pv_voltage']."'
-	)"; 
+	)";
 	
 	$update_query =	"UPDATE monitormate_summary SET
 		kwh_in=".$summary['kwh_in'].",
@@ -879,7 +993,7 @@ function register_summary($summary, &$parsed_array) {
 		while ($row = mysql_fetch_assoc($todaysRecordq)) {
 			
 			// IF the new summary values are equal or higher than existing values (as they should be)
-			// ELSE they are lower and were likely reset because the mate thinks it's a new day. 
+			// ELSE they are lower and were likely reset because the mate thinks it's a new day.
 
 			if ((floatval($summary['kwh_in']) >= floatval($row['kwh_in'])) && (floatval($summary['kwh_out']) >= floatval($row['kwh_out']))) {
 				$query = $update_query;
@@ -938,7 +1052,7 @@ function db_connection() {
 function runQuery($query) {
 	$result = mysql_query($query);
 	if ($result === FALSE) {
-		logEntry('error', mysql_error()."\n".$query);	
+		logEntry('error', mysql_error()."\n".$query);
 	}
 }
 
