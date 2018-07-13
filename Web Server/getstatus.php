@@ -237,7 +237,7 @@ function query_full_day($date, $scope){
 			$whereClause = "date > DATE_SUB(NOW(), INTERVAL ".$scope." HOUR)";
 		} else {
 			// ...with no scope.
-			$whereClause = "date(date) = date(NOW())";
+			$whereClause = "(date >= date(NOW()))";
 		}
 	} else {
 		// It's not today...
@@ -247,7 +247,8 @@ function query_full_day($date, $scope){
 							date < DATE_ADD(date('".$date."'), INTERVAL 1 DAY)";
 		} else {
 			// ...with no scope.
-			$whereClause = "date(date) = date('".$date."')";
+			//$whereClause = "date(date) = date('".$date."')";
+			$whereClause = "(date BETWEEN '".$date." 00:00:00' AND '".$date." 23:59:59')";
 		}
 	}
 
