@@ -90,7 +90,7 @@ function query_years($date) {
 	}
 	
 	$json_years = json_encode($result, JSON_NUMERIC_CHECK);
-	echo $json_years;
+	outputJSON($json_years);
 	
 	/*
 	//	Sample Response
@@ -144,7 +144,7 @@ function query_months($date) {
 	}
 	
 	$json_months = json_encode($result, JSON_NUMERIC_CHECK);
-	echo $json_months;
+	outputJSON($json_months);
 
 	/*
 	//	Sample Response
@@ -217,7 +217,7 @@ function query_days($date) {
 	}
 		
 	$json_month_days = json_encode($result, JSON_NUMERIC_CHECK);
-	echo $json_month_days;
+	outputJSON($json_month_days);
 }
 
 
@@ -329,7 +329,7 @@ function query_full_day($date, $scope){
 		echo '</pre>';
 	} else {
 		$json_full_day = json_encode($full_day_data, JSON_NUMERIC_CHECK);
-		echo $json_full_day;
+		outputJSON($json_full_day);
 	}
 }
 
@@ -365,6 +365,11 @@ function set_elementTypes(&$row) {
 		$row[$key] = $value;
 	}
 	return;
+}
+
+function outputJSON(&$data) {
+	header('Content-Type: application/json');
+	echo $data;
 }
 
 ?>
